@@ -44,6 +44,6 @@ jobs:
           github_token: ${{ secrets.GH_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          release_name: dev
+          release_tag: dev
           overwrite: true
           extra_files: LICENSE README.md
