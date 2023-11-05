@@ -1,2 +1,1 @@
-# progen
-Project Generator CLI
+# Project Generator CLI

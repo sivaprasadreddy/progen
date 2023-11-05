@@ -21,3 +21,5 @@ go.work
 tmp
 myapp/
 demo/
+
+dist/
