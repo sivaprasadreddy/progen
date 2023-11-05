@@ -1,0 +1,18 @@
+package {{ .BasePackage }};
+
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+
+public class AppTest {
+
+    App app = new App();
+
+    @Test
+    void echo() {
+        String input = "siva";
+        String output = app.echo(input);
+
+        assertThat(output).isEqualTo("siva..siva");
+    }
+
+}

@@ -1,0 +1,33 @@
+plugins {
+	id 'java'
+}
+
+group = "{{ .GroupID }}"
+version = "{{ .ApplicationVersion }}"
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+    set("junitVersion", "5.9.2")
+    set("assertjVersion", "3.24.2")
+}
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:${junitVersion}"))
+    testImplementation "org.junit.jupiter:junit-jupiter"
+	testImplementation "org.assertj:assertj-core:${assertjVersion}"
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	testLogging {
+		events = ["PASSED", "FAILED", "SKIPPED"]
+		showStandardStreams = true
+		exceptionFormat = "full"
+	}
+}
