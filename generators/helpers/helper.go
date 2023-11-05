@@ -39,7 +39,7 @@ func copyFile(tmplFS fs.FS, origin, filePath, projectName, dirName string) error
 
 	ensureDir(targetFilePath)
 
-	if err := os.WriteFile(targetFilePath, fileContent, 0666); err != nil {
+	if err := os.WriteFile(targetFilePath, fileContent, 0777); err != nil {
 		return err
 	}
 
@@ -59,7 +59,7 @@ func CopyTemplateFile(tmplFS fs.FS, filePath, projectName, destFileName string) 
 
 	ensureDir(targetFilePath)
 
-	if err := os.WriteFile(targetFilePath, fileContent, 0666); err != nil {
+	if err := os.WriteFile(targetFilePath, fileContent, 0777); err != nil {
 		return err
 	}
 

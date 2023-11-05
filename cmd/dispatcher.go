@@ -6,6 +6,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
 	"github.com/sivaprasadreddy/progen/generators/minimal-java"
+	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 	"os"
 	"strings"
 )
@@ -26,7 +27,7 @@ func invokeGenerator(genType string) error {
 	if strings.EqualFold(genType, appTypeMinimalJava) {
 		minimal_java.Run()
 	} else if strings.EqualFold(genType, appTypeSpringBoot) {
-		fmt.Println("Spring Boot - Work In Progress")
+		springboot.Run()
 	} else {
 		fmt.Println("Unknown generator type")
 	}
