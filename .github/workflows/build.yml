@@ -25,25 +25,25 @@ jobs:
       - name: Build
         run: go build -v .
 
-#  dev-releases-matrix:
-#    name: Release Go Binary
-#    needs: [build]
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        go-version: [1.20]
-#        goos: [ linux, windows, darwin ]
-#        goarch: [ amd64, arm64 ]
-#        exclude:
-#          - goarch: arm64
-#            goos: windows
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: wangyoucao577/go-release-action@v1
-#        with:
-#          github_token: ${{ secrets.GH_TOKEN }}
-#          goos: ${{ matrix.goos }}
-#          goarch: ${{ matrix.goarch }}
-#          release_name: dev
-#          overwrite: true
-#          extra_files: LICENSE README.md
+  dev-releases-matrix:
+    name: Release Go Binary
+    needs: [build]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.20]
+        goos: [ linux, windows, darwin ]
+        goarch: [ amd64, arm64 ]
+        exclude:
+          - goarch: arm64
+            goos: windows
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wangyoucao577/go-release-action@v1
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          release_name: dev
+          overwrite: true
+          extra_files: LICENSE README.md
