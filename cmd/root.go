@@ -1,43 +1,39 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/spf13/cobra"
 	"log"
-	"os"
+
+	"github.com/spf13/cobra"
 )
 
-// var cfgFile string
-var generatorType string
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main().
+// It only needs to happen once to the rootCmd.
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "progen",
-	Short: "Application generator",
-	Long:  `Application generator.`,
+	Short: "Project generator CLI",
+	Long:  `A project generator CLI for Java, Spring Boot, Go applications`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		err := invokeGenerator(generatorType)
+		err := invokeGenerator()
 		if err != nil {
 			log.Fatal(err)
 		}
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
-
 func init() {
-
+	rootCmd.Version = VERSION
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().StringVarP(&generatorType, "type", "t", "", "Generator Type")
+	//rootCmd.Flags().StringVarP(&generatorType, "type", "t", "", "Application Type")
 }

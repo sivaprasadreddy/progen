@@ -2,9 +2,10 @@ package minimal_java
 
 import (
 	"errors"
+	"os"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
-	"os"
 )
 
 func getAnswers() (ProjectConfig, error) {

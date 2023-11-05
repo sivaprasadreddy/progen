@@ -3,10 +3,11 @@ package minimal_java
 import (
 	"embed"
 	"fmt"
-	"github.com/sivaprasadreddy/progen/generators/helpers"
 	"path"
 	"strings"
 	"text/template"
+
+	"github.com/sivaprasadreddy/progen/generators/helpers"
 )
 
 //go:embed all:templates/*

@@ -2,34 +2,29 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/AlecAivazis/survey/v2/terminal"
-	"github.com/sivaprasadreddy/progen/generators/minimal-java"
-	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 	"os"
 	"strings"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/AlecAivazis/survey/v2/terminal"
+	minimal_java "github.com/sivaprasadreddy/progen/generators/minimal-java"
+	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 )
 
-const appTypeMinimalJava = "Minimal Java"
-const appTypeSpringBoot = "Spring Boot"
+const minimalJava = "Minimal Java"
+const springBoot = "Spring Boot"
 
-func invokeGenerator(genType string) error {
-	if genType == "" {
-		answers, err := getAppTypeAnswers()
-		if err != nil {
-			fmt.Println(err.Error())
-			return err
-		}
-		genType = answers.AppType
+func invokeGenerator() error {
+	answers, err := getAppTypeAnswers()
+	if err != nil {
+		return err
 	}
-
-	if strings.EqualFold(genType, appTypeMinimalJava) {
+	if strings.EqualFold(answers.AppType, minimalJava) {
 		minimal_java.Run()
-	} else if strings.EqualFold(genType, appTypeSpringBoot) {
+	} else if strings.EqualFold(answers.AppType, springBoot) {
 		springboot.Run()
 	} else {
-		fmt.Println("Unknown generator type")
+		return errors.New("unknown generator type")
 	}
 	return nil
 }
@@ -44,7 +39,7 @@ func getAppTypeAnswers() (GeneratorType, error) {
 			Name: "AppType",
 			Prompt: &survey.Select{
 				Message: "Choose application type:",
-				Options: []string{appTypeMinimalJava, appTypeSpringBoot},
+				Options: []string{minimalJava, springBoot},
 				Default: "Minimal Java",
 			},
 		},
