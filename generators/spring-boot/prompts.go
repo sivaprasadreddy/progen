@@ -19,9 +19,9 @@ func getAnswers() (ProjectConfig, error) {
 func getProjectConfigAnswers() (ProjectConfig, error) {
 	var questions = []*survey.Question{
 		{
-			Name: "ApplicationName",
+			Name: "AppName",
 			Prompt: &survey.Input{
-				Message: "What is ApplicationName?",
+				Message: "What is the base name of your application?",
 				Help:    "Name of your application",
 				Default: "myapp",
 			},
@@ -30,28 +30,23 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 		{
 			Name: "GroupID",
 			Prompt: &survey.Input{
-				Message: "What is GroupID?",
+				Message: "What is your application groupId?",
 				Default: "com.mycompany",
 			},
-			Validate: func(val interface{}) error {
-				if str, ok := val.(string); !ok || len(str) < 1 {
-					return errors.New("invalid groupId")
-				}
-				return nil
-			},
+			Validate: survey.Required,
 		},
 		{
 			Name: "ArtifactID",
 			Prompt: &survey.Input{
-				Message: "What is ArtifactID?",
+				Message: "What is your application artifactId?",
 				Default: "myapp",
 			},
 			Validate: survey.Required,
 		},
 		{
-			Name: "ApplicationVersion",
+			Name: "AppVersion",
 			Prompt: &survey.Input{
-				Message: "What is Application Version?",
+				Message: "What is your application version?",
 				Default: "1.0.0-SNAPSHOT",
 			},
 			Validate: survey.Required,
@@ -59,8 +54,8 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 		{
 			Name: "BasePackage",
 			Prompt: &survey.Input{
-				Message: "What is base package?",
-				Help:    "Base package name",
+				Message: "What is your application base package?",
+				Help:    "Base package",
 				Default: "com.mycompany.myapp",
 			},
 			Validate: survey.Required,
@@ -68,9 +63,25 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 		{
 			Name: "BuildTool",
 			Prompt: &survey.Select{
-				Message: "Choose Build Tool:",
+				Message: "Which build tool would you like to use?",
 				Options: []string{"Maven", "Gradle"},
 				Default: "Maven",
+			},
+		},
+		{
+			Name: "DbType",
+			Prompt: &survey.Select{
+				Message: "Which database would you like to use?",
+				Options: []string{"postgresql", "mysql", "mariadb"},
+				Default: "postgresql",
+			},
+		},
+		{
+			Name: "DbMigrationTool",
+			Prompt: &survey.Select{
+				Message: "Which database migration tool would you like to use?",
+				Options: []string{"Flyway", "Liquibase"},
+				Default: "Flyway",
 			},
 		},
 	}

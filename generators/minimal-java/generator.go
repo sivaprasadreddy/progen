@@ -16,12 +16,12 @@ var tmplsFS embed.FS
 const templatesRootDir = "templates"
 
 type ProjectConfig struct {
-	ApplicationName    string
-	GroupID            string
-	ArtifactID         string
-	ApplicationVersion string
-	BasePackage        string
-	BuildTool          string
+	AppName     string
+	GroupID     string
+	ArtifactID  string
+	AppVersion  string
+	BasePackage string
+	BuildTool   string
 }
 
 func Run() {
@@ -41,7 +41,7 @@ type projectGenerator struct {
 }
 
 func (pg projectGenerator) generate(pc ProjectConfig) error {
-	if err := helpers.RecreateDir(pc.ApplicationName); err != nil {
+	if err := helpers.RecreateDir(pc.AppName); err != nil {
 		return err
 	}
 	if pc.BuildTool == "Maven" {
@@ -75,21 +75,21 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 /** Maven Functions **/
 
 func (pg projectGenerator) createMavenBuildFiles(pc ProjectConfig) error {
-	return pg.executeTemplate(pc, templatePath("pom.xml.tmpl"), "pom.xml")
+	return pg.executeTemplate(pc, "pom.xml.tmpl", "pom.xml")
 }
 
 func (pg projectGenerator) createGitIgnore(pc ProjectConfig) error {
-	return pg.executeTemplate(pc, templatePath("gitignore.tmpl"), ".gitignore")
+	return pg.executeTemplate(pc, "gitignore.tmpl", ".gitignore")
 }
 
 func (pg projectGenerator) createMavenWrapper(pc ProjectConfig) error {
-	return helpers.CopyDir(pg.tmplFS, templatePath("maven-wrapper"), pc.ApplicationName, "")
+	return pg.copyTemplateDir(pc, "maven-wrapper", "")
 }
 
 /** Gradle Functions **/
 
 func (pg projectGenerator) createGradleWrapper(pc ProjectConfig) error {
-	return helpers.CopyDir(pg.tmplFS, templatePath("gradle-wrapper"), pc.ApplicationName, "")
+	return pg.copyTemplateDir(pc, "gradle-wrapper", "")
 }
 
 func (pg projectGenerator) createGradleBuildFiles(pc ProjectConfig) error {
@@ -98,7 +98,7 @@ func (pg projectGenerator) createGradleBuildFiles(pc ProjectConfig) error {
 		"settings.gradle.tmpl": "settings.gradle",
 	}
 	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, templatePath(tmpl), filePath)
+		err := pg.executeTemplate(pc, tmpl, filePath)
 		if err != nil {
 			return err
 		}
@@ -118,7 +118,7 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 	}
 
 	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, templatePath(srcMainJavaPath+tmpl), srcMainJavaPath+basePackagePath+"/"+filePath)
+		err := pg.executeTemplate(pc, srcMainJavaPath+tmpl, srcMainJavaPath+basePackagePath+"/"+filePath)
 		if err != nil {
 			return err
 		}
@@ -135,7 +135,7 @@ func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
 	}
 
 	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, templatePath(srcTestJavaPath+tmpl), srcTestJavaPath+basePackagePath+"/"+filePath)
+		err := pg.executeTemplate(pc, srcTestJavaPath+tmpl, srcTestJavaPath+basePackagePath+"/"+filePath)
 		if err != nil {
 			return err
 		}
@@ -143,20 +143,22 @@ func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
 	return nil
 }
 
-func templatePath(filepath string) string {
-	return fmt.Sprintf("%s/%s", templatesRootDir, filepath)
+func (pg projectGenerator) copyTemplateDir(pc ProjectConfig, origin, dirName string) error {
+	templateDirPath := fmt.Sprintf("%s/%s", templatesRootDir, origin)
+	return helpers.CopyDir(pg.tmplFS, templateDirPath, pc.AppName, dirName)
 }
 
 func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targetFilePath string) error {
-	tmplFileContent, err := pg.tmplFS.ReadFile(templatePath)
+	templateFilePath := fmt.Sprintf("%s/%s", templatesRootDir, templatePath)
+	tmplFileContent, err := pg.tmplFS.ReadFile(templateFilePath)
 	if err != nil {
 		return err
 	}
-	tmpl, err := template.New(templatePath).Parse(string(tmplFileContent))
+	tmpl, err := template.New(templateFilePath).Parse(string(tmplFileContent))
 	if err != nil {
 		return err
 	}
-	f := helpers.CreateFile(path.Join(".", pc.ApplicationName, targetFilePath))
+	f := helpers.CreateFile(path.Join(".", pc.AppName, targetFilePath))
 	err = tmpl.Execute(f, pc)
 	if err != nil {
 		return err

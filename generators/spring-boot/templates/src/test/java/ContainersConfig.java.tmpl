@@ -1,8 +1,41 @@
 package {{ .BasePackage }};
 
-import org.springframework.boot.test.context.TestConfiguration;
+import static org.testcontainers.utility.DockerImageName.parse;
 
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.context.annotation.Bean;
+{{- if eq .DbType "postgresql" }}
+import org.testcontainers.containers.PostgreSQLContainer;
+{{ end -}}
+{{- if eq .DbType "mysql" }}
+import org.testcontainers.containers.MySQLContainer;
+{{ end -}}
+{{- if eq .DbType "mariadb" }}
+import org.testcontainers.containers.MariaDBContainer;
+{{ end }}
 @TestConfiguration(proxyBeanMethods = false)
 public class ContainersConfig {
 
+{{ if eq .DbType "postgresql" }}
+    @Bean
+    @ServiceConnection
+    PostgreSQLContainer<?> postgres() {
+        return new PostgreSQLContainer<>(parse("postgres:16-alpine")).withReuse(true);
+    }
+{{ end -}}
+{{ if eq .DbType "mysql" }}
+    @Bean
+    @ServiceConnection
+    MySQLContainer<?> mysql() {
+        return new MySQLContainer<>(parse("mysql:8.1.0")).withReuse(true);
+    }
+{{ end -}}
+{{ if eq .DbType "mariadb" }}
+    @Bean
+    @ServiceConnection
+    MariaDBContainer<?> mariadb() {
+        return new MariaDBContainer<>(parse("mariadb:11.0.3")).withReuse(true);
+    }
+{{ end -}}
 }

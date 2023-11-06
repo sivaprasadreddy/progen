@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          {{- if eq .BuildTool "Maven" }}
+          cache: 'maven'
+          {{ end -}}
+          {{- if eq .BuildTool "Gradle" }}
+          cache: 'gradle'
+          {{ end -}}
+
+     {{- if eq .BuildTool "Maven" }}
+      - name: Build with Maven
+        run: ./mvnw verify
+     {{ end -}}
+     {{- if eq .BuildTool "Gradle" }}
+      - name: Build with Gradle
+        run: ./gradlew build
+     {{ end -}}
+
+

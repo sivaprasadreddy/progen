@@ -19,7 +19,7 @@ func getAnswers() (ProjectConfig, error) {
 func getProjectConfigAnswers() (ProjectConfig, error) {
 	var questions = []*survey.Question{
 		{
-			Name: "ApplicationName",
+			Name: "AppName",
 			Prompt: &survey.Input{
 				Message: "What is ApplicationName?",
 				Help:    "Name of your application",

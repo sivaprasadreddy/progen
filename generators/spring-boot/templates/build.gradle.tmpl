@@ -1,14 +1,14 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.1.5'
-    id 'io.spring.dependency-management' version '1.1.3'
+	id "java"
+	id "org.springframework.boot" version "3.1.5"
+    id "io.spring.dependency-management" version "1.1.3"
 }
 
 group = "{{ .GroupID }}"
-version = "{{ .ApplicationVersion }}"
+version = "{{ .AppVersion }}"
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = "17"
 }
 
 configurations {
@@ -22,19 +22,47 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    {{- if eq .DbType "postgresql" }}
+    runtimeOnly "org.postgresql:postgresql"
+    {{ end -}}
+    {{- if eq .DbType "mysql" }}
+    runtimeOnly "com.mysql:mysql-connector-j"
+    {{ end -}}
+    {{- if eq .DbType "mariadb" }}
+    runtimeOnly "org.mariadb.jdbc:mariadb-java-client"
+    {{ end -}}
+    {{- if eq .DbMigrationTool "Flyway"}}
+    implementation "org.flywaydb:flyway-core"
+    {{ if or (eq .DbType "mysql") (eq .DbType "mariadb") }}
+    implementation "org.flywaydb:flyway-mysql"
+    {{ end }}
+    {{ end -}}
+    {{- if eq .DbMigrationTool "Liquibase"}}
+    implementation "org.liquibase:liquibase-core"
+    {{ end -}}
+    developmentOnly "org.springframework.boot:spring-boot-devtools"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "org.testcontainers:junit-jupiter"
+    {{- if eq .DbType "postgresql" }}
+    testImplementation "org.testcontainers:postgresql"
+    {{ end -}}
+    {{- if eq .DbType "mysql" }}
+    testImplementation "org.testcontainers:mysql"
+    {{ end -}}
+    {{- if eq .DbType "mariadb" }}
+    testImplementation "org.testcontainers:mariadb"
+    {{ end -}}
+    testImplementation "io.rest-assured:rest-assured"
 }
 
-tasks.named('test') {
+tasks.named("test") {
 	useJUnitPlatform()
 	testLogging {
 		events = ["PASSED", "FAILED", "SKIPPED"]

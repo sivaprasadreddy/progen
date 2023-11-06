@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"errors"
-	minimalgo "github.com/sivaprasadreddy/progen/generators/minimal-go"
 	"os"
 	"strings"
+
+	minimalgo "github.com/sivaprasadreddy/progen/generators/minimal-go"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"

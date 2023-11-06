@@ -16,9 +16,9 @@ var tmplsFS embed.FS
 const templatesRootDir = "templates"
 
 type ProjectConfig struct {
-	ApplicationName string
-	ModulePath      string
-	RoutingLibrary  string
+	AppName        string
+	ModulePath     string
+	RoutingLibrary string
 }
 
 func Run() {
@@ -38,7 +38,7 @@ type projectGenerator struct {
 }
 
 func (pg projectGenerator) generate(pc ProjectConfig) error {
-	if err := helpers.RecreateDir(pc.ApplicationName); err != nil {
+	if err := helpers.RecreateDir(pc.AppName); err != nil {
 		return err
 	}
 	if err := pg.createGitIgnore(pc); err != nil {
@@ -54,7 +54,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 }
 
 func (pg projectGenerator) createGitIgnore(pc ProjectConfig) error {
-	return pg.executeTemplate(pc, templatePath("gitignore.tmpl"), ".gitignore")
+	return pg.executeTemplate(pc, "gitignore.tmpl", ".gitignore")
 }
 
 func (pg projectGenerator) createModuleFiles(pc ProjectConfig) error {
@@ -65,7 +65,7 @@ func (pg projectGenerator) createModuleFiles(pc ProjectConfig) error {
 	}
 
 	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, templatePath(prefix+"/"+tmpl), filePath)
+		err := pg.executeTemplate(pc, prefix+"/"+tmpl, filePath)
 		if err != nil {
 			return err
 		}
@@ -82,7 +82,7 @@ func (pg projectGenerator) createMainSrc(pc ProjectConfig) error {
 	}
 
 	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, templatePath(prefix+"/"+tmpl), filePath)
+		err := pg.executeTemplate(pc, prefix+"/"+tmpl, filePath)
 		if err != nil {
 			return err
 		}
@@ -90,20 +90,22 @@ func (pg projectGenerator) createMainSrc(pc ProjectConfig) error {
 	return nil
 }
 
-func templatePath(filepath string) string {
-	return fmt.Sprintf("%s/%s", templatesRootDir, filepath)
+func (pg projectGenerator) copyTemplateDir(pc ProjectConfig, origin, dirName string) error {
+	templateDirPath := fmt.Sprintf("%s/%s", templatesRootDir, origin)
+	return helpers.CopyDir(pg.tmplFS, templateDirPath, pc.AppName, dirName)
 }
 
 func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targetFilePath string) error {
-	tmplFileContent, err := pg.tmplFS.ReadFile(templatePath)
+	templateFilePath := fmt.Sprintf("%s/%s", templatesRootDir, templatePath)
+	tmplFileContent, err := pg.tmplFS.ReadFile(templateFilePath)
 	if err != nil {
 		return err
 	}
-	tmpl, err := template.New(templatePath).Parse(string(tmplFileContent))
+	tmpl, err := template.New(templateFilePath).Parse(string(tmplFileContent))
 	if err != nil {
 		return err
 	}
-	f := helpers.CreateFile(path.Join(".", pc.ApplicationName, targetFilePath))
+	f := helpers.CreateFile(path.Join(".", pc.AppName, targetFilePath))
 	err = tmpl.Execute(f, pc)
 	if err != nil {
 		return err
