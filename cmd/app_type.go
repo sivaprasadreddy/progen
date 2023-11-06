@@ -2,27 +2,31 @@ package cmd
 
 import (
 	"errors"
+	minimalgo "github.com/sivaprasadreddy/progen/generators/minimal-go"
 	"os"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
-	minimal_java "github.com/sivaprasadreddy/progen/generators/minimal-java"
+	minimaljava "github.com/sivaprasadreddy/progen/generators/minimal-java"
 	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 )
 
-const minimalJava = "Minimal Java"
-const springBoot = "Spring Boot"
+const appTypeMinimalJava = "Minimal Java"
+const appTypeSpringBoot = "Spring Boot"
+const appTypeMinimalGo = "Minimal Go"
 
 func invokeGenerator() error {
 	answers, err := getAppTypeAnswers()
 	if err != nil {
 		return err
 	}
-	if strings.EqualFold(answers.AppType, minimalJava) {
-		minimal_java.Run()
-	} else if strings.EqualFold(answers.AppType, springBoot) {
+	if strings.EqualFold(answers.AppType, appTypeMinimalJava) {
+		minimaljava.Run()
+	} else if strings.EqualFold(answers.AppType, appTypeSpringBoot) {
 		springboot.Run()
+	} else if strings.EqualFold(answers.AppType, appTypeMinimalGo) {
+		minimalgo.Run()
 	} else {
 		return errors.New("unknown generator type")
 	}
@@ -39,7 +43,7 @@ func getAppTypeAnswers() (GeneratorType, error) {
 			Name: "AppType",
 			Prompt: &survey.Select{
 				Message: "Choose application type:",
-				Options: []string{minimalJava, springBoot},
+				Options: []string{appTypeMinimalJava, appTypeSpringBoot, appTypeMinimalGo},
 				Default: "Minimal Java",
 			},
 		},

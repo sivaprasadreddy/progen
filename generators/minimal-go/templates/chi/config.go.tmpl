@@ -1,0 +1,11 @@
+package main
+
+type AppConfig struct {
+	ServerPort           int
+}
+
+func getConfig() AppConfig {
+	return AppConfig {
+		ServerPort: 8080,
+	}
+}
