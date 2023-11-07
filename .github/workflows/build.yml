@@ -27,7 +27,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
+      - name: Print SDK Versions
+        run: |
+          java -version
+          go version
       - name: Test
         run: go test -v ./...
 

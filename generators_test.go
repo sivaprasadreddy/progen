@@ -140,9 +140,7 @@ func deleteDir(dirName string) error {
 		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
 	}
 	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
+	fmt.Println("Error:", err)
 	return nil
 }
 
@@ -154,8 +152,6 @@ func testGeneratedProject(dirName, executable, testCmd string) error {
 	}
 	fmt.Println("appTestCmd: ", appTestCmd)
 	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
+	fmt.Println("Error:", err)
 	return nil
 }
