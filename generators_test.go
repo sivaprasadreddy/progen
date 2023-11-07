@@ -7,9 +7,21 @@ import (
 	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 	"github.com/stretchr/testify/assert"
 	"os/exec"
+	"runtime"
 	"testing"
 )
 
+var hostOS = runtime.GOOS
+var mvnExec = "./mvnw"
+var gradleExec = "./gradlew"
+
+func init() {
+	fmt.Println("Host OS:", hostOS)
+	if hostOS == "windows" {
+		mvnExec = "./mvnw.cmd"
+		gradleExec = "./gradlew.bat"
+	}
+}
 func TestGenerateMinimalJavaMavenApp(t *testing.T) {
 	pc := minimaljava.ProjectConfig{
 		AppName:     "my-minimal-java-mvn-app",
@@ -21,14 +33,11 @@ func TestGenerateMinimalJavaMavenApp(t *testing.T) {
 	}
 	err := minimaljava.GenerateProject(pc)
 	assert.Nil(t, err)
-	cmd := exec.Command("/bin/sh", "-c", "cd my-minimal-java-mvn-app; ./mvnw test;")
-	err = cmd.Run()
-	fmt.Println("error:", err)
+	err = testGeneratedProject("my-minimal-java-mvn-app", mvnExec, "test")
 	assert.Nil(t, err)
 
 	//cleanup
-	cmd = exec.Command("/bin/sh", "-c", "rm -rf my-minimal-java-mvn-app;")
-	err = cmd.Run()
+	err = deleteDir("my-minimal-java-mvn-app")
 	assert.Nil(t, err)
 }
 
@@ -43,14 +52,11 @@ func TestGenerateMinimalJavaGradleApp(t *testing.T) {
 	}
 	err := minimaljava.GenerateProject(pc)
 	assert.Nil(t, err)
-	cmd := exec.Command("/bin/sh", "-c", "cd my-minimal-java-gradle-app; ./gradlew build;")
-	err = cmd.Run()
-	fmt.Println("error:", err)
+	err = testGeneratedProject("my-minimal-java-gradle-app", gradleExec, "build")
 	assert.Nil(t, err)
 
 	//cleanup
-	cmd = exec.Command("/bin/sh", "-c", "rm -rf my-minimal-java-gradle-app;")
-	err = cmd.Run()
+	err = deleteDir("my-minimal-java-gradle-app")
 	assert.Nil(t, err)
 }
 
@@ -67,14 +73,11 @@ func TestGenerateSpringBootMavenApp(t *testing.T) {
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)
-	cmd := exec.Command("/bin/sh", "-c", "cd my-spring-boot-mvn-app; ./mvnw test;")
-	err = cmd.Run()
-	fmt.Println("error:", err)
+	err = testGeneratedProject("my-spring-boot-mvn-app", mvnExec, "test")
 	assert.Nil(t, err)
 
 	//cleanup
-	cmd = exec.Command("/bin/sh", "-c", "rm -rf my-spring-boot-mvn-app;")
-	err = cmd.Run()
+	err = deleteDir("my-spring-boot-mvn-app")
 	assert.Nil(t, err)
 }
 
@@ -91,14 +94,11 @@ func TestGenerateSpringBootGradleApp(t *testing.T) {
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)
-	cmd := exec.Command("/bin/sh", "-c", "cd my-spring-boot-gradle-app; ./gradlew test;")
-	err = cmd.Run()
-	fmt.Println("error:", err)
+	err = testGeneratedProject("my-spring-boot-gradle-app", gradleExec, "build")
 	assert.Nil(t, err)
 
 	//cleanup
-	cmd = exec.Command("/bin/sh", "-c", "rm -rf my-spring-boot-gradle-app;")
-	err = cmd.Run()
+	err = deleteDir("my-spring-boot-gradle-app")
 	assert.Nil(t, err)
 }
 
@@ -110,14 +110,11 @@ func TestGenerateMinimalGoGinApp(t *testing.T) {
 	}
 	err := minimalgo.GenerateProject(pc)
 	assert.Nil(t, err)
-	cmd := exec.Command("/bin/sh", "-c", "cd my-minimal-go-gin-app; go build;")
-	err = cmd.Run()
-	fmt.Println("error:", err)
+	err = testGeneratedProject("my-minimal-go-gin-app", "go", "build")
 	assert.Nil(t, err)
 
 	//cleanup
-	cmd = exec.Command("/bin/sh", "-c", "rm -rf my-minimal-go-gin-app;")
-	err = cmd.Run()
+	err = deleteDir("my-minimal-go-gin-app")
 	assert.Nil(t, err)
 }
 
@@ -129,13 +126,27 @@ func TestGenerateMinimalGoChiApp(t *testing.T) {
 	}
 	err := minimalgo.GenerateProject(pc)
 	assert.Nil(t, err)
-	cmd := exec.Command("/bin/sh", "-c", "cd my-minimal-go-chi-app; go build;")
-	err = cmd.Run()
-	fmt.Println("error:", err)
+	err = testGeneratedProject("my-minimal-go-chi-app", "go", "build")
 	assert.Nil(t, err)
 
 	//cleanup
-	cmd = exec.Command("/bin/sh", "-c", "rm -rf my-minimal-go-chi-app;")
-	err = cmd.Run()
+	err = deleteDir("my-minimal-go-chi-app")
 	assert.Nil(t, err)
+}
+
+func deleteDir(dirName string) error {
+	cmd := exec.Command("/bin/sh", "-c", "rm -rf "+dirName)
+	if hostOS == "windows" {
+		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
+	}
+	return cmd.Run()
+}
+
+func testGeneratedProject(dirName, executable, testCmd string) error {
+	appTestCmd := fmt.Sprintf("cd %s; %s %s;", dirName, executable, testCmd)
+	cmd := exec.Command("/bin/sh", "-c", appTestCmd)
+	if hostOS == "windows" {
+		cmd = exec.Command("cmd", "/C", appTestCmd)
+	}
+	return cmd.Run()
 }
