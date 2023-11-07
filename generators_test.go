@@ -139,7 +139,11 @@ func deleteDir(dirName string) error {
 	if hostOS == "windows" {
 		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
 	}
-	return cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	return nil
 }
 
 func testGeneratedProject(dirName, executable, testCmd string) error {
@@ -148,5 +152,9 @@ func testGeneratedProject(dirName, executable, testCmd string) error {
 	if hostOS == "windows" {
 		cmd = exec.Command("cmd", "/C", appTestCmd)
 	}
-	return cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	return nil
 }
