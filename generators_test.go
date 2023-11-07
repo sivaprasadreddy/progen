@@ -18,8 +18,8 @@ var gradleExec = "./gradlew"
 func init() {
 	fmt.Println("Host OS:", hostOS)
 	if hostOS == "windows" {
-		mvnExec = "./mvnw.cmd"
-		gradleExec = "./gradlew.bat"
+		mvnExec = "mvnw.cmd"
+		gradleExec = "gradlew.bat"
 	}
 }
 func TestGenerateMinimalJavaMavenApp(t *testing.T) {
@@ -134,24 +134,25 @@ func TestGenerateMinimalGoChiApp(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func deleteDir(dirName string) error {
-	cmd := exec.Command("/bin/sh", "-c", "rm -rf "+dirName)
+func testGeneratedProject(dirName, executable, testCmd string) error {
+	appTestCmd := fmt.Sprintf("cd %s; %s %s;", dirName, executable, testCmd)
+	cmd := exec.Command("/bin/sh", "-c", appTestCmd)
 	if hostOS == "windows" {
-		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
+		appTestCmd = fmt.Sprintf("cd %s && %s %s", dirName, executable, testCmd)
+		cmd = exec.Command("cmd", "/C", appTestCmd)
 	}
-	out, err := cmd.Output()
+	fmt.Println("appTestCmd: ", appTestCmd)
+	out, err := cmd.CombinedOutput()
 	fmt.Println("Error:", err)
 	fmt.Println("Output:", string(out))
 	return err
 }
 
-func testGeneratedProject(dirName, executable, testCmd string) error {
-	appTestCmd := fmt.Sprintf("cd %s; %s %s;", dirName, executable, testCmd)
-	cmd := exec.Command("/bin/sh", "-c", appTestCmd)
+func deleteDir(dirName string) error {
+	cmd := exec.Command("/bin/sh", "-c", "rm -rf "+dirName)
 	if hostOS == "windows" {
-		cmd = exec.Command("cmd", "/C", appTestCmd)
+		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
 	}
-	fmt.Println("appTestCmd: ", appTestCmd)
 	out, err := cmd.Output()
 	fmt.Println("Error:", err)
 	fmt.Println("Output:", string(out))
