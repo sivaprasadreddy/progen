@@ -152,6 +152,7 @@ func testGeneratedProject(dirName, executable, testCmd string) error {
 	if hostOS == "windows" {
 		cmd = exec.Command("cmd", "/C", appTestCmd)
 	}
+	fmt.Println("appTestCmd: ", appTestCmd)
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println("Error:", err)
