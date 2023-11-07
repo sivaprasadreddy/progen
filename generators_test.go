@@ -141,10 +141,10 @@ func testGeneratedProject(dirName, executable, testCmd string) error {
 		appTestCmd = fmt.Sprintf("cd %s && %s %s", dirName, executable, testCmd)
 		cmd = exec.Command("cmd", "/C", appTestCmd)
 	}
-	fmt.Println("appTestCmd: ", appTestCmd)
-	out, err := cmd.CombinedOutput()
-	fmt.Println("Error:", err)
-	fmt.Println("Output:", string(out))
+	//fmt.Println("appTestCmd: ", appTestCmd)
+	_, err := cmd.CombinedOutput()
+	//fmt.Println("Error:", err)
+	//fmt.Println("Output:", string(out))
 	return err
 }
 
@@ -153,8 +153,8 @@ func deleteDir(dirName string) error {
 	if hostOS == "windows" {
 		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
 	}
-	out, err := cmd.Output()
-	fmt.Println("Error:", err)
-	fmt.Println("Output:", string(out))
+	_, err := cmd.CombinedOutput()
+	//fmt.Println("Error:", err)
+	//fmt.Println("Output:", string(out))
 	return err
 }
