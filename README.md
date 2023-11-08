@@ -22,13 +22,16 @@ $ ./progen --help
 ```
 
 ### Windows
-* Download the latest binary for windows OS from https://github.com/sivaprasadreddy/progen/releases.
-* Unzip the file, navigate to folder and open in command prompt
-* Once opened in command prompt just type progen.exe and hit enter
+1. Go to https://github.com/sivaprasadreddy/progen/releases.
+2. Download the latest file for Windows.
+3. Extract the downloaded file.
+4. Open the extracted folder in File Explorer.
+5. Hold down the Shift key, right-click within the folder, and select "Open command window here" or "Open PowerShell window here."
+6. In the command prompt or PowerShell window that appears, type progen.exe and press Enter.
 ```
 C:\Users\appUser\Documents\workspace-sts\git\progen_Windows_x86_64>progen.exe
 ```
-
+These steps should help you download, extract, and run 'progen.exe' from the command prompt in a Windows environment.
 
 ## Usage:
 
