@@ -21,6 +21,15 @@ $ ./progen --help
 # move progen binary to somewhere in your PATH so that you can access progen from anywhere 
 ```
 
+### Windows
+* Download the latest binary for windows OS from https://github.com/sivaprasadreddy/progen/releases.
+* Unzip the file, navigate to folder and open in command prompt
+* Once opened in command prompt just type progen.exe and hit enter
+```
+C:\Users\appUser\Documents\workspace-sts\git\progen_Windows_x86_64>progen.exe
+```
+
+
 ## Usage:
 
 ```shell
