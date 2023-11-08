@@ -33,39 +33,12 @@ $ progen
 
 ### Generate a Minimal Java Project
 
-```shell
-$ progen
-? Choose application type: Minimal Java
-? What is the base name of your application? myapp
-? What is your application groupId? com.mycompany
-? What is your application artifactId? myapp
-? What is your application version? 1.0.0-SNAPSHOT
-? What is your application base package? com.mycompany.myapp
-? Which build tool would you like to use? Maven
-Project generated successfully
-```
+![minimal-java.gif](docs%2Fminimal-java.gif)
 
 ### Generate a Spring Boot Project
-```shell
-$ progen
-? Choose application type: Spring Boot
-? What is the base name of your application? myapp
-? What is your application groupId? com.mycompany
-? What is your application artifactId? myapp
-? What is your application version? 1.0.0-SNAPSHOT
-? What is your application base package? com.mycompany.myapp
-? Which build tool would you like to use? Maven
-? Which database would you like to use? postgresql
-? Which database migration tool would you like to use? Flyway
-Project generated successfully
-```
+
+![spring-boot.gif](docs%2Fspring-boot.gif)
 
 ### Generate a Go Project
-```shell
-$ progen
-? Choose application type: Minimal Go
-? What is ApplicationName? myapp
-? What is Module Path? github.com/username/myapp
-? Choose Routing Library: Gin
-Project generated successfully
-```
+
+![minimal-go.gif](docs%2Fminimal-go.gif)
