@@ -38,3 +38,19 @@ release:
     owner: sivaprasadreddy
     name: progen
   name_template: "{{.Tag}}"
+
+brews:
+  - name: "progen"
+    homepage: "https://github.com/sivaprasadreddy/progen"
+    description: "Project Generator CLI"
+    tap:
+      owner: sivaprasadreddy
+      name: homebrew-progen
+    commit_author:
+      name: K Siva Prasad Reddy
+      email: sivaprasadreddy.k@gmail.com
+    folder: Formula
+    test: |
+      system "#{bin}/progen --version"
+    install: |
+      bin.install "progen"
