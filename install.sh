@@ -16,10 +16,10 @@ mkdir -p "${CLI_DIR}/current"
 ostype="linux"
 case "$(uname -s)" in
     Darwin*)
-        ostype="Darwin"
+        ostype="darwin"
         ;;
     Linux*)
-        ostype="Linux"
+        ostype="linux"
         ;;
 esac
 

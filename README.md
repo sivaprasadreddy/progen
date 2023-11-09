@@ -21,13 +21,13 @@ For Linux and macOS, you can follow the below steps:
 ```shell
 $ cd $HOME/Downloads
 # For MacOS ARM64 (M1, M2 chips)
-$ FILE="progen_Darwin_arm64.tar.gz"
+$ FILE="progen_darwin_arm64.tar.gz"
 # For MacOS AMD64
-$ FILE="progen_Darwin_x86_64.tar.gz"
+$ FILE="progen_darwin_x86_64.tar.gz"
 # For Linux ARM64
-$ FILE="progen_Linux_arm64.tar.gz"
+$ FILE="progen_linux_arm64.tar.gz"
 # For Linux AMD64
-$ FILE="progen_Linux_x86_64.tar.gz"
+$ FILE="progen_linux_x86_64.tar.gz"
 $ curl --location --progress-bar "https://github.com/sivaprasadreddy/progen/releases/download/v0.0.2/${FILE}" > "progen.tar.gz"
 $ tar -xf progen.tar.gz progen
 $ ./progen --help
