@@ -2,7 +2,9 @@ package spring_boot
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
+	"os"
 	"path"
 	"strings"
 	"text/template"
@@ -30,6 +32,16 @@ func Run() {
 	projectConfig, err := getAnswers()
 	helpers.FatalIfErr(err)
 	err = GenerateProject(projectConfig)
+	if err == nil {
+		file, err := json.MarshalIndent(projectConfig, "", " ")
+		if err != nil {
+			fmt.Println("failed to marshall projectConfig")
+		} else {
+			if err = os.WriteFile(projectConfig.AppName+"/.progen.json", file, 0644); err != nil {
+				fmt.Println("failed to write .progrn.json file")
+			}
+		}
+	}
 	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
 }
 

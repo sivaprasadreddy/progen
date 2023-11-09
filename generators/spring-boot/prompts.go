@@ -74,8 +74,8 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 			Name: "DbType",
 			Prompt: &survey.Select{
 				Message: "Which database would you like to use?",
-				Options: []string{"postgresql", "mysql", "mariadb"},
-				Default: "postgresql",
+				Options: []string{"PostgreSQL", "MySQL", "MariaDB"},
+				Default: "PostgreSQL",
 			},
 		},
 		{

@@ -27,18 +27,18 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    {{- if eq .DbType "postgresql" }}
+    {{- if eq .DbType "PostgreSQL" }}
     runtimeOnly "org.postgresql:postgresql"
     {{ end -}}
-    {{- if eq .DbType "mysql" }}
+    {{- if eq .DbType "MySQL" }}
     runtimeOnly "com.mysql:mysql-connector-j"
     {{ end -}}
-    {{- if eq .DbType "mariadb" }}
+    {{- if eq .DbType "MariaDB" }}
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client"
     {{ end -}}
     {{- if eq .DbMigrationTool "Flyway"}}
     implementation "org.flywaydb:flyway-core"
-    {{ if or (eq .DbType "mysql") (eq .DbType "mariadb") }}
+    {{ if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
     implementation "org.flywaydb:flyway-mysql"
     {{ end }}
     {{ end -}}
@@ -51,13 +51,13 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
     testImplementation "org.testcontainers:junit-jupiter"
-    {{- if eq .DbType "postgresql" }}
+    {{- if eq .DbType "PostgreSQL" }}
     testImplementation "org.testcontainers:postgresql"
     {{ end -}}
-    {{- if eq .DbType "mysql" }}
+    {{- if eq .DbType "MySQL" }}
     testImplementation "org.testcontainers:mysql"
     {{ end -}}
-    {{- if eq .DbType "mariadb" }}
+    {{- if eq .DbType "MariaDB" }}
     testImplementation "org.testcontainers:mariadb"
     {{ end -}}
     testImplementation "io.rest-assured:rest-assured"

@@ -69,7 +69,7 @@ func TestGenerateSpringBootMavenApp(t *testing.T) {
 		AppVersion:      "1.0",
 		BasePackage:     "com.sivalabs.myapp",
 		BuildTool:       "Maven",
-		DbType:          "postgresql",
+		DbType:          "PostgreSQL",
 		DbMigrationTool: "flyway",
 	}
 	err := springboot.GenerateProject(pc)
@@ -90,7 +90,7 @@ func TestGenerateSpringBootGradleApp(t *testing.T) {
 		AppVersion:      "1.0",
 		BasePackage:     "com.sivalabs.myapp",
 		BuildTool:       "Gradle",
-		DbType:          "postgresql",
+		DbType:          "PostgreSQL",
 		DbMigrationTool: "flyway",
 	}
 	err := springboot.GenerateProject(pc)

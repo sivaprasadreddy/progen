@@ -22,7 +22,7 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 		{
 			Name: "AppName",
 			Prompt: &survey.Input{
-				Message: "What is ApplicationName?",
+				Message: "What is the base name of your application?",
 				Help:    "Name of your application",
 				Default: "myapp",
 			},
@@ -32,7 +32,7 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 		{
 			Name: "ModulePath",
 			Prompt: &survey.Input{
-				Message: "What is Module Path?",
+				Message: "What is your application module path?",
 				Help:    "Module path ex: github.com/username/modulename",
 				Default: "github.com/username/myapp",
 			},
