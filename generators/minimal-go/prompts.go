@@ -6,6 +6,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
+	"github.com/sivaprasadreddy/progen/generators/helpers"
 )
 
 func getAnswers() (ProjectConfig, error) {
@@ -25,7 +26,8 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 				Help:    "Name of your application",
 				Default: "myapp",
 			},
-			Validate: survey.Required,
+			Validate:  helpers.ValidateApplicationName,
+			Transform: helpers.TrimString,
 		},
 		{
 			Name: "ModulePath",

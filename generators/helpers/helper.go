@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -10,6 +11,8 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/AlecAivazis/survey/v2"
 )
 
 func CopyDir(tmplFS embed.FS, origin, projectName, dirName string) error {
@@ -95,6 +98,25 @@ func CreateFile(filePath string) *os.File {
 		panic(err)
 	}
 	return f
+}
+
+func ValidateApplicationName(val interface{}) error {
+	str, ok := val.(string)
+	if !ok || strings.Trim(str, " ") == "" {
+		return errors.New("value is required")
+	}
+	appName := strings.Trim(str, " ")
+	if stat, err := os.Stat(appName); err == nil && stat.IsDir() {
+		return errors.New(fmt.Sprintf("A directory with name '%s' already exist", appName))
+	}
+	return nil
+}
+
+func TrimString(ans interface{}) interface{} {
+	transformer := survey.TransformString(func(s string) string {
+		return strings.Trim(s, " ")
+	})
+	return transformer(ans)
 }
 
 func FatalIfErr(err error) {

@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os/exec"
+	"runtime"
+	"testing"
+
 	minimalgo "github.com/sivaprasadreddy/progen/generators/minimal-go"
 	minimaljava "github.com/sivaprasadreddy/progen/generators/minimal-java"
 	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 	"github.com/stretchr/testify/assert"
-	"os/exec"
-	"runtime"
-	"testing"
 )
 
 var hostOS = runtime.GOOS
