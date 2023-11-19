@@ -86,6 +86,13 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 				Default: "Flyway",
 			},
 		},
+		{
+			Name: "SpringCloudAWSSupport",
+			Prompt: &survey.Confirm{
+				Message: "Would you like to add Spring Cloud AWS support with LocalStack?",
+				Default: false,
+			},
+		},
 	}
 	answers := ProjectConfig{}
 	err := survey.Ask(questions, &answers)

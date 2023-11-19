@@ -63,14 +63,15 @@ func TestGenerateMinimalJavaGradleApp(t *testing.T) {
 
 func TestGenerateSpringBootMavenApp(t *testing.T) {
 	pc := springboot.ProjectConfig{
-		AppName:         "my-spring-boot-mvn-app",
-		GroupID:         "com.sivalabs",
-		ArtifactID:      "my-spring-boot-mvn-app",
-		AppVersion:      "1.0",
-		BasePackage:     "com.sivalabs.myapp",
-		BuildTool:       "Maven",
-		DbType:          "PostgreSQL",
-		DbMigrationTool: "flyway",
+		AppName:               "my-spring-boot-mvn-app",
+		GroupID:               "com.sivalabs",
+		ArtifactID:            "my-spring-boot-mvn-app",
+		AppVersion:            "1.0",
+		BasePackage:           "com.sivalabs.myapp",
+		BuildTool:             "Maven",
+		DbType:                "PostgreSQL",
+		DbMigrationTool:       "flyway",
+		SpringCloudAWSSupport: true,
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)
@@ -84,14 +85,15 @@ func TestGenerateSpringBootMavenApp(t *testing.T) {
 
 func TestGenerateSpringBootGradleApp(t *testing.T) {
 	pc := springboot.ProjectConfig{
-		AppName:         "my-spring-boot-gradle-app",
-		GroupID:         "com.sivalabs",
-		ArtifactID:      "my-spring-boot-gradle-app",
-		AppVersion:      "1.0",
-		BasePackage:     "com.sivalabs.myapp",
-		BuildTool:       "Gradle",
-		DbType:          "PostgreSQL",
-		DbMigrationTool: "flyway",
+		AppName:               "my-spring-boot-gradle-app",
+		GroupID:               "com.sivalabs",
+		ArtifactID:            "my-spring-boot-gradle-app",
+		AppVersion:            "1.0",
+		BasePackage:           "com.sivalabs.myapp",
+		BuildTool:             "Gradle",
+		DbType:                "PostgreSQL",
+		DbMigrationTool:       "flyway",
+		SpringCloudAWSSupport: true,
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)

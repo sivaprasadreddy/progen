@@ -45,6 +45,10 @@ dependencies {
     {{- if eq .DbMigrationTool "Liquibase"}}
     implementation "org.liquibase:liquibase-core"
     {{ end -}}
+    {{- if .SpringCloudAWSSupport }}
+    implementation "io.awspring.cloud:spring-cloud-aws-starter"
+    implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
+    {{ end }}
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
@@ -60,8 +64,19 @@ dependencies {
     {{- if eq .DbType "MariaDB" }}
     testImplementation "org.testcontainers:mariadb"
     {{ end -}}
+    {{- if .SpringCloudAWSSupport }}
+    testImplementation "org.testcontainers:localstack"
+    {{ end }}
     testImplementation "io.rest-assured:rest-assured"
 }
+
+{{- if .SpringCloudAWSSupport }}
+dependencyManagement {
+    imports {
+        mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:3.0.3"
+    }
+}
+{{ end }}
 
 tasks.named("test") {
 	useJUnitPlatform()

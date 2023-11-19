@@ -18,14 +18,15 @@ var tmplsFS embed.FS
 const templatesRootDir = "templates"
 
 type ProjectConfig struct {
-	AppName         string
-	GroupID         string
-	ArtifactID      string
-	AppVersion      string
-	BasePackage     string
-	BuildTool       string
-	DbType          string
-	DbMigrationTool string
+	AppName               string
+	GroupID               string
+	ArtifactID            string
+	AppVersion            string
+	BasePackage           string
+	BuildTool             string
+	DbType                string
+	DbMigrationTool       string
+	SpringCloudAWSSupport bool
 }
 
 func Run() {

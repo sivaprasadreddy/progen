@@ -7,9 +7,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-
+{{- if .SpringCloudAWSSupport }}
+import org.springframework.test.context.TestPropertySource;
+{{ end }}
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(ContainersConfig.class)
+{{- if .SpringCloudAWSSupport }}
+@TestPropertySource(properties = {
+    "spring.cloud.aws.region.static=us-east-1"
+})
+{{ end }}
 public abstract class BaseIntegrationTest {
 
     @LocalServerPort

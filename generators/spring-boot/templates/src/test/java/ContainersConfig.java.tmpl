@@ -14,6 +14,10 @@ import org.testcontainers.containers.MySQLContainer;
 {{- if eq .DbType "MariaDB" }}
 import org.testcontainers.containers.MariaDBContainer;
 {{ end }}
+{{- if .SpringCloudAWSSupport }}
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.testcontainers.containers.localstack.LocalStackContainer;
+{{ end }}
 @TestConfiguration(proxyBeanMethods = false)
 public class ContainersConfig {
 
@@ -38,4 +42,16 @@ public class ContainersConfig {
         return new MariaDBContainer<>(parse("mariadb:11.0.3")).withReuse(true);
     }
 {{ end -}}
+{{- if .SpringCloudAWSSupport }}
+    @Bean
+    LocalStackContainer localstackContainer(DynamicPropertyRegistry registry) {
+        LocalStackContainer localStackContainer =
+                new LocalStackContainer(parse("localstack/localstack:3.0.0"));
+        registry.add("spring.cloud.aws.credentials.access-key", localStackContainer::getAccessKey);
+        registry.add("spring.cloud.aws.credentials.secret-key", localStackContainer::getSecretKey);
+        registry.add("spring.cloud.aws.region.static", localStackContainer::getRegion);
+        registry.add("spring.cloud.aws.endpoint", localStackContainer::getEndpoint);
+        return localStackContainer;
+    }
+{{ end }}
 }

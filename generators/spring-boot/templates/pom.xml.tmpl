@@ -18,6 +18,9 @@
 	<properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
+{{- if .SpringCloudAWSSupport }}
+        <spring-cloud-aws.version>3.0.3</spring-cloud-aws.version>
+{{ end }}
 	</properties>
 
 	<dependencies>
@@ -76,6 +79,16 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
         {{ end -}}
+        {{- if .SpringCloudAWSSupport }}
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter-s3</artifactId>
+        </dependency>
+        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -123,12 +136,33 @@
             <scope>test</scope>
         </dependency>
         {{ end -}}
+        {{- if .SpringCloudAWSSupport }}
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>localstack</artifactId>
+            <scope>test</scope>
+        </dependency>
+        {{ end }}
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    {{- if .SpringCloudAWSSupport }}
+    <dependencyManagement>
+            <dependencies>
+                <dependency>
+                    <groupId>io.awspring.cloud</groupId>
+                    <artifactId>spring-cloud-aws-dependencies</artifactId>
+                    <version>${spring-cloud-aws.version}</version>
+                    <type>pom</type>
+                    <scope>import</scope>
+                </dependency>
+            </dependencies>
+    </dependencyManagement>
+    {{ end }}
 
     <build>
         <plugins>
