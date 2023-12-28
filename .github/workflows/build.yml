@@ -31,12 +31,12 @@ jobs:
 #          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
 
       - name: Install Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
