@@ -71,6 +71,7 @@ func TestGenerateSpringBootMavenApp(t *testing.T) {
 		BuildTool:             "Maven",
 		DbType:                "PostgreSQL",
 		DbMigrationTool:       "flyway",
+		SpringModulithSupport: true,
 		SpringCloudAWSSupport: true,
 	}
 	err := springboot.GenerateProject(pc)
@@ -93,6 +94,7 @@ func TestGenerateSpringBootGradleApp(t *testing.T) {
 		BuildTool:             "Gradle",
 		DbType:                "PostgreSQL",
 		DbMigrationTool:       "flyway",
+		SpringModulithSupport: true,
 		SpringCloudAWSSupport: true,
 	}
 	err := springboot.GenerateProject(pc)

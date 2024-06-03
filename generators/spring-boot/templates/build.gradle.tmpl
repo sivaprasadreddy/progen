@@ -1,15 +1,16 @@
 plugins {
 	id "java"
-	id "org.springframework.boot" version "3.2.1"
-    id "io.spring.dependency-management" version "1.1.4"
-    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+	id "org.springframework.boot" version "3.3.0"
+    id "io.spring.dependency-management" version "1.1.5"
+    id "com.gorylenko.gradle-git-properties" version "2.4.2"
+    id "com.diffplug.spotless" version "6.25.0"
 }
 
 group = "{{ .GroupID }}"
 version = "{{ .AppVersion }}"
 
 java {
-	sourceCompatibility = "17"
+	sourceCompatibility = "21"
 }
 
 configurations {
@@ -22,10 +23,21 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+  set('springdocOpenapiVersion', "2.5.0")
+{{- if .SpringCloudAWSSupport }}
+  set('awspringVersion', "3.1.1")
+{{ end }}
+{{- if .SpringModulithSupport }}
+  set('springModulithVersion', "1.2.0")
+{{ end }}
+}
+
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     {{- if eq .DbType "PostgreSQL" }}
     runtimeOnly "org.postgresql:postgresql"
@@ -37,6 +49,9 @@ dependencies {
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client"
     {{ end -}}
     {{- if eq .DbMigrationTool "Flyway"}}
+    {{- if eq .DbType "PostgreSQL" }}
+    runtimeOnly "org.flywaydb:flyway-database-postgresql"
+    {{ end -}}
     implementation "org.flywaydb:flyway-core"
     {{ if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
     implementation "org.flywaydb:flyway-mysql"
@@ -45,6 +60,11 @@ dependencies {
     {{- if eq .DbMigrationTool "Liquibase"}}
     implementation "org.liquibase:liquibase-core"
     {{ end -}}
+    {{- if .SpringModulithSupport }}
+    implementation "org.springframework.modulith:spring-modulith-starter-core"
+    implementation "org.springframework.modulith:spring-modulith-actuator"
+    implementation "org.springframework.modulith:spring-modulith-docs"
+    {{ end }}
     {{- if .SpringCloudAWSSupport }}
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
@@ -53,6 +73,9 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    {{- if .SpringModulithSupport }}
+    implementation "org.springframework.modulith:spring-modulith-starter-test"
+    {{ end }}
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
     testImplementation "org.testcontainers:junit-jupiter"
     {{- if eq .DbType "PostgreSQL" }}
@@ -70,13 +93,21 @@ dependencies {
     testImplementation "io.rest-assured:rest-assured"
 }
 
-{{- if .SpringCloudAWSSupport }}
 dependencyManagement {
     imports {
-        mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0"
+        {{- if .SpringCloudAWSSupport }}
+        mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${awspringVersion}"
+        {{ end }}
+        {{- if .SpringModulithSupport }}
+        mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
+        {{ end }}
     }
 }
-{{ end }}
+
+tasks.named("bootBuildImage") {
+	builder = "dashaun/builder:tiny"
+	imageName = "your_dockerhub_username/${project.name}"
+}
 
 tasks.named("test") {
 	useJUnitPlatform()
@@ -95,4 +126,13 @@ gitProperties {
             "git.commit.user.name",
             "git.commit.message.full"
     ]
+}
+
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        formatAnnotations()
+        palantirJavaFormat("2.47.0")
+    }
 }

@@ -6,7 +6,7 @@ group = "{{ .GroupID }}"
 version = "{{ .AppVersion }}"
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '21'
 }
 
 repositories {
@@ -14,9 +14,10 @@ repositories {
 }
 
 ext {
-    set("junitVersion", "5.10.1")
-    set("assertjVersion", "3.24.2")
+    set("junitVersion", "5.10.2")
+    set("assertjVersion", "3.26.0")
 }
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:${junitVersion}"))
     testImplementation "org.junit.jupiter:junit-jupiter"

@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 	"text/template"
 
@@ -26,6 +28,7 @@ type ProjectConfig struct {
 	BuildTool             string
 	DbType                string
 	DbMigrationTool       string
+	SpringModulithSupport bool
 	SpringCloudAWSSupport bool
 }
 
@@ -91,6 +94,9 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		return err
 	}
 	if err := pg.createCIConfigFiles(pc); err != nil {
+		return err
+	}
+	if err := pg.formatCode(pc); err != nil {
 		return err
 	}
 	return nil
@@ -245,4 +251,26 @@ func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targe
 		return err
 	}
 	return nil
+}
+
+func (pg projectGenerator) formatCode(pc ProjectConfig) error {
+	var hostOS = runtime.GOOS
+	dirName := pc.AppName
+	executable := "./mvnw"
+	formatCmd := "spotless:apply"
+	if pc.BuildTool == "Gradle" {
+		executable = "./gradlew"
+		formatCmd = "spotlessApply"
+	}
+	appFormatCmd := fmt.Sprintf("cd %s; %s %s;", dirName, executable, formatCmd)
+	cmd := exec.Command("/bin/sh", "-c", appFormatCmd)
+	if hostOS == "windows" {
+		appFormatCmd = fmt.Sprintf("cd %s && %s %s", dirName, executable, formatCmd)
+		cmd = exec.Command("cmd", "/C", appFormatCmd)
+	}
+	//fmt.Println("appTestCmd: ", appTestCmd)
+	_, err := cmd.CombinedOutput()
+	//fmt.Println("Error:", err)
+	//fmt.Println("Output:", string(out))
+	return err
 }

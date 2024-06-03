@@ -87,6 +87,13 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 			},
 		},
 		{
+			Name: "SpringModulithSupport",
+			Prompt: &survey.Confirm{
+				Message: "Would you like to add Spring Modulith support?",
+				Default: true,
+			},
+		},
+		{
 			Name: "SpringCloudAWSSupport",
 			Prompt: &survey.Confirm{
 				Message: "Would you like to add Spring Cloud AWS support with LocalStack?",

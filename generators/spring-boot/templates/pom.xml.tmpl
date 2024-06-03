@@ -7,7 +7,7 @@
 	<parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version>
+        <version>3.3.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 	<groupId>{{ .GroupID }}</groupId>
@@ -17,10 +17,16 @@
 
 	<properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
+{{- if .SpringModulithSupport }}
+        <spring-modulith.version>1.2.0</spring-modulith.version>
+{{ end }}
 {{- if .SpringCloudAWSSupport }}
         <spring-cloud-aws.version>3.1.0</spring-cloud-aws.version>
 {{ end }}
+        <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
+        <spotless.version>2.43.0</spotless.version>
+        <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
 	</properties>
 
 	<dependencies>
@@ -66,6 +72,12 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
+        {{- if eq .DbType "PostgreSQL"}}
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+        {{ end }}
         {{ if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -79,6 +91,25 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
         {{ end -}}
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc-openapi.version}</version>
+        </dependency>
+        {{- if .SpringModulithSupport }}
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-starter-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-docs</artifactId>
+        </dependency>
+        {{ end }}
         {{- if .SpringCloudAWSSupport }}
         <dependency>
             <groupId>io.awspring.cloud</groupId>
@@ -105,6 +136,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        {{- if .SpringModulithSupport }}
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -150,9 +188,9 @@
         </dependency>
     </dependencies>
 
-    {{- if .SpringCloudAWSSupport }}
     <dependencyManagement>
             <dependencies>
+    {{- if .SpringCloudAWSSupport }}
                 <dependency>
                     <groupId>io.awspring.cloud</groupId>
                     <artifactId>spring-cloud-aws-dependencies</artifactId>
@@ -160,15 +198,30 @@
                     <type>pom</type>
                     <scope>import</scope>
                 </dependency>
+    {{ end }}
+    {{- if .SpringModulithSupport }}
+                <dependency>
+                    <groupId>org.springframework.modulith</groupId>
+                    <artifactId>spring-modulith-bom</artifactId>
+                    <version>${spring-modulith.version}</version>
+                    <type>pom</type>
+                    <scope>import</scope>
+                </dependency>
+    {{ end }}
             </dependencies>
     </dependencyManagement>
-    {{ end }}
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <image>
+                            <builder>dashaun/builder:tiny</builder>
+                            <name>${dockerImageName}</name>
+                        </image>
+                    </configuration>
                     <executions>
                         <execution>
                             <goals>
@@ -199,7 +252,29 @@
                     </includeOnlyProperties>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <importOrder />
+                        <removeUnusedImports />
+                        <formatAnnotations />
+                        <palantirJavaFormat>
+                            <version>2.47.0</version>
+                        </palantirJavaFormat>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

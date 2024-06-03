@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/spf13/cobra v1.8.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
