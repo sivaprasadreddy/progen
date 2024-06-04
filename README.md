@@ -16,30 +16,6 @@ The reasons for creating this new **progen** CLI tool are:
 Download the latest binary for your OS and Architecture(arm64, x86_64) 
 from https://github.com/sivaprasadreddy/progen/releases.
 
-For Linux and macOS, you can follow the below steps:
-
-```shell
-$ cd $HOME/Downloads
-# For MacOS ARM64 (M1, M2 chips)
-$ FILE="progen_darwin_arm64.tar.gz"
-# For MacOS AMD64
-$ FILE="progen_darwin_x86_64.tar.gz"
-# For Linux ARM64
-$ FILE="progen_linux_arm64.tar.gz"
-# For Linux AMD64
-$ FILE="progen_linux_x86_64.tar.gz"
-$ curl --location --progress-bar "https://github.com/sivaprasadreddy/progen/releases/download/v0.0.2/${FILE}" > "progen.tar.gz"
-$ tar -xf progen.tar.gz progen
-$ ./progen --help
-# move progen binary to somewhere in your PATH so that you can access progen from anywhere 
-```
-
-For Windows, download the latest Zip, extract `progen.exe` and use it as follows:
-
-```shell
-> progen.exe --help
-```
-
 ### Using Go Install
 If you have Go installed on your machine, you can use the following command to install `progen`:
 
