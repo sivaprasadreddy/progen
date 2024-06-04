@@ -63,16 +63,15 @@ func TestGenerateMinimalJavaGradleApp(t *testing.T) {
 
 func TestGenerateSpringBootMavenApp(t *testing.T) {
 	pc := springboot.ProjectConfig{
-		AppName:               "my-spring-boot-mvn-app",
-		GroupID:               "com.sivalabs",
-		ArtifactID:            "my-spring-boot-mvn-app",
-		AppVersion:            "1.0",
-		BasePackage:           "com.sivalabs.myapp",
-		BuildTool:             "Maven",
-		DbType:                "PostgreSQL",
-		DbMigrationTool:       "flyway",
-		SpringModulithSupport: true,
-		SpringCloudAWSSupport: true,
+		AppName:         "my-spring-boot-mvn-app",
+		GroupID:         "com.sivalabs",
+		ArtifactID:      "my-spring-boot-mvn-app",
+		AppVersion:      "1.0",
+		BasePackage:     "com.sivalabs.myapp",
+		BuildTool:       "Maven",
+		DbType:          "PostgreSQL",
+		DbMigrationTool: "flyway",
+		Features:        []string{"Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security", "JWT Security"},
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)
@@ -86,20 +85,20 @@ func TestGenerateSpringBootMavenApp(t *testing.T) {
 
 func TestGenerateSpringBootGradleApp(t *testing.T) {
 	pc := springboot.ProjectConfig{
-		AppName:               "my-spring-boot-gradle-app",
-		GroupID:               "com.sivalabs",
-		ArtifactID:            "my-spring-boot-gradle-app",
-		AppVersion:            "1.0",
-		BasePackage:           "com.sivalabs.myapp",
-		BuildTool:             "Gradle",
-		DbType:                "PostgreSQL",
-		DbMigrationTool:       "flyway",
-		SpringModulithSupport: true,
-		SpringCloudAWSSupport: true,
+		AppName:         "my-spring-boot-gradle-app",
+		GroupID:         "com.sivalabs",
+		ArtifactID:      "my-spring-boot-gradle-app",
+		AppVersion:      "1.0",
+		BasePackage:     "com.sivalabs.myapp",
+		BuildTool:       "Gradle",
+		DbType:          "PostgreSQL",
+		DbMigrationTool: "flyway",
+		Features:        []string{"Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security", "JWT Security"},
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)
 	err = testGeneratedProject("my-spring-boot-gradle-app", gradleExec, "build")
+	fmt.Println("Error:", err)
 	assert.Nil(t, err)
 
 	//cleanup
@@ -147,9 +146,9 @@ func testGeneratedProject(dirName, executable, testCmd string) error {
 		cmd = exec.Command("cmd", "/C", appTestCmd)
 	}
 	//fmt.Println("appTestCmd: ", appTestCmd)
-	_, err := cmd.CombinedOutput()
-	//fmt.Println("Error:", err)
-	//fmt.Println("Output:", string(out))
+	out, err := cmd.CombinedOutput()
+	fmt.Println("Error:", err)
+	fmt.Println("Output:", string(out))
 	return err
 }
 

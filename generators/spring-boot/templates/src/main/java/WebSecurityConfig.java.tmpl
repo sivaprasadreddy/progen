@@ -1,0 +1,90 @@
+package {{ .BasePackage }}.config;
+
+{{- if .JwtSecuritySupport }}
+import {{ .BasePackage }}.security.TokenAuthenticationFilter;
+{{ end }}
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+@Configuration
+@EnableWebSecurity
+class WebSecurityConfig {
+    private static final String[] PUBLIC_RESOURCES = {
+        "/css/**",
+        "/js/**",
+        "/images/**",
+        "/webjars/**",
+        "/favicon.ico",
+        "/actuator/health/**",
+        "/actuator/info/**",
+        "/error",
+    };
+
+    {{- if .JwtSecuritySupport }}
+    private final TokenAuthenticationFilter tokenAuthFilter;
+
+    WebSecurityConfig(TokenAuthenticationFilter tokenAuthFilter) {
+        this.tokenAuthFilter = tokenAuthFilter;
+    }
+    {{ end }}
+
+    {{- if .JwtSecuritySupport }}
+    @Bean
+    @Order(1)
+    SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+        String[] unsecuredPaths = {
+            "/api/login",
+        };
+        http.securityMatcher("/api/**");
+        http.csrf(CsrfConfigurer::disable);
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_RESOURCES)
+                .permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**")
+                .permitAll()
+                .requestMatchers(unsecuredPaths)
+                .permitAll()
+                .anyRequest()
+                .permitAll());
+        http.addFilterBefore(tokenAuthFilter, BasicAuthenticationFilter.class);
+        http.exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
+    }
+    {{ end }}
+
+    @Bean
+    @Order(2)
+    SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+        String[] unsecuredPaths = {
+            "/login",
+        };
+        http.securityMatcher("/**");
+
+        http.authorizeHttpRequests(r -> r.requestMatchers(PUBLIC_RESOURCES)
+                .permitAll()
+                .requestMatchers(unsecuredPaths)
+                .permitAll()
+                .anyRequest()
+                .authenticated());
+
+        http.formLogin(formLogin -> formLogin.loginPage("/login").permitAll());
+
+        http.logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")
+                .permitAll());
+
+        return http.build();
+    }
+}

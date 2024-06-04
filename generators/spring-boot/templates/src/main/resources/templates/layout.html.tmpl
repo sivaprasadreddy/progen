@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:hx="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+{{ if or .SecuritySupport .JwtSecuritySupport }}
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+{{ end }}
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>{{ .AppName }}</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.css">
+    <link rel="stylesheet" href="/webjars/font-awesome/6.5.2/css/all.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#" th:href="@{/}">
+                {{ .AppName }}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {{ if or .SecuritySupport .JwtSecuritySupport }}
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/login"> Login </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/logout">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="app" class="container">
+        <div layout:fragment="content">
+            <!-- Your Page Content Here -->
+        </div>
+    </div>
+</main>
+
+<script src="/webjars/jquery/3.7.1/jquery.js"></script>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.js"></script>
+{{- if .HTMXSupport }}
+<script src="/webjars/htmx.org/1.9.12/dist/htmx.min.js"></script>
+{{ end }}
+<div layout:fragment="pageScripts">
+</div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+package {{ .BasePackage }}.security;
+
+import java.time.Instant;
+
+public record AuthToken(String accessToken, Instant expiresAt) {}

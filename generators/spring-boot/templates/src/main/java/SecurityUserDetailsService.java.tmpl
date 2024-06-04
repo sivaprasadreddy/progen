@@ -1,0 +1,26 @@
+package {{ .BasePackage }}.security;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+class SecurityUserDetailsService implements UserDetailsService {
+
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        //TODO; implement user lookup
+        Optional<UserDetails> userDetails = Optional.of(
+            new User(username, "{noop}password", true, true, true, true,
+                    List.of(new SimpleGrantedAuthority("ROLE_USER")))
+        );
+
+        return userDetails.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+}

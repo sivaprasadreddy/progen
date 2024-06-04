@@ -24,6 +24,18 @@
 {{- if .SpringCloudAWSSupport }}
         <spring-cloud-aws.version>3.1.0</spring-cloud-aws.version>
 {{ end }}
+{{- if .ThymeleafSupport }}
+        <bootstrap.version>5.3.3</bootstrap.version>
+  		<jquery.version>3.7.1</jquery.version>
+  		<font_awesome.version>6.5.2</font_awesome.version>
+{{ end }}
+{{- if .HTMXSupport }}
+        <htmx.org.version>1.9.12</htmx.org.version>
+        <htmx-spring-boot-thymeleaf.version>3.3.0</htmx-spring-boot-thymeleaf.version>
+{{ end }}
+{{- if .JwtSecuritySupport }}
+        <jjwt.version>0.11.5</jjwt.version>
+{{ end }}
         <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
         <spotless.version>2.43.0</spotless.version>
         <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
@@ -42,6 +54,35 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        {{- if .SecuritySupport }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        {{ end }}
+        {{- if .ThymeleafSupport }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+        </dependency>
+        {{- if .SecuritySupport }}
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+        {{ end }}
+        {{- if .HTMXSupport }}
+        <dependency>
+            <groupId>io.github.wimdeblauwe</groupId>
+            <artifactId>htmx-spring-boot-thymeleaf</artifactId>
+            <version>${htmx-spring-boot-thymeleaf.version}</version>
+        </dependency>
+        {{ end }}
+        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -120,6 +161,49 @@
             <artifactId>spring-cloud-aws-starter-s3</artifactId>
         </dependency>
         {{ end }}
+        {{- if .ThymeleafSupport }}
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${bootstrap.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>${jquery.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>${font_awesome.version}</version>
+        </dependency>
+        {{ end }}
+        {{- if .HTMXSupport }}
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>htmx.org</artifactId>
+            <version>${htmx.org.version}</version>
+        </dependency>
+        {{ end }}
+        {{- if .JwtSecuritySupport }}
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -136,6 +220,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        {{ if or .SecuritySupport .JwtSecuritySupport }}
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        {{ end }}
         {{- if .SpringModulithSupport }}
         <dependency>
             <groupId>org.springframework.modulith</groupId>
@@ -189,26 +280,26 @@
     </dependencies>
 
     <dependencyManagement>
-            <dependencies>
-    {{- if .SpringCloudAWSSupport }}
-                <dependency>
-                    <groupId>io.awspring.cloud</groupId>
-                    <artifactId>spring-cloud-aws-dependencies</artifactId>
-                    <version>${spring-cloud-aws.version}</version>
-                    <type>pom</type>
-                    <scope>import</scope>
-                </dependency>
-    {{ end }}
-    {{- if .SpringModulithSupport }}
-                <dependency>
-                    <groupId>org.springframework.modulith</groupId>
-                    <artifactId>spring-modulith-bom</artifactId>
-                    <version>${spring-modulith.version}</version>
-                    <type>pom</type>
-                    <scope>import</scope>
-                </dependency>
-    {{ end }}
-            </dependencies>
+        <dependencies>
+        {{- if .SpringCloudAWSSupport }}
+            <dependency>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws-dependencies</artifactId>
+                <version>${spring-cloud-aws.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        {{ end }}
+        {{- if .SpringModulithSupport }}
+            <dependency>
+                <groupId>org.springframework.modulith</groupId>
+                <artifactId>spring-modulith-bom</artifactId>
+                <version>${spring-modulith.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        {{ end }}
+        </dependencies>
     </dependencyManagement>
 
     <build>

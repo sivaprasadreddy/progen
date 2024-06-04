@@ -31,12 +31,37 @@ ext {
 {{- if .SpringModulithSupport }}
   set('springModulithVersion', "1.2.0")
 {{ end }}
+{{- if .ThymeleafSupport }}
+  set('bootstrapVersion', "5.3.3")
+  set('jqueryVersion', "3.7.1")
+  set('fontawesomeVersion', "6.5.2")
+{{ end }}
+{{- if .HTMXSupport }}
+  set('htmxVersion', "1.9.12")
+  set('htmxSpringBootThymeleafVersion', "3.3.0")
+{{ end }}
+{{- if .JwtSecuritySupport }}
+  set('jjwtVersion', "0.11.5")
+{{ end }}
 }
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    {{- if .SecuritySupport }}
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    {{ end }}
+    {{- if .ThymeleafSupport }}
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
+    {{- if .SecuritySupport }}
+    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6"
+    {{ end }}
+    {{- if .HTMXSupport }}
+    implementation "io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:${htmxSpringBootThymeleafVersion}"
+    {{ end }}
+    {{ end }}
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     {{- if eq .DbType "PostgreSQL" }}
@@ -69,12 +94,29 @@ dependencies {
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
     {{ end }}
+    {{- if .ThymeleafSupport }}
+    implementation "org.webjars:bootstrap:${bootstrapVersion}"
+    implementation "org.webjars:jquery:${jqueryVersion}"
+    implementation "org.webjars:font-awesome:${fontawesomeVersion}"
+    {{ end }}
+    {{- if .HTMXSupport }}
+    implementation "org.webjars.npm:htmx.org:${htmxVersion}"
+    {{ end }}
+    {{- if .JwtSecuritySupport }}
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+    {{ end }}
+
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    {{ if or .SecuritySupport .JwtSecuritySupport }}
+    testImplementation "org.springframework.security:spring-security-test"
+    {{ end }}
     {{- if .SpringModulithSupport }}
-    implementation "org.springframework.modulith:spring-modulith-starter-test"
+    testImplementation "org.springframework.modulith:spring-modulith-starter-test"
     {{ end }}
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
     testImplementation "org.testcontainers:junit-jupiter"

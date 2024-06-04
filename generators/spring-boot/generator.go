@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path"
 	"runtime"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -28,30 +29,53 @@ type ProjectConfig struct {
 	BuildTool             string
 	DbType                string
 	DbMigrationTool       string
+	Features              []string
 	SpringModulithSupport bool
 	SpringCloudAWSSupport bool
+	ThymeleafSupport      bool
+	HTMXSupport           bool
+	SecuritySupport       bool
+	JwtSecuritySupport    bool
+}
+
+func (p ProjectConfig) Enabled(feature string) bool {
+	return p.Features != nil && slices.Contains(p.Features, feature)
 }
 
 func Run() {
 	projectConfig, err := getAnswers()
 	helpers.FatalIfErr(err)
 	err = GenerateProject(projectConfig)
-	if err == nil {
-		file, err := json.MarshalIndent(projectConfig, "", " ")
-		if err != nil {
-			fmt.Println("failed to marshall projectConfig")
-		} else {
-			if err = os.WriteFile(projectConfig.AppName+"/.progen.json", file, 0644); err != nil {
-				fmt.Println("failed to write .progrn.json file")
-			}
-		}
-	}
 	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
 }
 
 func GenerateProject(pc ProjectConfig) error {
+	updateFeatureFlags(&pc)
 	pg := projectGenerator{tmplFS: tmplsFS}
-	return pg.generate(pc)
+	err := pg.generate(pc)
+	if err != nil {
+		return err
+	}
+	if err == nil {
+		file, err := json.MarshalIndent(pc, "", " ")
+		if err != nil {
+			fmt.Println("failed to marshall projectConfig")
+		} else {
+			if err = os.WriteFile(pc.AppName+"/.progen.json", file, 0644); err != nil {
+				fmt.Println("failed to write .progrn.json file")
+			}
+		}
+	}
+	return nil
+}
+
+func updateFeatureFlags(pc *ProjectConfig) {
+	pc.SpringModulithSupport = pc.Enabled("Spring Modulith")
+	pc.SpringCloudAWSSupport = pc.Enabled("Spring Cloud AWS")
+	pc.ThymeleafSupport = pc.Enabled("Thymeleaf")
+	pc.HTMXSupport = pc.Enabled("HTMX")
+	pc.SecuritySupport = pc.Enabled("Security") || pc.Enabled("JWT Security")
+	pc.JwtSecuritySupport = pc.Enabled("JWT Security")
 }
 
 type projectGenerator struct {
@@ -143,7 +167,21 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
 
 	templateMap := map[string]string{
-		"Application.java.tmpl": "Application.java",
+		"Application.java.tmpl":           "Application.java",
+		"ApplicationProperties.java.tmpl": "ApplicationProperties.java",
+		"WebMvcConfig.java.tmpl":          "config/WebMvcConfig.java",
+	}
+
+	if pc.SecuritySupport || pc.JwtSecuritySupport {
+		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
+		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
+		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/WebSecurityConfig.java"
+	}
+
+	if pc.JwtSecuritySupport {
+		templateMap["AuthToken.java.tmpl"] = "security/AuthToken.java"
+		templateMap["TokenHelper.java.tmpl"] = "security/TokenHelper.java"
+		templateMap["TokenAuthenticationFilter.java.tmpl"] = "security/TokenAuthenticationFilter.java"
 	}
 
 	for tmpl, filePath := range templateMap {
@@ -159,6 +197,16 @@ func (pg projectGenerator) createSrcMainResources(pc ProjectConfig) error {
 	var srcMainResourcesPath = "src/main/resources/"
 	templateMap := map[string]string{
 		"application.properties.tmpl": "application.properties",
+	}
+
+	if pc.ThymeleafSupport {
+		templateMap["static/css/styles.css"] = "css/styles.css"
+		templateMap["templates/index.html.tmpl"] = "templates/index.html"
+		templateMap["templates/layout.html.tmpl"] = "templates/layout.html"
+	}
+
+	if pc.SecuritySupport || pc.JwtSecuritySupport {
+		templateMap["templates/login.html.tmpl"] = "templates/login.html"
 	}
 
 	for tmpl, filePath := range templateMap {
@@ -190,6 +238,10 @@ func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
 		"ContainersConfig.java.tmpl":    "ContainersConfig.java",
 		"BaseIntegrationTest.java.tmpl": "BaseIntegrationTest.java",
 		"TestApplication.java.tmpl":     "TestApplication.java",
+	}
+
+	if pc.Enabled("Spring Modulith") {
+		templateMap["ModularityTests.java.tmpl"] = "ModularityTests.java"
 	}
 
 	for tmpl, filePath := range templateMap {

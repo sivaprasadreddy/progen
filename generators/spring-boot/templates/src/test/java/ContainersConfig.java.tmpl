@@ -45,13 +45,13 @@ public class ContainersConfig {
 {{- if .SpringCloudAWSSupport }}
     @Bean
     LocalStackContainer localstackContainer(DynamicPropertyRegistry registry) {
-        LocalStackContainer localStackContainer =
-                new LocalStackContainer(parse("localstack/localstack:3.0.0"));
-        registry.add("spring.cloud.aws.credentials.access-key", localStackContainer::getAccessKey);
-        registry.add("spring.cloud.aws.credentials.secret-key", localStackContainer::getSecretKey);
-        registry.add("spring.cloud.aws.region.static", localStackContainer::getRegion);
-        registry.add("spring.cloud.aws.endpoint", localStackContainer::getEndpoint);
-        return localStackContainer;
+        LocalStackContainer lsc =
+                new LocalStackContainer(parse("localstack/localstack:3.4.0"));
+        registry.add("spring.cloud.aws.credentials.access-key", lsc::getAccessKey);
+        registry.add("spring.cloud.aws.credentials.secret-key", lsc::getSecretKey);
+        registry.add("spring.cloud.aws.region.static", lsc::getRegion);
+        registry.add("spring.cloud.aws.endpoint", lsc::getEndpoint);
+        return lsc;
     }
 {{ end }}
 }

@@ -44,8 +44,8 @@ func getAppTypeAnswers() (GeneratorType, error) {
 			Name: "AppType",
 			Prompt: &survey.Select{
 				Message: "Choose application type:",
-				Options: []string{appTypeMinimalJava, appTypeSpringBoot, appTypeMinimalGo},
-				Default: "Minimal Java",
+				Options: []string{appTypeSpringBoot, appTypeMinimalJava, appTypeMinimalGo},
+				Default: appTypeSpringBoot,
 			},
 		},
 	}

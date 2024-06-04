@@ -87,17 +87,11 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 			},
 		},
 		{
-			Name: "SpringModulithSupport",
-			Prompt: &survey.Confirm{
-				Message: "Would you like to add Spring Modulith support?",
-				Default: true,
-			},
-		},
-		{
-			Name: "SpringCloudAWSSupport",
-			Prompt: &survey.Confirm{
-				Message: "Would you like to add Spring Cloud AWS support with LocalStack?",
-				Default: false,
+			Name: "Features",
+			Prompt: &survey.MultiSelect{
+				Message: "What features you would like to add?",
+				Options: []string{"Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security", "JWT Security"},
+				Default: []string{"Spring Modulith", "Thymeleaf", "Security"},
 			},
 		},
 	}

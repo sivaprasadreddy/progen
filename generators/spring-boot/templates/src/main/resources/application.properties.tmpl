@@ -2,6 +2,17 @@ spring.application.name={{ .ArtifactID }}
 server.port=8080
 server.shutdown=graceful
 
+######## App Configuration  #########
+app.cors.path-pattern=/api/**
+app.cors.allowed-origins=*
+app.cors.allowed-methods=*
+app.cors.allowed-headers=*
+{{- if .JwtSecuritySupport }}
+app.jwt.issuer={{ .AppName }}
+app.jwt.expires-in=604800
+app.jwt.secret=secretsecretsecret12345678901234567890
+{{ end }}
+
 ################ Actuator #####################
 management.endpoints.web.exposure.include=configprops,env,health,info,logfile,loggers
 management.endpoint.health.show-details=when_authorized
