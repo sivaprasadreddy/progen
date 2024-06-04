@@ -24,6 +24,12 @@ $ go install github.com/sivaprasadreddy/progen@latest
 $ progen --help
 ```
 
+> [!IMPORTANT]
+> On MacOS, you may get the error **"progen cannot be opened because the developer cannot be verified"**.
+> To fix this, you can select the progen binary in Finder, hold control and click, and select Open.
+> You will then be prompted to confirm that you want to open the binary. After confirming, you can run progen as usual.
+
+
 ## Usage:
 
 ```shell
