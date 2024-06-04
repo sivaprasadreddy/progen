@@ -205,7 +205,7 @@ func (pg projectGenerator) createSrcMainResources(pc ProjectConfig) error {
 		templateMap["templates/layout.html.tmpl"] = "templates/layout.html"
 	}
 
-	if pc.SecuritySupport || pc.JwtSecuritySupport {
+	if pc.ThymeleafSupport && (pc.SecuritySupport || pc.JwtSecuritySupport) {
 		templateMap["templates/login.html.tmpl"] = "templates/login.html"
 	}
 

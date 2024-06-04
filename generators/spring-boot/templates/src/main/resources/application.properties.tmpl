@@ -38,7 +38,7 @@ spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 
 {{- if eq .DbMigrationTool "Flyway"}}
 spring.flyway.locations=classpath:/db/migration
-{{ end -}}
+{{- end }}
 {{- if eq .DbMigrationTool "Liquibase"}}
-spring.liquibase.change-log=classpath:/db/migration/changelog/liquibase-changelog.xml
-{{ end -}}
+spring.liquibase.change-log=classpath:/db/migration/liquibase-changelog.xml
+{{- end }}

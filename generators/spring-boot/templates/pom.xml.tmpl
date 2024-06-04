@@ -31,6 +31,8 @@
 {{ end }}
 {{- if .HTMXSupport }}
         <htmx.org.version>1.9.12</htmx.org.version>
+{{ end }}
+{{- if and .ThymeleafSupport .HTMXSupport }}
         <htmx-spring-boot-thymeleaf.version>3.3.0</htmx-spring-boot-thymeleaf.version>
 {{ end }}
 {{- if .JwtSecuritySupport }}
@@ -93,21 +95,21 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-        {{ end -}}
+        {{- end }}
         {{- if eq .DbType "MySQL" }}
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
-        {{ end -}}
+        {{- end }}
         {{- if eq .DbType "MariaDB" }}
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <scope>runtime</scope>
         </dependency>
-        {{ end -}}
+        {{- end }}
         {{- if eq .DbMigrationTool "Flyway"}}
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -119,19 +121,19 @@
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         {{ end }}
-        {{ if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
+        {{- if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
         </dependency>
         {{ end }}
-        {{ end -}}
+        {{- end }}
         {{- if eq .DbMigrationTool "Liquibase"}}
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
-        {{ end -}}
+        {{- end }}
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -220,7 +222,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        {{ if or .SecuritySupport .JwtSecuritySupport }}
+        {{- if or .SecuritySupport .JwtSecuritySupport }}
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
@@ -250,21 +252,21 @@
             <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
-        {{ end -}}
+        {{- end }}
         {{- if eq .DbType "MySQL" }}
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mysql</artifactId>
             <scope>test</scope>
         </dependency>
-        {{ end -}}
+        {{- end }}
         {{- if eq .DbType "MariaDB" }}
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mariadb</artifactId>
             <scope>test</scope>
         </dependency>
-        {{ end -}}
+        {{- end }}
         {{- if .SpringCloudAWSSupport }}
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -356,6 +358,12 @@
                             <version>2.47.0</version>
                         </palantirJavaFormat>
                     </java>
+                    <pom>
+                        <sortPom>
+                            <keepBlankLines>false</keepBlankLines>
+                            <expandEmptyElements>false</expandEmptyElements>
+                        </sortPom>
+                    </pom>
                 </configuration>
                 <executions>
                     <execution>

@@ -41,8 +41,8 @@ class WebSecurityConfig {
     {{ end }}
 
     {{- if .JwtSecuritySupport }}
-    @Bean
     @Order(1)
+    @Bean
     SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         String[] unsecuredPaths = {
             "/api/login",
@@ -64,8 +64,10 @@ class WebSecurityConfig {
     }
     {{ end }}
 
-    @Bean
+    {{- if .JwtSecuritySupport }}
     @Order(2)
+    {{ end }}
+    @Bean
     SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
         String[] unsecuredPaths = {
             "/login",

@@ -27,22 +27,24 @@ ext {
   set('springdocOpenapiVersion', "2.5.0")
 {{- if .SpringCloudAWSSupport }}
   set('awspringVersion', "3.1.1")
-{{ end }}
+{{- end }}
 {{- if .SpringModulithSupport }}
   set('springModulithVersion', "1.2.0")
-{{ end }}
+{{- end }}
 {{- if .ThymeleafSupport }}
   set('bootstrapVersion', "5.3.3")
   set('jqueryVersion', "3.7.1")
   set('fontawesomeVersion', "6.5.2")
-{{ end }}
+{{- end }}
 {{- if .HTMXSupport }}
   set('htmxVersion', "1.9.12")
+{{- end }}
+{{- if and .ThymeleafSupport .HTMXSupport }}
   set('htmxSpringBootThymeleafVersion', "3.3.0")
-{{ end }}
+{{- end }}
 {{- if .JwtSecuritySupport }}
   set('jjwtVersion', "0.11.5")
-{{ end }}
+{{- end }}
 }
 
 dependencies {
@@ -51,87 +53,85 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     {{- if .SecuritySupport }}
     implementation "org.springframework.boot:spring-boot-starter-security"
-    {{ end }}
+    {{- end }}
     {{- if .ThymeleafSupport }}
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
     implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
     {{- if .SecuritySupport }}
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6"
-    {{ end }}
+    {{- end }}
     {{- if .HTMXSupport }}
     implementation "io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:${htmxSpringBootThymeleafVersion}"
-    {{ end }}
-    {{ end }}
+    {{- end }}
+    {{- end }}
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     {{- if eq .DbType "PostgreSQL" }}
     runtimeOnly "org.postgresql:postgresql"
-    {{ end -}}
+    {{- end }}
     {{- if eq .DbType "MySQL" }}
     runtimeOnly "com.mysql:mysql-connector-j"
-    {{ end -}}
+    {{- end }}
     {{- if eq .DbType "MariaDB" }}
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client"
-    {{ end -}}
+    {{- end }}
     {{- if eq .DbMigrationTool "Flyway"}}
     {{- if eq .DbType "PostgreSQL" }}
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
-    {{ end -}}
+    {{- end }}
     implementation "org.flywaydb:flyway-core"
-    {{ if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
+    {{- if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
     implementation "org.flywaydb:flyway-mysql"
-    {{ end }}
-    {{ end -}}
+    {{- end }}
+    {{- end }}
     {{- if eq .DbMigrationTool "Liquibase"}}
     implementation "org.liquibase:liquibase-core"
-    {{ end -}}
+    {{- end }}
     {{- if .SpringModulithSupport }}
     implementation "org.springframework.modulith:spring-modulith-starter-core"
     implementation "org.springframework.modulith:spring-modulith-actuator"
     implementation "org.springframework.modulith:spring-modulith-docs"
-    {{ end }}
+    {{- end }}
     {{- if .SpringCloudAWSSupport }}
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
-    {{ end }}
+    {{- end }}
     {{- if .ThymeleafSupport }}
     implementation "org.webjars:bootstrap:${bootstrapVersion}"
     implementation "org.webjars:jquery:${jqueryVersion}"
     implementation "org.webjars:font-awesome:${fontawesomeVersion}"
-    {{ end }}
+    {{- end }}
     {{- if .HTMXSupport }}
     implementation "org.webjars.npm:htmx.org:${htmxVersion}"
-    {{ end }}
+    {{- end }}
     {{- if .JwtSecuritySupport }}
     implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
-    {{ end }}
-
+    {{- end }}
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    {{ if or .SecuritySupport .JwtSecuritySupport }}
+    {{- if or .SecuritySupport .JwtSecuritySupport }}
     testImplementation "org.springframework.security:spring-security-test"
-    {{ end }}
+    {{- end }}
     {{- if .SpringModulithSupport }}
     testImplementation "org.springframework.modulith:spring-modulith-starter-test"
-    {{ end }}
+    {{- end }}
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
     testImplementation "org.testcontainers:junit-jupiter"
     {{- if eq .DbType "PostgreSQL" }}
     testImplementation "org.testcontainers:postgresql"
-    {{ end -}}
+    {{- end }}
     {{- if eq .DbType "MySQL" }}
     testImplementation "org.testcontainers:mysql"
-    {{ end -}}
+    {{- end }}
     {{- if eq .DbType "MariaDB" }}
     testImplementation "org.testcontainers:mariadb"
-    {{ end -}}
+    {{- end }}
     {{- if .SpringCloudAWSSupport }}
     testImplementation "org.testcontainers:localstack"
-    {{ end }}
+    {{- end }}
     testImplementation "io.rest-assured:rest-assured"
 }
 
@@ -139,10 +139,10 @@ dependencyManagement {
     imports {
         {{- if .SpringCloudAWSSupport }}
         mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${awspringVersion}"
-        {{ end }}
+        {{- end }}
         {{- if .SpringModulithSupport }}
         mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
-        {{ end }}
+        {{- end }}
     }
 }
 
@@ -176,5 +176,9 @@ spotless {
         removeUnusedImports()
         formatAnnotations()
         palantirJavaFormat("2.47.0")
+    }
+    groovyGradle {
+        target '*.gradle'
+        greclipse()
     }
 }

@@ -21,25 +21,25 @@ jobs:
           distribution: 'temurin'
           {{- if eq .BuildTool "Maven" }}
           cache: 'maven'
-          {{ end -}}
+          {{- end }}
           {{- if eq .BuildTool "Gradle" }}
           cache: 'gradle'
-          {{ end -}}
+          {{- end }}
 
      {{- if eq .BuildTool "Maven" }}
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
-     {{ end -}}
+     {{- end }}
      {{- if eq .BuildTool "Gradle" }}
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
-     {{ end -}}
+     {{- end }}
 
      {{- if eq .BuildTool "Maven" }}
       - name: Build with Maven
         run: ./mvnw -ntp verify
-     {{ end -}}
+     {{- end }}
      {{- if eq .BuildTool "Gradle" }}
       - name: Build with Gradle
         run: ./gradlew build
-     {{ end -}}
+     {{- end }}

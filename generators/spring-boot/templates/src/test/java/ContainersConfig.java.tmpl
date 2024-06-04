@@ -7,10 +7,10 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 {{- if eq .DbType "PostgreSQL" }}
 import org.testcontainers.containers.PostgreSQLContainer;
-{{ end -}}
+{{- end }}
 {{- if eq .DbType "MySQL" }}
 import org.testcontainers.containers.MySQLContainer;
-{{ end -}}
+{{- end }}
 {{- if eq .DbType "MariaDB" }}
 import org.testcontainers.containers.MariaDBContainer;
 {{ end }}
@@ -21,27 +21,27 @@ import org.testcontainers.containers.localstack.LocalStackContainer;
 @TestConfiguration(proxyBeanMethods = false)
 public class ContainersConfig {
 
-{{ if eq .DbType "PostgreSQL" }}
+{{- if eq .DbType "PostgreSQL" }}
     @Bean
     @ServiceConnection
     PostgreSQLContainer<?> postgres() {
         return new PostgreSQLContainer<>(parse("postgres:16-alpine")).withReuse(true);
     }
-{{ end -}}
-{{ if eq .DbType "MySQL" }}
+{{- end }}
+{{- if eq .DbType "MySQL" }}
     @Bean
     @ServiceConnection
     MySQLContainer<?> mysql() {
         return new MySQLContainer<>(parse("mysql:8.1.0")).withReuse(true);
     }
-{{ end -}}
-{{ if eq .DbType "MariaDB" }}
+{{- end }}
+{{- if eq .DbType "MariaDB" }}
     @Bean
     @ServiceConnection
     MariaDBContainer<?> mariadb() {
         return new MariaDBContainer<>(parse("mariadb:11.0.3")).withReuse(true);
     }
-{{ end -}}
+{{- end }}
 {{- if .SpringCloudAWSSupport }}
     @Bean
     LocalStackContainer localstackContainer(DynamicPropertyRegistry registry) {
