@@ -175,7 +175,7 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 	if pc.SecuritySupport || pc.JwtSecuritySupport {
 		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
 		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
-		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/WebSecurityConfig.java"
+		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
 	}
 
 	if pc.JwtSecuritySupport {
@@ -200,7 +200,7 @@ func (pg projectGenerator) createSrcMainResources(pc ProjectConfig) error {
 	}
 
 	if pc.ThymeleafSupport {
-		templateMap["static/css/styles.css"] = "css/styles.css"
+		templateMap["static/css/styles.css"] = "static/css/styles.css"
 		templateMap["templates/index.html.tmpl"] = "templates/index.html"
 		templateMap["templates/layout.html.tmpl"] = "templates/layout.html"
 	}
