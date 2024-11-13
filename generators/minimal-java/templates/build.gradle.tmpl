@@ -6,7 +6,9 @@ group = "{{ .GroupID }}"
 version = "{{ .AppVersion }}"
 
 java {
-	sourceCompatibility = '21'
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
 }
 
 repositories {
@@ -14,8 +16,8 @@ repositories {
 }
 
 ext {
-    set("junitVersion", "5.10.2")
-    set("assertjVersion", "3.26.0")
+    set("junitVersion", "5.11.3")
+    set("assertjVersion", "3.26.3")
 }
 
 dependencies {

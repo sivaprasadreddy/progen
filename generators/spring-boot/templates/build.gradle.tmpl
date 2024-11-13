@@ -1,7 +1,7 @@
 plugins {
 	id "java"
-	id "org.springframework.boot" version "3.3.0"
-    id "io.spring.dependency-management" version "1.1.5"
+	id "org.springframework.boot" version "3.3.5"
+    id "io.spring.dependency-management" version "1.1.6"
     id "com.gorylenko.gradle-git-properties" version "2.4.2"
     id "com.diffplug.spotless" version "6.25.0"
 }
@@ -10,7 +10,9 @@ group = "{{ .GroupID }}"
 version = "{{ .AppVersion }}"
 
 java {
-	sourceCompatibility = "21"
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
 }
 
 configurations {
@@ -24,12 +26,12 @@ repositories {
 }
 
 ext {
-  set('springdocOpenapiVersion', "2.5.0")
+  set('springdocOpenapiVersion', "2.6.0")
 {{- if .SpringCloudAWSSupport }}
-  set('awspringVersion', "3.1.1")
+  set('awspringVersion', "3.2.1")
 {{- end }}
 {{- if .SpringModulithSupport }}
-  set('springModulithVersion', "1.2.0")
+  set('springModulithVersion', "1.2.5")
 {{- end }}
 {{- if .ThymeleafSupport }}
   set('bootstrapVersion', "5.3.3")
@@ -37,13 +39,13 @@ ext {
   set('fontawesomeVersion', "6.5.2")
 {{- end }}
 {{- if .HTMXSupport }}
-  set('htmxVersion', "1.9.12")
+  set('htmxVersion', "2.0.3")
 {{- end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-  set('htmxSpringBootThymeleafVersion', "3.3.0")
+  set('htmxSpringBootThymeleafVersion', "3.5.1")
 {{- end }}
 {{- if .JwtSecuritySupport }}
-  set('jjwtVersion', "0.11.5")
+  set('jjwtVersion', "0.12.6")
 {{- end }}
 }
 
@@ -111,7 +113,9 @@ dependencies {
     {{- end }}
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     {{- if or .SecuritySupport .JwtSecuritySupport }}
     testImplementation "org.springframework.security:spring-security-test"
     {{- end }}
@@ -175,7 +179,7 @@ spotless {
         importOrder()
         removeUnusedImports()
         formatAnnotations()
-        palantirJavaFormat("2.47.0")
+        palantirJavaFormat("2.50.0")
     }
     groovyGradle {
         target '*.gradle'

@@ -57,21 +57,19 @@ public class TokenHelper {
         Date issuedAt = new Date();
         Date expiration = generateExpirationDate(issuedAt);
         String token = Jwts.builder()
-                .setIssuer(props.jwt().issuer())
-                .setSubject(username)
-                .setIssuedAt(issuedAt)
-                .setExpiration(expiration)
+                .issuer(props.jwt().issuer())
+                .subject(username)
+                .issuedAt(issuedAt)
+                .expiration(expiration)
                 .signWith(key)
                 .compact();
         return new AuthToken(token, expiration.toInstant());
     }
 
     private Claims parseToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(props.jwt().secret().getBytes(UTF_8))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        String secretString = props.jwt().secret();
+        SecretKey key = Keys.hmacShaKeyFor(secretString.getBytes(UTF_8));
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     }
 
     private Date generateExpirationDate(Date date) {
