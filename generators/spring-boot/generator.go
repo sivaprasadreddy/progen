@@ -56,14 +56,12 @@ func GenerateProject(pc ProjectConfig) error {
 	if err != nil {
 		return err
 	}
-	if err == nil {
-		file, err := json.MarshalIndent(pc, "", " ")
-		if err != nil {
-			fmt.Println("failed to marshall projectConfig")
-		} else {
-			if err = os.WriteFile(pc.AppName+"/.progen.json", file, 0644); err != nil {
-				fmt.Println("failed to write .progrn.json file")
-			}
+	file, err := json.MarshalIndent(pc, "", " ")
+	if err != nil {
+		fmt.Println("failed to marshall projectConfig")
+	} else {
+		if err = os.WriteFile(pc.AppName+"/.progen.json", file, 0644); err != nil {
+			fmt.Println("failed to write .progrn.json file")
 		}
 	}
 	return nil
@@ -234,10 +232,10 @@ func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
 
 	templateMap := map[string]string{
-		"ApplicationTests.java.tmpl":    "ApplicationTests.java",
-		"ContainersConfig.java.tmpl":    "ContainersConfig.java",
-		"BaseIntegrationTest.java.tmpl": "BaseIntegrationTest.java",
-		"TestApplication.java.tmpl":     "TestApplication.java",
+		"ApplicationTests.java.tmpl":     "ApplicationTests.java",
+		"TestcontainersConfig.java.tmpl": "TestcontainersConfig.java",
+		"BaseIntegrationTest.java.tmpl":  "BaseIntegrationTest.java",
+		"TestApplication.java.tmpl":      "TestApplication.java",
 	}
 
 	if pc.Enabled("Spring Modulith") {

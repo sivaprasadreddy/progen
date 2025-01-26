@@ -19,7 +19,7 @@ public record ApplicationProperties(
 
 {{- if .JwtSecuritySupport }}
     public record JwtProperties(
-            @DefaultValue("MRS") String issuer,
+            @DefaultValue("{{ .AppName }}") String issuer,
             @DefaultValue("604800") Long expiresIn,
             @NotEmpty String secret) {}
 {{ end }}

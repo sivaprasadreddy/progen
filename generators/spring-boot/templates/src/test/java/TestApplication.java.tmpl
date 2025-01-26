@@ -9,7 +9,7 @@ public class TestApplication {
         System.setProperty("spring.cloud.aws.region.static", "us-east-1");
         {{ end }}
         SpringApplication.from(Application::main)
-                .with(ContainersConfig.class)
+                .with(TestcontainersConfig.class)
                 .run(args);
     }
 }

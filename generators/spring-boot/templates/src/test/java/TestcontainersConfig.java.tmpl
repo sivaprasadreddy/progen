@@ -15,43 +15,37 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.MariaDBContainer;
 {{ end }}
 {{- if .SpringCloudAWSSupport }}
-import org.springframework.test.context.DynamicPropertyRegistry;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 {{ end }}
 @TestConfiguration(proxyBeanMethods = false)
-public class ContainersConfig {
+public class TestcontainersConfig {
 
 {{- if eq .DbType "PostgreSQL" }}
     @Bean
     @ServiceConnection
     PostgreSQLContainer<?> postgres() {
-        return new PostgreSQLContainer<>(parse("postgres:16-alpine")).withReuse(true);
+        return new PostgreSQLContainer<>(parse("postgres:17-alpine"));
     }
 {{- end }}
 {{- if eq .DbType "MySQL" }}
     @Bean
     @ServiceConnection
     MySQLContainer<?> mysql() {
-        return new MySQLContainer<>(parse("mysql:8.1.0")).withReuse(true);
+        return new MySQLContainer<>(parse("mysql:8.1.0"));
     }
 {{- end }}
 {{- if eq .DbType "MariaDB" }}
     @Bean
     @ServiceConnection
     MariaDBContainer<?> mariadb() {
-        return new MariaDBContainer<>(parse("mariadb:11.0.3")).withReuse(true);
+        return new MariaDBContainer<>(parse("mariadb:11.0.3"));
     }
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
     @Bean
-    LocalStackContainer localstackContainer(DynamicPropertyRegistry registry) {
-        LocalStackContainer lsc =
-                new LocalStackContainer(parse("localstack/localstack:3.4.0"));
-        registry.add("spring.cloud.aws.credentials.access-key", lsc::getAccessKey);
-        registry.add("spring.cloud.aws.credentials.secret-key", lsc::getSecretKey);
-        registry.add("spring.cloud.aws.region.static", lsc::getRegion);
-        registry.add("spring.cloud.aws.endpoint", lsc::getEndpoint);
-        return lsc;
+    @ServiceConnection
+    LocalStackContainer localstackContainer() {
+        return new LocalStackContainer(parse("localstack/localstack:4.0.3"));
     }
 {{ end }}
 }
