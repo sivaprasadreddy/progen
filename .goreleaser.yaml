@@ -1,3 +1,5 @@
+version: 2
+
 before:
   hooks:
     # You may remove this if you don't use go modules.
@@ -17,18 +19,18 @@ builds:
         - goarch: arm64
           goos: windows
 archives:
-  - format: tar.gz
+  - formats: ['tar.gz']
     # this name template makes the OS and Arch compatible with the results of `uname`.
     name_template: >-
       {{ .ProjectName }}_{{ .Os }}_{{- if eq .Arch "amd64" }}x86_64{{- else }}{{ .Arch }}{{ end }}{{- if .Arm }}v{{ .Arm }}{{ end }}
     # use zip for windows archives
     format_overrides:
       - goos: windows
-        format: zip
+        formats: ['zip']
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
 release:
   github:
     owner: sivaprasadreddy
@@ -39,13 +41,13 @@ brews:
   - name: "progen"
     homepage: "https://github.com/sivaprasadreddy/progen"
     description: "Project Generator CLI"
-    tap:
+    repository:
       owner: sivaprasadreddy
       name: homebrew-progen
     commit_author:
       name: K Siva Prasad Reddy
       email: sivaprasadreddy.k@gmail.com
-    folder: Formula
+    directory: Formula
     test: |
       system "#{bin}/progen --version"
     install: |
