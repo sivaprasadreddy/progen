@@ -5,10 +5,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/charmbracelet/huh"
 	minimalgo "github.com/sivaprasadreddy/progen/generators/minimal-go"
 
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/AlecAivazis/survey/v2/terminal"
 	minimaljava "github.com/sivaprasadreddy/progen/generators/minimal-java"
 	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 )
@@ -39,22 +38,26 @@ type GeneratorType struct {
 }
 
 func getAppTypeAnswers() (GeneratorType, error) {
-	var answers = []*survey.Question{
-		{
-			Name: "AppType",
-			Prompt: &survey.Select{
-				Message: "Choose application type:",
-				Options: []string{appTypeSpringBoot, appTypeMinimalJava, appTypeMinimalGo},
-				Default: appTypeSpringBoot,
-			},
-		},
-	}
+
 	generatorType := GeneratorType{}
-	err := survey.Ask(answers, &generatorType)
-	if errors.Is(err, terminal.InterruptErr) {
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Title("Choose application type:").
+				Options(
+					huh.NewOption(appTypeSpringBoot, appTypeSpringBoot).Selected(true),
+					huh.NewOption(appTypeMinimalJava, appTypeMinimalJava),
+					huh.NewOption(appTypeMinimalGo, appTypeMinimalGo),
+				).Value(&generatorType.AppType),
+		),
+	)
+
+	err := form.Run()
+	if errors.Is(err, huh.ErrUserAborted) {
 		os.Exit(0)
 	} else if err != nil {
 		return generatorType, err
 	}
+
 	return generatorType, nil
 }

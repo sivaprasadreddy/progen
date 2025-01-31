@@ -11,8 +11,6 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-
-	"github.com/AlecAivazis/survey/v2"
 )
 
 func CopyDir(tmplFS embed.FS, origin, projectName, dirName string) error {
@@ -110,13 +108,6 @@ func ValidateApplicationName(val interface{}) error {
 		return errors.New(fmt.Sprintf("A directory with name '%s' already exist", appName))
 	}
 	return nil
-}
-
-func TrimString(ans interface{}) interface{} {
-	transformer := survey.TransformString(func(s string) string {
-		return strings.Trim(s, " ")
-	})
-	return transformer(ans)
 }
 
 func FatalIfErr(err error) {
