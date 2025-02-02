@@ -48,7 +48,7 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 		),
 		huh.NewGroup(
 			huh.NewInput().
-				Title("What is your applciation artifactID").
+				Title("What is your application artifactID").
 				Validate(func(str string) error {
 					if str == "" {
 						return errors.New("artifactID is required")
