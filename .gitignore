@@ -24,3 +24,6 @@ myapp/
 demo/
 
 dist/
+
+# .DS_Store file of MacOS
+.DS_Store
