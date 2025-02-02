@@ -17,8 +17,11 @@ func getAnswers() (ProjectConfig, error) {
 }
 
 func getProjectConfigAnswers() (ProjectConfig, error) {
-
-	answers := ProjectConfig{}
+	answers := ProjectConfig{
+		AppName:        "myapp",
+		ModulePath:     "github.com/username/myapp",
+		RoutingLibrary: "Gin",
+	}
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().

@@ -17,7 +17,17 @@ func getAnswers() (ProjectConfig, error) {
 }
 
 func getProjectConfigAnswers() (ProjectConfig, error) {
-	answers := ProjectConfig{}
+	answers := ProjectConfig{
+		AppName:         "myapp",
+		GroupID:         "com.mycompany",
+		ArtifactID:      "myapp",
+		AppVersion:      "1.0.0-SNAPSHOT",
+		BasePackage:     "com.mycompany.myapp",
+		BuildTool:       "Maven",
+		DbType:          "PostgreSQL",
+		DbMigrationTool: "Flyway",
+		Features:        []string{"Spring Modulith", "Thymeleaf", "Security"},
+	}
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
