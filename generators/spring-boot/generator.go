@@ -30,6 +30,7 @@ type ProjectConfig struct {
 	DbType                string
 	DbMigrationTool       string
 	Features              []string
+	DockerComposeSupport  bool
 	SpringModulithSupport bool
 	SpringCloudAWSSupport bool
 	ThymeleafSupport      bool
@@ -68,6 +69,7 @@ func GenerateProject(pc ProjectConfig) error {
 }
 
 func updateFeatureFlags(pc *ProjectConfig) {
+	pc.DockerComposeSupport = pc.Enabled("Docker Compose")
 	pc.SpringModulithSupport = pc.Enabled("Spring Modulith")
 	pc.SpringCloudAWSSupport = pc.Enabled("Spring Cloud AWS")
 	pc.ThymeleafSupport = pc.Enabled("Thymeleaf")
@@ -115,7 +117,13 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 	if err := pg.createSrcTestResources(pc); err != nil {
 		return err
 	}
+	if err := pg.createComposeConfigFiles(pc); err != nil {
+		return err
+	}
 	if err := pg.createCIConfigFiles(pc); err != nil {
+		return err
+	}
+	if err := pg.createReadMeFile(pc); err != nil {
 		return err
 	}
 	if err := pg.formatCode(pc); err != nil {
@@ -271,6 +279,35 @@ func (pg projectGenerator) createCIConfigFiles(pc ProjectConfig) error {
 		"ci/github/workflows/ci.yml.tmpl": ".github/workflows/ci.yml",
 	}
 
+	for tmpl, filePath := range templateMap {
+		err := pg.executeTemplate(pc, tmpl, filePath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pg projectGenerator) createComposeConfigFiles(pc ProjectConfig) error {
+	if !pc.DockerComposeSupport {
+		return nil
+	}
+	templateMap := map[string]string{
+		"compose.yml.tmpl": "compose.yml",
+	}
+	for tmpl, filePath := range templateMap {
+		err := pg.executeTemplate(pc, tmpl, filePath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pg projectGenerator) createReadMeFile(pc ProjectConfig) error {
+	templateMap := map[string]string{
+		"README.md.tmpl": "README.md",
+	}
 	for tmpl, filePath := range templateMap {
 		err := pg.executeTemplate(pc, tmpl, filePath)
 		if err != nil {

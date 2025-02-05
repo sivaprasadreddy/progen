@@ -113,6 +113,9 @@ dependencies {
     {{- end }}
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    {{- if .DockerComposeSupport }}
+    developmentOnly "org.springframework.boot:spring-boot-docker-compose"
+    {{- end }}
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

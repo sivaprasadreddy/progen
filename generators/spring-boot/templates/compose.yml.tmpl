@@ -1,0 +1,48 @@
+services:
+  {{- if eq .DbType "PostgreSQL" }}
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+  {{- end }}
+  {{- if eq .DbType "MySQL" }}
+  mysql:
+    image: mysql:8.1.0
+    environment:
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=admin
+    ports:
+      - "3306:3306"
+  {{- end }}
+  {{- if eq .DbType "MariaDB" }}
+  mariadb:
+    image: mariadb:11.0.3
+    environment:
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=admin
+    ports:
+      - "3306:3306"
+  {{- end }}
+  {{- if .SpringCloudAWSSupport }}
+  localstack:
+    image: localstack/localstack:4.0.3
+    ports:
+      - "4566:4566"
+    environment:
+      - DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - USE_SSL=0
+      - AWS_CBOR_DISABLE=1
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      #- "./.localstack:/etc/localstack/init/ready.d"  # ready hook
+  {{- end }}

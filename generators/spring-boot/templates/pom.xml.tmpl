@@ -217,6 +217,14 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
           <optional>true</optional>
         </dependency>
+        {{- if .DockerComposeSupport }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

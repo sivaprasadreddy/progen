@@ -26,7 +26,7 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 		BuildTool:       "Maven",
 		DbType:          "PostgreSQL",
 		DbMigrationTool: "Flyway",
-		Features:        []string{"Spring Modulith", "Thymeleaf", "Security"},
+		Features:        []string{"Docker Compose", "Spring Modulith", "Thymeleaf", "Security"},
 	}
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -108,6 +108,7 @@ func getProjectConfigAnswers() (ProjectConfig, error) {
 			huh.NewMultiSelect[string]().
 				Title("What features you would like to add?").
 				Options(
+					huh.NewOption("Docker Compose", "Docker Compose").Selected(true),
 					huh.NewOption("Spring Modulith", "Spring Modulith").Selected(true),
 					huh.NewOption("Spring Cloud AWS", "Spring Cloud AWS"),
 					huh.NewOption("Thymeleaf", "Thymeleaf").Selected(true),

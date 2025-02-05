@@ -71,7 +71,7 @@ func TestGenerateSpringBootMavenApp(t *testing.T) {
 		BuildTool:       "Maven",
 		DbType:          "PostgreSQL",
 		DbMigrationTool: "flyway",
-		Features:        []string{"Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security", "JWT Security"},
+		Features:        []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security", "JWT Security"},
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)
@@ -93,7 +93,7 @@ func TestGenerateSpringBootGradleApp(t *testing.T) {
 		BuildTool:       "Gradle",
 		DbType:          "PostgreSQL",
 		DbMigrationTool: "flyway",
-		Features:        []string{"Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security", "JWT Security"},
+		Features:        []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security", "JWT Security"},
 	}
 	err := springboot.GenerateProject(pc)
 	assert.Nil(t, err)

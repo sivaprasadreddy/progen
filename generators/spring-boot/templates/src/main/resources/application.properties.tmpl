@@ -1,5 +1,7 @@
 spring.application.name={{ .ArtifactID }}
-
+{{- if .DockerComposeSupport }}
+spring.docker.compose.lifecycle-management=start_only
+{{ end }}
 ######## App Configuration  #########
 app.cors.path-pattern=/api/**
 app.cors.allowed-origins=*
