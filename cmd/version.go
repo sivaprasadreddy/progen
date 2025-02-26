@@ -17,6 +17,6 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of Progen",
 	Long:  `Print the version number of Progen CLI`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Progen Application Generator %s\n", VERSION)
+		fmt.Printf("Progen : Spring Boot Application Generator %s\n", VERSION)
 	},
 }

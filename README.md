@@ -1,5 +1,5 @@
 # Project Generator CLI
-A CLI tool for generating projects with sensible defaults.
+A CLI tool for generating Spring Boot projects.
 
 ## Motivation
 There are few good project generator tools exist such as [JHipster](https://www.jhipster.tech/), [Bootify](https://bootify.io/), [generator-springboot](https://github.com/sivaprasadreddy/generator-springboot).
@@ -29,29 +29,11 @@ $ progen --help
 > To fix this, you can select the progen binary in Finder, hold control and click, and select Open.
 > You will then be prompted to confirm that you want to open the binary. After confirming, you can run progen as usual.
 
-
 ## Usage:
 
 ```shell
 $ progen
-? Choose application type:  [Use arrows to move, type to filter]
-> Minimal Java
-  Spring Boot
-  Minimal Go
 ```
-
-### Generate a Minimal Java Project
-
-![minimal-java.gif](docs%2Fminimal-java.gif)
-
-### Generate a Spring Boot Project
-
-![spring-boot.gif](docs%2Fspring-boot.gif)
-
-### Generate a Go Project
-
-![minimal-go.gif](docs%2Fminimal-go.gif)
-
 
 ## License
 The **progen** is an Open Source software

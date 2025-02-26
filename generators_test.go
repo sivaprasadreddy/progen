@@ -6,8 +6,6 @@ import (
 	"runtime"
 	"testing"
 
-	minimalgo "github.com/sivaprasadreddy/progen/generators/minimal-go"
-	minimaljava "github.com/sivaprasadreddy/progen/generators/minimal-java"
 	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,43 +20,6 @@ func init() {
 		mvnExec = "mvnw.cmd"
 		gradleExec = "gradlew.bat"
 	}
-}
-func TestGenerateMinimalJavaMavenApp(t *testing.T) {
-	pc := minimaljava.ProjectConfig{
-		AppName:     "my-minimal-java-mvn-app",
-		GroupID:     "com.sivalabs",
-		ArtifactID:  "my-minimal-java-mvn-app",
-		AppVersion:  "1.0",
-		BasePackage: "com.sivalabs.myapp",
-		BuildTool:   "Maven",
-	}
-	err := minimaljava.GenerateProject(pc)
-	assert.Nil(t, err)
-	err = testGeneratedProject("my-minimal-java-mvn-app", mvnExec, "test")
-	assert.Nil(t, err)
-
-	//cleanup
-	err = deleteDir("my-minimal-java-mvn-app")
-	assert.Nil(t, err)
-}
-
-func TestGenerateMinimalJavaGradleApp(t *testing.T) {
-	pc := minimaljava.ProjectConfig{
-		AppName:     "my-minimal-java-gradle-app",
-		GroupID:     "com.sivalabs",
-		ArtifactID:  "my-minimal-java-gradle-app",
-		AppVersion:  "1.0",
-		BasePackage: "com.sivalabs.myapp",
-		BuildTool:   "Gradle",
-	}
-	err := minimaljava.GenerateProject(pc)
-	assert.Nil(t, err)
-	err = testGeneratedProject("my-minimal-java-gradle-app", gradleExec, "build")
-	assert.Nil(t, err)
-
-	//cleanup
-	err = deleteDir("my-minimal-java-gradle-app")
-	assert.Nil(t, err)
 }
 
 func TestGenerateSpringBootMavenApp(t *testing.T) {
@@ -103,38 +64,6 @@ func TestGenerateSpringBootGradleApp(t *testing.T) {
 
 	//cleanup
 	err = deleteDir("my-spring-boot-gradle-app")
-	assert.Nil(t, err)
-}
-
-func TestGenerateMinimalGoGinApp(t *testing.T) {
-	pc := minimalgo.ProjectConfig{
-		AppName:        "my-minimal-go-gin-app",
-		ModulePath:     "github.com/sivalabs/myginapp",
-		RoutingLibrary: "Gin",
-	}
-	err := minimalgo.GenerateProject(pc)
-	assert.Nil(t, err)
-	err = testGeneratedProject("my-minimal-go-gin-app", "go", "build")
-	assert.Nil(t, err)
-
-	//cleanup
-	err = deleteDir("my-minimal-go-gin-app")
-	assert.Nil(t, err)
-}
-
-func TestGenerateMinimalGoChiApp(t *testing.T) {
-	pc := minimalgo.ProjectConfig{
-		AppName:        "my-minimal-go-chi-app",
-		ModulePath:     "github.com/sivalabs/mychiapp",
-		RoutingLibrary: "Chi",
-	}
-	err := minimalgo.GenerateProject(pc)
-	assert.Nil(t, err)
-	err = testGeneratedProject("my-minimal-go-chi-app", "go", "build")
-	assert.Nil(t, err)
-
-	//cleanup
-	err = deleteDir("my-minimal-go-chi-app")
 	assert.Nil(t, err)
 }
 
