@@ -177,9 +177,15 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 		"Application.java.tmpl":           "Application.java",
 		"ApplicationProperties.java.tmpl": "ApplicationProperties.java",
 		"WebMvcConfig.java.tmpl":          "config/WebMvcConfig.java",
+		"BaseEntity.java.tmpl":            "domain/BaseEntity.java",
 	}
 
 	if pc.SecuritySupport || pc.JwtSecuritySupport {
+		templateMap["Role.java.tmpl"] = "domain/Role.java"
+		templateMap["User.java.tmpl"] = "domain/User.java"
+		templateMap["UserRepository.java.tmpl"] = "domain/UserRepository.java"
+		templateMap["UserService.java.tmpl"] = "domain/UserService.java"
+		templateMap["SecurityUser.java.tmpl"] = "domain/SecurityUser.java"
 		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
 		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
 	}
@@ -220,19 +226,42 @@ func (pg projectGenerator) createSrcMainResources(pc ProjectConfig) error {
 		templateMap["templates/login.html.tmpl"] = "templates/login.html"
 	}
 
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, srcMainResourcesPath+tmpl, srcMainResourcesPath+filePath)
-		if err != nil {
-			return err
+	if pc.DbMigrationTool == "Flyway" {
+		if pc.SecuritySupport || pc.JwtSecuritySupport {
+			if pc.DbType == "PostgreSQL" {
+				templateMap["db/migration/flyway/V1__init_postgresql.sql"] = "db/migration/V1__init.sql"
+			}
+			if pc.DbType == "MySQL" {
+				templateMap["db/migration/flyway/V1__init_mysql.sql"] = "db/migration/V1__init.sql"
+			}
+			if pc.DbType == "MariaDB" {
+				templateMap["db/migration/flyway/V1__init_mariadb.sql"] = "db/migration/V1__init.sql"
+			}
+		} else {
+			templateMap["db/migration/flyway/V1__init_empty.sql"] = "db/migration/V1__init.sql"
 		}
 	}
-	if pc.DbMigrationTool == "Flyway" {
-		err := pg.copyTemplateDir(pc, "src/main/resources/db/migration/flyway", "src/main/resources/db/migration")
-		if err != nil {
-			return err
+
+	if pc.DbMigrationTool == "Liquibase" {
+		templateMap["db/migration/liquibase/liquibase-changelog.xml"] = "db/migration/liquibase-changelog.xml"
+
+		if pc.SecuritySupport || pc.JwtSecuritySupport {
+			if pc.DbType == "PostgreSQL" {
+				templateMap["db/migration/liquibase/changelog/01-init-postgresql.xml"] = "db/migration/changelog/01-init.xml"
+			}
+			if pc.DbType == "MySQL" {
+				templateMap["db/migration/liquibase/changelog/01-init-mysql.xml"] = "db/migration/changelog/01-init.xml"
+			}
+			if pc.DbType == "MariaDB" {
+				templateMap["db/migration/liquibase/changelog/01-init-mariadb.xml"] = "db/migration/changelog/01-init.xml"
+			}
+		} else {
+			templateMap["db/migration/liquibase/changelog/01-init-empty.xml"] = "db/migration/changelog/01-init.xml"
 		}
-	} else {
-		err := pg.copyTemplateDir(pc, "src/main/resources/db/migration/liquibase", "src/main/resources/db/migration")
+	}
+
+	for tmpl, filePath := range templateMap {
+		err := pg.executeTemplate(pc, srcMainResourcesPath+tmpl, srcMainResourcesPath+filePath)
 		if err != nil {
 			return err
 		}
