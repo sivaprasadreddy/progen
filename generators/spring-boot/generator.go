@@ -21,6 +21,7 @@ var tmplsFS embed.FS
 const templatesRootDir = "templates"
 
 type ProjectConfig struct {
+	AppType               string
 	AppName               string
 	GroupID               string
 	ArtifactID            string
@@ -74,7 +75,7 @@ func updateFeatureFlags(pc *ProjectConfig) {
 	pc.SpringCloudAWSSupport = pc.Enabled("Spring Cloud AWS")
 	pc.ThymeleafSupport = pc.Enabled("Thymeleaf")
 	pc.HTMXSupport = pc.Enabled("HTMX")
-	pc.SecuritySupport = pc.Enabled("Security") || pc.Enabled("JWT Security")
+	pc.SecuritySupport = pc.Enabled("Security")
 	pc.JwtSecuritySupport = pc.Enabled("JWT Security")
 }
 
@@ -180,11 +181,15 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 
 	if pc.SecuritySupport || pc.JwtSecuritySupport {
 		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
-		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
 		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
 	}
 
+	if pc.SecuritySupport {
+		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
+	}
+
 	if pc.JwtSecuritySupport {
+		templateMap["JwtWebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
 		templateMap["AuthToken.java.tmpl"] = "security/AuthToken.java"
 		templateMap["TokenHelper.java.tmpl"] = "security/TokenHelper.java"
 		templateMap["TokenAuthenticationFilter.java.tmpl"] = "security/TokenAuthenticationFilter.java"

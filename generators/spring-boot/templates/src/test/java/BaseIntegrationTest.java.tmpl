@@ -1,8 +1,9 @@
 package {{ .BasePackage }};
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-
+{{- if eq .AppType "REST API" }}
 import io.restassured.RestAssured;
+{{ end }}
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -18,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 {{ end }}
 public abstract class BaseIntegrationTest {
-
+{{- if eq .AppType "REST API" }}
     @LocalServerPort
     int port;
 
@@ -26,4 +27,5 @@ public abstract class BaseIntegrationTest {
     void setUpBase() {
         RestAssured.port = port;
     }
+{{ end }}
 }

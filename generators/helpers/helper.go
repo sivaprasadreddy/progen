@@ -101,7 +101,7 @@ func CreateFile(filePath string) *os.File {
 func ValidateApplicationName(val interface{}) error {
 	str, ok := val.(string)
 	if !ok || strings.Trim(str, " ") == "" {
-		return errors.New("value is required")
+		return errors.New("application name is required")
 	}
 	appName := strings.Trim(str, " ")
 	if stat, err := os.Stat(appName); err == nil && stat.IsDir() {
