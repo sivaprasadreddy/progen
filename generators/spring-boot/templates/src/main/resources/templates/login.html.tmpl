@@ -11,33 +11,33 @@
 <div layout:fragment="content">
     <div class="col-md-4 offset-md-4">
         <div class="card">
-        <div class="card-header text-center">
-            <h3>Login Form</h3>
-        </div>
-        <div class="card-body">
-            <div th:if="${param.error}">
-                <div class="alert alert-danger">Invalid Email and Password</div>
+            <div class="card-header text-center">
+                <h3>Login Form</h3>
             </div>
-            <div th:if="${param.logout}">
-                <div class="alert alert-success">You have been logged out.</div>
-            </div>
-            <div>
-                <form id="loginForm" method="post" th:action="@{/login}">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Email*</label>
-                        <input type="text" id="username" name="username"
-                               class="form-control" placeholder="Enter email" />
-                    </div>
+            <div class="card-body">
+                <div th:if="${param.error}">
+                    <div class="alert alert-danger">Invalid Email and Password</div>
+                </div>
+                <div th:if="${param.logout}">
+                    <div class="alert alert-success">You have been logged out.</div>
+                </div>
+                <div>
+                    <form id="loginForm" method="post" th:action="@{/login}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Email*</label>
+                            <input type="text" id="username" name="username"
+                                   class="form-control" placeholder="Enter email" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password*</label>
-                        <input type="password" id="password" name="password"
-                               class="form-control" placeholder="Enter password" />
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password*</label>
+                            <input type="password" id="password" name="password"
+                                   class="form-control" placeholder="Enter password" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 </div>

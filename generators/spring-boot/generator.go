@@ -174,10 +174,12 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
 
 	templateMap := map[string]string{
-		"Application.java.tmpl":           "Application.java",
-		"ApplicationProperties.java.tmpl": "ApplicationProperties.java",
-		"WebMvcConfig.java.tmpl":          "config/WebMvcConfig.java",
-		"BaseEntity.java.tmpl":            "domain/BaseEntity.java",
+		"Application.java.tmpl":               "Application.java",
+		"ApplicationProperties.java.tmpl":     "ApplicationProperties.java",
+		"WebMvcConfig.java.tmpl":              "config/WebMvcConfig.java",
+		"BaseEntity.java.tmpl":                "domain/BaseEntity.java",
+		"BadRequestException.java.tmpl":       "domain/BadRequestException.java",
+		"ResourceNotFoundException.java.tmpl": "domain/ResourceNotFoundException.java",
 	}
 
 	if pc.SecuritySupport || pc.JwtSecuritySupport {
@@ -188,10 +190,12 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 		templateMap["SecurityUser.java.tmpl"] = "domain/SecurityUser.java"
 		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
 		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
+		templateMap["UserContextUtils.java.tmpl"] = "web/UserContextUtils.java"
 	}
 
 	if pc.SecuritySupport {
 		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
+		templateMap["WebAppExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
 	}
 
 	if pc.JwtSecuritySupport {
@@ -199,6 +203,8 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 		templateMap["AuthToken.java.tmpl"] = "security/AuthToken.java"
 		templateMap["TokenHelper.java.tmpl"] = "security/TokenHelper.java"
 		templateMap["TokenAuthenticationFilter.java.tmpl"] = "security/TokenAuthenticationFilter.java"
+		templateMap["RestApiExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
+		templateMap["LoginController.java.tmpl"] = "web/LoginController.java"
 	}
 
 	for tmpl, filePath := range templateMap {
@@ -278,6 +284,10 @@ func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
 		"TestcontainersConfig.java.tmpl": "TestcontainersConfig.java",
 		"BaseIntegrationTest.java.tmpl":  "BaseIntegrationTest.java",
 		"TestApplication.java.tmpl":      "TestApplication.java",
+	}
+
+	if pc.Enabled("JWT Security") {
+		templateMap["LoginControllerTests.java.tmpl"] = "web/LoginControllerTests.java"
 	}
 
 	if pc.Enabled("Spring Modulith") {

@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet author="app" id="createTable-users">
+    <changeSet id="000001-createTable-users" author="app">
         <createSequence
                 sequenceName="user_id_seq"
                 incrementBy="50"
@@ -34,4 +34,14 @@
             <column name="updated_at" type="datetime"/>
         </createTable>
     </changeSet>
+
+    <changeSet id="000002-insert-users" author="app">
+        <comment>insert users</comment>
+        <sql>
+            insert into users(email, password, name, role, created_at) values
+            ('admin@gmail.com', '$2a$10$hKDVYxLefVHV/vtuPhWD3OigtRyOykRLDdUAp80Z1crSoS1lFqaFS', 'Administrator', 'ROLE_ADMIN', CURRENT_TIMESTAMP),
+            ('demouser@gmail.com', '$2a$10$CDAk0r/V8cvHUj.gzstta.xfvbkJY6kHrjL8pzyQWLsWMzUmByWVC', 'Demo User','ROLE_USER', CURRENT_TIMESTAMP);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

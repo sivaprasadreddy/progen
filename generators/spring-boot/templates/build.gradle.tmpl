@@ -103,6 +103,7 @@ dependencies {
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
     {{- end }}
     {{- if .ThymeleafSupport }}
+    implementation "org.webjars:webjars-locator-lite"
     implementation "org.webjars:bootstrap:${bootstrapVersion}"
     implementation "org.webjars:jquery:${jqueryVersion}"
     implementation "org.webjars:font-awesome:${fontawesomeVersion}"

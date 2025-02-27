@@ -1,0 +1,34 @@
+package {{ .BasePackage }}.web;
+
+import {{ .BasePackage }}.BaseIntegrationTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.blankOrNullString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpStatus.OK;
+
+class LoginControllerTests extends BaseIntegrationTest {
+
+    @Test
+    @DisplayName("Given valid credentials, user should be able to login successfully")
+    void shouldLoginSuccessfully() {
+        given().contentType("application/json")
+                .body("""
+                    {
+                      "email": "admin@gmail.com",
+                      "password": "admin"
+                    }
+                  """)
+                .when()
+                .post("/api/login")
+                .then()
+                .statusCode(OK.value())
+                .assertThat()
+                .body("token", not(blankOrNullString()))
+                .body("email", equalTo("admin@gmail.com"))
+                .body("name", equalTo("Administrator"));
+    }
+}
