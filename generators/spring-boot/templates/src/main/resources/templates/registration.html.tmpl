@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+  <title>Registration</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="fixed-grid has-3-cols pt-3">
+    <div class="grid">
+      <div class="cell is-col-start-2">
+        <form class="box " id="registrationForm" method="post"
+              th:action="@{/registration}" th:object="${user}">
+          <div class="field">
+            <label for="name" class="label">Name</label>
+            <div class="control">
+              <input class="input" type="text"
+                     id="name" name="name"
+                     th:field="*{name}">
+            </div>
+            <p class="help is-danger" th:if="${#fields.hasErrors('name')}"
+               th:errors="*{name}">Incorrect data</p>
+          </div>
+          <div class="field">
+            <label for="email" class="label">Email</label>
+            <div class="control">
+              <input class="input" type="email"
+                     id="email" name="email"
+                     th:field="*{email}">
+            </div>
+            <p class="help is-danger" th:if="${#fields.hasErrors('email')}"
+               th:errors="*{email}">Incorrect data</p>
+          </div>
+          <div class="field">
+            <label for="password" class="label">Password</label>
+            <div class="control">
+              <input class="input" type="password"
+                     id="password" name="password"
+                     th:field="*{password}">
+            </div>
+            <p class="help is-danger" th:if="${#fields.hasErrors('password')}"
+               th:errors="*{password}">Incorrect data</p>
+          </div>
+
+          <div class="field is-grouped">
+            <div class="control">
+              <button type="submit" class="button is-primary">Submit</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

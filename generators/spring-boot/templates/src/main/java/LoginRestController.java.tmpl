@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-class LoginController {
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+class LoginRestController {
+    private static final Logger log = LoggerFactory.getLogger(LoginRestController.class);
 
     private final AuthenticationManager authManager;
     private final UserService userService;
     private final TokenHelper tokenHelper;
 
-    LoginController(AuthenticationManager authManager,
+    LoginRestController(AuthenticationManager authManager,
                     UserService userService,
                     TokenHelper tokenHelper) {
         this.authManager = authManager;

@@ -191,11 +191,13 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
 		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
 		templateMap["UserContextUtils.java.tmpl"] = "web/UserContextUtils.java"
+		templateMap["CreateUserCmd.java.tmpl"] = "domain/CreateUserCmd.java"
 	}
 
 	if pc.SecuritySupport {
 		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
 		templateMap["WebAppExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
+		templateMap["UserController.java.tmpl"] = "web/UserController.java"
 	}
 
 	if pc.JwtSecuritySupport {
@@ -204,7 +206,8 @@ func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
 		templateMap["TokenHelper.java.tmpl"] = "security/TokenHelper.java"
 		templateMap["TokenAuthenticationFilter.java.tmpl"] = "security/TokenAuthenticationFilter.java"
 		templateMap["RestApiExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
-		templateMap["LoginController.java.tmpl"] = "web/LoginController.java"
+		templateMap["LoginRestController.java.tmpl"] = "web/LoginRestController.java"
+		templateMap["UserRestController.java.tmpl"] = "web/UserRestController.java"
 	}
 
 	for tmpl, filePath := range templateMap {
@@ -228,8 +231,10 @@ func (pg projectGenerator) createSrcMainResources(pc ProjectConfig) error {
 		templateMap["templates/layout.html.tmpl"] = "templates/layout.html"
 	}
 
-	if pc.ThymeleafSupport && (pc.SecuritySupport || pc.JwtSecuritySupport) {
+	if pc.ThymeleafSupport && pc.SecuritySupport {
 		templateMap["templates/login.html.tmpl"] = "templates/login.html"
+		templateMap["templates/registration.html.tmpl"] = "templates/registration.html"
+		templateMap["templates/registration-success.html.tmpl"] = "templates/registration-success.html"
 	}
 
 	if pc.DbMigrationTool == "Flyway" {
@@ -287,7 +292,8 @@ func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
 	}
 
 	if pc.Enabled("JWT Security") {
-		templateMap["LoginControllerTests.java.tmpl"] = "web/LoginControllerTests.java"
+		templateMap["LoginRestControllerTests.java.tmpl"] = "web/LoginRestControllerTests.java"
+		templateMap["UserRestControllerTests.java.tmpl"] = "web/UserRestControllerTests.java"
 	}
 
 	if pc.Enabled("Spring Modulith") {

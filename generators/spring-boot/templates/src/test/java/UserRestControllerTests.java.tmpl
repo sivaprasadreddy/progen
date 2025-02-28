@@ -1,0 +1,37 @@
+package {{ .BasePackage }}.api;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.blankOrNullString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+
+import {{ .BasePackage }}.BaseIntegrationTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+class UserRestControllerTests extends BaseIntegrationTest {
+
+    @Test
+    @DisplayName("Given valid user details, user should be created successfully")
+    void shouldCreateUserSuccessfully() {
+        given().contentType("application/json")
+                .body(
+                        """
+              {
+                  "name":"User123",
+                  "email":"user123@gmail.com",
+                  "password":"secret"
+                }
+              """)
+                .when()
+                .post("/api/users")
+                .then()
+                .statusCode(CREATED.value())
+                .assertThat()
+                .body("name", equalTo("User123"))
+                .body("email", equalTo("user123@gmail.com"))
+                .body("role", equalTo("ROLE_USER"));
+    }
+}

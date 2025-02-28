@@ -1,0 +1,43 @@
+package {{ .BasePackage }}.api;
+
+import static org.springframework.http.HttpStatus.CREATED;
+
+import {{ .BasePackage }}.domain.CreateUserCmd;
+import {{ .BasePackage }}.domain.Role;
+import {{ .BasePackage }}.domain.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+class UserRestController {
+    private static final Logger log = LoggerFactory.getLogger(UserRestController.class);
+
+    private final UserService userService;
+
+    UserRestController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping("/api/users")
+    ResponseEntity<RegistrationResponse> creatUser(@RequestBody @Valid RegistrationRequest req) {
+        log.info("Registration request for email: {}", req.email());
+        var cmd = new CreateUserCmd(req.name(), req.email(), req.password(), Role.ROLE_USER);
+        userService.createUser(cmd);
+        var response = new RegistrationResponse(req.name(), req.email(), Role.ROLE_USER);
+        return ResponseEntity.status(CREATED.value()).body(response);
+    }
+
+    public record RegistrationRequest(
+            @NotBlank(message = "Name is required") String name,
+            @NotBlank(message = "Email is required") @Email(message = "Invalid email address") String email,
+            @NotBlank(message = "Password is required") String password) {}
+
+    public record RegistrationResponse(String name, String email, Role role) {}
+}

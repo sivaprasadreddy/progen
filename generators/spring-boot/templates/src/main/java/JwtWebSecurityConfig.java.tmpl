@@ -47,6 +47,8 @@ class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers(unsecuredPaths)
                 .permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users")
+                .permitAll()
                 .anyRequest()
                 .permitAll());
         http.addFilterBefore(tokenAuthFilter, BasicAuthenticationFilter.class);
