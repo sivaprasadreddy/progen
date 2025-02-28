@@ -164,7 +164,7 @@ dependencyManagement {
 }
 
 tasks.named("bootBuildImage") {
-	imageName = "your_dockerhub_username/${project.name}"
+	imageName = "your_dockerhub_username/{{ .ArtifactID }}"
 }
 
 tasks.named("test") {

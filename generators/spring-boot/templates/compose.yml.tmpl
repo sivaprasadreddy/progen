@@ -46,3 +46,39 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       #- "./.localstack:/etc/localstack/init/ready.d"  # ready hook
   {{- end }}
+
+  {{ .ArtifactID }}:
+    image: your_dockerhub_username/{{ .ArtifactID }}
+    container_name: {{ .ArtifactID }}
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      {{- if eq .DbType "PostgreSQL" }}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      {{- end }}
+      {{- if eq .DbType "MySQL" }}
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/test
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: secret
+      {{- end }}
+      {{- if eq .DbType "MariaDB" }}
+      SPRING_DATASOURCE_URL: jdbc:mariadb://localhost:3306/test
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: secret
+      {{- end }}
+    ports:
+      - "8080:8080"
+    depends_on:
+      {{- if eq .DbType "PostgreSQL" }}
+      - postgres
+      {{- end }}
+      {{- if eq .DbType "MySQL" }}
+      - mysql
+      {{- end }}
+      {{- if eq .DbType "MariaDB" }}
+      - mariadb
+      {{- end }}
+    restart: unless-stopped
+    profiles:
+      - app

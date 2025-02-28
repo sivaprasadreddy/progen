@@ -94,11 +94,17 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		if err := pg.createMavenBuildFiles(pc); err != nil {
 			return err
 		}
+		if err := pg.createMavenTaskFile(pc); err != nil {
+			return err
+		}
 	} else {
 		if err := pg.createGradleWrapper(pc); err != nil {
 			return err
 		}
 		if err := pg.createGradleBuildFiles(pc); err != nil {
+			return err
+		}
+		if err := pg.createGradleTaskFile(pc); err != nil {
 			return err
 		}
 	}
@@ -147,6 +153,10 @@ func (pg projectGenerator) createMavenWrapper(pc ProjectConfig) error {
 	return pg.copyTemplateDir(pc, "maven-wrapper", "")
 }
 
+func (pg projectGenerator) createMavenTaskFile(pc ProjectConfig) error {
+	return pg.copyTemplateFile(pc, "Taskfile.maven.yml.tmpl", "Taskfile.yml")
+}
+
 /** Gradle Functions **/
 
 func (pg projectGenerator) createGradleWrapper(pc ProjectConfig) error {
@@ -165,6 +175,10 @@ func (pg projectGenerator) createGradleBuildFiles(pc ProjectConfig) error {
 		}
 	}
 	return nil
+}
+
+func (pg projectGenerator) createGradleTaskFile(pc ProjectConfig) error {
+	return pg.copyTemplateFile(pc, "Taskfile.gradle.yml.tmpl", "Taskfile.yml")
 }
 
 /** Common Functions **/
@@ -291,6 +305,10 @@ func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
 		"TestApplication.java.tmpl":      "TestApplication.java",
 	}
 
+	if pc.Enabled("Security") {
+		templateMap["UserControllerTests.java.tmpl"] = "web/UserControllerTests.java"
+	}
+
 	if pc.Enabled("JWT Security") {
 		templateMap["LoginRestControllerTests.java.tmpl"] = "web/LoginRestControllerTests.java"
 		templateMap["UserRestControllerTests.java.tmpl"] = "web/UserRestControllerTests.java"
@@ -370,6 +388,11 @@ func (pg projectGenerator) createReadMeFile(pc ProjectConfig) error {
 func (pg projectGenerator) copyTemplateDir(pc ProjectConfig, origin, dirName string) error {
 	templateDirPath := fmt.Sprintf("%s/%s", templatesRootDir, origin)
 	return helpers.CopyDir(pg.tmplFS, templateDirPath, pc.AppName, dirName)
+}
+
+func (pg projectGenerator) copyTemplateFile(pc ProjectConfig, sourceFilePath, targetFilePath string) error {
+	templateFilePath := fmt.Sprintf("%s/%s", templatesRootDir, sourceFilePath)
+	return helpers.CopyTemplateFile(pg.tmplFS, templateFilePath, pc.AppName, targetFilePath)
 }
 
 func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targetFilePath string) error {

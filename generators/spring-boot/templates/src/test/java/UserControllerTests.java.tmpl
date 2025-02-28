@@ -1,0 +1,26 @@
+package {{ .BasePackage }}.web;
+
+import {{ .BasePackage }}.BaseIntegrationTest;
+import {{ .BasePackage }}.dtos.PostDto;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class UserControllerTests extends BaseIntegrationTest {
+
+    @Test
+    void shouldRegisterUserSuccessfully() {
+        var result = mvc.post().uri("/registration")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", "testuser123")
+                .param("email", "testuser123@gmail.com")
+                .param("password", "testuser123")
+                ;
+
+        assertThat(result).hasStatus(HttpStatus.FOUND);
+    }
+}

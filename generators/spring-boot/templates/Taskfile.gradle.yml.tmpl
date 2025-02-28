@@ -1,0 +1,47 @@
+version: '3'
+
+vars:
+  GOOS: "{{default OS .GOOS}}"
+  GRADLEW: '{{if eq .GOOS "windows"}}gradlew.bat{{else}}./gradlew{{end}}'
+  SLEEP_CMD: '{{if eq .GOOS "windows"}}timeout{{else}}sleep{{end}}'
+  IMAGE_NAME: 'your_dockerhub_username/{{ .ArtifactID }}'
+  DC_FILE: "compose.yml"
+
+tasks:
+  default:
+    cmds:
+      - task: test
+  test:
+    deps: [ format ]
+    cmds:
+      - "{{.GRADLEW}} build"
+
+  format:
+    cmds:
+      - "{{.GRADLEW}} spotlessApply"
+
+  build_image:
+    cmds:
+      - "{{.GRADLEW}} -x test bootBuildImage --imageName={{.IMAGE_NAME}}"
+
+  start:
+    deps: [ build_image ]
+    cmds:
+      - docker compose --profile app -f "{{.DC_FILE}}" up --force-recreate -d
+
+  stop:
+    cmds:
+      - docker compose --profile app -f "{{.DC_FILE}}" stop
+      - docker compose --profile app -f "{{.DC_FILE}}" rm -f
+
+  restart:
+    cmds:
+      - task: stop
+      - task: sleep
+      - task: start
+
+  sleep:
+    vars:
+      DURATION: "{{default 5 .DURATION}}"
+    cmds:
+      - "{{.SLEEP_CMD}} {{.DURATION}}"
