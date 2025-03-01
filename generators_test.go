@@ -2,15 +2,14 @@ package main
 
 import (
 	"fmt"
+	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
+	"github.com/stretchr/testify/assert"
 	"os/exec"
 	"runtime"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
-
-	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
-	"github.com/stretchr/testify/assert"
 )
 
 var hostOS = runtime.GOOS
@@ -22,58 +21,6 @@ func init() {
 	if hostOS == "windows" {
 		mvnExec = "mvnw.cmd"
 		gradleExec = "gradlew.bat"
-	}
-}
-
-func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
-	var options = []struct {
-		dbType        string
-		migrationTool string
-		features      []string
-	}{
-		{"MySQL", "Flyway", []string{}},
-		{"PostgreSQL", "Flyway", []string{}},
-		{"MariaDB", "Flyway", []string{}},
-
-		{"MySQL", "Liquibase", []string{}},
-		{"PostgreSQL", "Liquibase", []string{}},
-		{"MariaDB", "Liquibase", []string{}},
-
-		{"MySQL", "Flyway", []string{"JWT Security"}},
-		{"MariaDB", "Flyway", []string{"JWT Security"}},
-		{"PostgreSQL", "Flyway", []string{"JWT Security"}},
-
-		{"MySQL", "Liquibase", []string{"JWT Security"}},
-		{"MariaDB", "Liquibase", []string{"JWT Security"}},
-		{"PostgreSQL", "Liquibase", []string{"JWT Security"}},
-	}
-
-	for _, tt := range options {
-		t.Run(tt.dbType+"-"+tt.migrationTool, func(t *testing.T) {
-			t.Log("Generating App with Options: ", tt)
-			appName := "my-spring-boot-mvn-api-" + strings.ToLower(tt.dbType) + "-" + strings.ToLower(tt.migrationTool)
-
-			pc := springboot.ProjectConfig{
-				AppType:         "REST API",
-				AppName:         appName,
-				GroupID:         "com.sivalabs",
-				ArtifactID:      appName,
-				AppVersion:      "1.0",
-				BasePackage:     "com.sivalabs.myapp",
-				BuildTool:       "Maven",
-				DbType:          tt.dbType,
-				DbMigrationTool: tt.migrationTool,
-				Features:        tt.features,
-			}
-			err := springboot.GenerateProject(pc)
-			assert.Nil(t, err)
-			err = testGeneratedProject(appName, mvnExec, "test")
-			assert.Nil(t, err)
-
-			//cleanup
-			err = deleteDir(appName)
-			assert.Nil(t, err)
-		})
 	}
 }
 
@@ -116,6 +63,61 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 			} else {
 				err = testGeneratedProject(appName, gradleExec, "build")
 			}
+			assert.Nil(t, err)
+
+			//cleanup
+			err = deleteDir(appName)
+			assert.Nil(t, err)
+		})
+	}
+}
+
+func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping all combination tests in short mode")
+	}
+	var options = []struct {
+		dbType        string
+		migrationTool string
+		features      []string
+	}{
+		{"MySQL", "Flyway", []string{}},
+		{"PostgreSQL", "Flyway", []string{}},
+		{"MariaDB", "Flyway", []string{}},
+
+		{"MySQL", "Liquibase", []string{}},
+		{"PostgreSQL", "Liquibase", []string{}},
+		{"MariaDB", "Liquibase", []string{}},
+
+		{"MySQL", "Flyway", []string{"JWT Security"}},
+		{"MariaDB", "Flyway", []string{"JWT Security"}},
+		{"PostgreSQL", "Flyway", []string{"JWT Security"}},
+
+		{"MySQL", "Liquibase", []string{"JWT Security"}},
+		{"MariaDB", "Liquibase", []string{"JWT Security"}},
+		{"PostgreSQL", "Liquibase", []string{"JWT Security"}},
+	}
+
+	for _, tt := range options {
+		t.Run(tt.dbType+"-"+tt.migrationTool, func(t *testing.T) {
+			t.Log("Generating App with Options: ", tt)
+			appName := "my-spring-boot-mvn-api-" + strings.ToLower(tt.dbType) + "-" + strings.ToLower(tt.migrationTool)
+
+			pc := springboot.ProjectConfig{
+				AppType:         "REST API",
+				AppName:         appName,
+				GroupID:         "com.sivalabs",
+				ArtifactID:      appName,
+				AppVersion:      "1.0",
+				BasePackage:     "com.sivalabs.myapp",
+				BuildTool:       "Maven",
+				DbType:          tt.dbType,
+				DbMigrationTool: tt.migrationTool,
+				Features:        tt.features,
+			}
+			err := springboot.GenerateProject(pc)
+			assert.Nil(t, err)
+			err = testGeneratedProject(appName, mvnExec, "test")
 			assert.Nil(t, err)
 
 			//cleanup

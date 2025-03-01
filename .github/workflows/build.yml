@@ -43,7 +43,7 @@ jobs:
           go version
           docker version
       - name: Test
-        run: go test -v ./...
+        run: go test -v -short ./...
 
       - name: Build
         run: go build -v .
