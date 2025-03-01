@@ -9,7 +9,6 @@ import (
 	"path"
 	"runtime"
 	"slices"
-	"strings"
 	"text/template"
 
 	"github.com/sivaprasadreddy/progen/generators/helpers"
@@ -40,10 +39,6 @@ type ProjectConfig struct {
 	JwtSecuritySupport    bool
 }
 
-func (p ProjectConfig) Enabled(feature string) bool {
-	return p.Features != nil && slices.Contains(p.Features, feature)
-}
-
 func Run() {
 	projectConfig, err := getAnswers()
 	helpers.FatalIfErr(err)
@@ -70,13 +65,45 @@ func GenerateProject(pc ProjectConfig) error {
 }
 
 func updateFeatureFlags(pc *ProjectConfig) {
-	pc.DockerComposeSupport = pc.Enabled("Docker Compose")
-	pc.SpringModulithSupport = pc.Enabled("Spring Modulith")
-	pc.SpringCloudAWSSupport = pc.Enabled("Spring Cloud AWS")
-	pc.ThymeleafSupport = pc.Enabled("Thymeleaf")
-	pc.HTMXSupport = pc.Enabled("HTMX")
-	pc.SecuritySupport = pc.Enabled("Security")
-	pc.JwtSecuritySupport = pc.Enabled("JWT Security")
+	pc.DockerComposeSupport = pc.EnabledDockerComposeSupport()
+	pc.SpringModulithSupport = pc.EnabledSpringModulithSupport()
+	pc.SpringCloudAWSSupport = pc.EnabledSpringCloudAWSSupport()
+	pc.ThymeleafSupport = pc.EnabledThymeleafSupport()
+	pc.HTMXSupport = pc.EnabledHTMXSupport()
+	pc.SecuritySupport = pc.EnabledSecuritySupport()
+	pc.JwtSecuritySupport = pc.EnabledJwtSecuritySupport()
+}
+
+func (p ProjectConfig) EnabledSecuritySupport() bool {
+	return p.Enabled(FeatureSecuritySupport)
+}
+
+func (p ProjectConfig) EnabledJwtSecuritySupport() bool {
+	return p.Enabled(FeatureJwtSecuritySupport)
+}
+
+func (p ProjectConfig) EnabledSpringModulithSupport() bool {
+	return p.Enabled(FeatureSpringModulithSupport)
+}
+
+func (p ProjectConfig) EnabledSpringCloudAWSSupport() bool {
+	return p.Enabled(FeatureSpringCloudAWSSupport)
+}
+
+func (p ProjectConfig) EnabledThymeleafSupport() bool {
+	return p.Enabled(FeatureThymeleafSupport)
+}
+
+func (p ProjectConfig) EnabledHTMXSupport() bool {
+	return p.Enabled(FeatureHTMXSupport)
+}
+
+func (p ProjectConfig) EnabledDockerComposeSupport() bool {
+	return p.Enabled(FeatureDockerComposeSupport)
+}
+
+func (p ProjectConfig) Enabled(feature string) bool {
+	return p.Features != nil && slices.Contains(p.Features, feature)
 }
 
 type projectGenerator struct {
@@ -87,300 +114,42 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 	if err := helpers.RecreateDir(pc.AppName); err != nil {
 		return err
 	}
-	if pc.BuildTool == "Maven" {
-		if err := pg.createMavenWrapper(pc); err != nil {
-			return err
-		}
-		if err := pg.createMavenBuildFiles(pc); err != nil {
-			return err
-		}
-		if err := pg.createMavenTaskFile(pc); err != nil {
-			return err
-		}
-	} else {
-		if err := pg.createGradleWrapper(pc); err != nil {
-			return err
-		}
-		if err := pg.createGradleBuildFiles(pc); err != nil {
-			return err
-		}
-		if err := pg.createGradleTaskFile(pc); err != nil {
-			return err
-		}
-	}
-	if err := pg.createGitIgnore(pc); err != nil {
-		return err
-	}
 
-	if err := pg.createSrcMainJava(pc); err != nil {
+	if err := NewBuildToolConfig(pg).generate(pc); err != nil {
 		return err
 	}
-	if err := pg.createSrcMainResources(pc); err != nil {
+	if err := NewTaskfileConfig(pg).generate(pc); err != nil {
 		return err
 	}
-	if err := pg.createSrcTestJava(pc); err != nil {
+	if err := NewGitIgnoreConfig(pg).generate(pc); err != nil {
 		return err
 	}
-	if err := pg.createSrcTestResources(pc); err != nil {
+	if err := NewDockerComposeConfig(pg).generate(pc); err != nil {
 		return err
 	}
-	if err := pg.createComposeConfigFiles(pc); err != nil {
+	if err := NewGhActionsConfig(pg).generate(pc); err != nil {
 		return err
 	}
-	if err := pg.createCIConfigFiles(pc); err != nil {
+	if err := NewReadMeConfig(pg).generate(pc); err != nil {
 		return err
 	}
-	if err := pg.createReadMeFile(pc); err != nil {
+	if err := NewAppCommonConfig(pg).generate(pc); err != nil {
+		return err
+	}
+	if err := NewThymeleafConfig(pg).generate(pc); err != nil {
+		return err
+	}
+	if err := NewDbMigrationsConfig(pg).generate(pc); err != nil {
+		return err
+	}
+	if err := NewSpringModulithConfig(pg).generate(pc); err != nil {
+		return err
+	}
+	if err := NewSecurityConfig(pg).generate(pc); err != nil {
 		return err
 	}
 	if err := pg.formatCode(pc); err != nil {
 		return err
-	}
-	return nil
-}
-
-/** Maven Functions **/
-
-func (pg projectGenerator) createMavenBuildFiles(pc ProjectConfig) error {
-	return pg.executeTemplate(pc, "pom.xml.tmpl", "pom.xml")
-}
-
-func (pg projectGenerator) createGitIgnore(pc ProjectConfig) error {
-	return pg.executeTemplate(pc, "gitignore.tmpl", ".gitignore")
-}
-
-func (pg projectGenerator) createMavenWrapper(pc ProjectConfig) error {
-	return pg.copyTemplateDir(pc, "maven-wrapper", "")
-}
-
-func (pg projectGenerator) createMavenTaskFile(pc ProjectConfig) error {
-	return pg.copyTemplateFile(pc, "Taskfile.maven.yml.tmpl", "Taskfile.yml")
-}
-
-/** Gradle Functions **/
-
-func (pg projectGenerator) createGradleWrapper(pc ProjectConfig) error {
-	return pg.copyTemplateDir(pc, "gradle-wrapper", "")
-}
-
-func (pg projectGenerator) createGradleBuildFiles(pc ProjectConfig) error {
-	templateMap := map[string]string{
-		"build.gradle.tmpl":    "build.gradle",
-		"settings.gradle.tmpl": "settings.gradle",
-	}
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, tmpl, filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (pg projectGenerator) createGradleTaskFile(pc ProjectConfig) error {
-	return pg.copyTemplateFile(pc, "Taskfile.gradle.yml.tmpl", "Taskfile.yml")
-}
-
-/** Common Functions **/
-
-func (pg projectGenerator) createSrcMainJava(pc ProjectConfig) error {
-	var srcMainJavaPath = "src/main/java/"
-	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
-
-	templateMap := map[string]string{
-		"Application.java.tmpl":               "Application.java",
-		"ApplicationProperties.java.tmpl":     "ApplicationProperties.java",
-		"WebMvcConfig.java.tmpl":              "config/WebMvcConfig.java",
-		"BaseEntity.java.tmpl":                "domain/BaseEntity.java",
-		"BadRequestException.java.tmpl":       "domain/BadRequestException.java",
-		"ResourceNotFoundException.java.tmpl": "domain/ResourceNotFoundException.java",
-	}
-
-	if pc.SecuritySupport || pc.JwtSecuritySupport {
-		templateMap["Role.java.tmpl"] = "domain/Role.java"
-		templateMap["User.java.tmpl"] = "domain/User.java"
-		templateMap["UserRepository.java.tmpl"] = "domain/UserRepository.java"
-		templateMap["UserService.java.tmpl"] = "domain/UserService.java"
-		templateMap["SecurityUser.java.tmpl"] = "domain/SecurityUser.java"
-		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
-		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
-		templateMap["UserContextUtils.java.tmpl"] = "web/UserContextUtils.java"
-		templateMap["CreateUserCmd.java.tmpl"] = "domain/CreateUserCmd.java"
-	}
-
-	if pc.SecuritySupport {
-		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
-		templateMap["WebAppExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
-		templateMap["UserController.java.tmpl"] = "web/UserController.java"
-	}
-
-	if pc.JwtSecuritySupport {
-		templateMap["JwtWebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
-		templateMap["AuthToken.java.tmpl"] = "security/AuthToken.java"
-		templateMap["TokenHelper.java.tmpl"] = "security/TokenHelper.java"
-		templateMap["TokenAuthenticationFilter.java.tmpl"] = "security/TokenAuthenticationFilter.java"
-		templateMap["RestApiExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
-		templateMap["LoginRestController.java.tmpl"] = "web/LoginRestController.java"
-		templateMap["UserRestController.java.tmpl"] = "web/UserRestController.java"
-	}
-
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, srcMainJavaPath+tmpl, srcMainJavaPath+basePackagePath+"/"+filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (pg projectGenerator) createSrcMainResources(pc ProjectConfig) error {
-	var srcMainResourcesPath = "src/main/resources/"
-	templateMap := map[string]string{
-		"application.properties.tmpl": "application.properties",
-	}
-
-	if pc.ThymeleafSupport {
-		templateMap["static/css/styles.css"] = "static/css/styles.css"
-		templateMap["templates/index.html.tmpl"] = "templates/index.html"
-		templateMap["templates/layout.html.tmpl"] = "templates/layout.html"
-	}
-
-	if pc.ThymeleafSupport && pc.SecuritySupport {
-		templateMap["templates/login.html.tmpl"] = "templates/login.html"
-		templateMap["templates/registration.html.tmpl"] = "templates/registration.html"
-		templateMap["templates/registration-success.html.tmpl"] = "templates/registration-success.html"
-	}
-
-	if pc.DbMigrationTool == "Flyway" {
-		if pc.SecuritySupport || pc.JwtSecuritySupport {
-			if pc.DbType == "PostgreSQL" {
-				templateMap["db/migration/flyway/V1__init_postgresql.sql"] = "db/migration/V1__init.sql"
-			}
-			if pc.DbType == "MySQL" {
-				templateMap["db/migration/flyway/V1__init_mysql.sql"] = "db/migration/V1__init.sql"
-			}
-			if pc.DbType == "MariaDB" {
-				templateMap["db/migration/flyway/V1__init_mariadb.sql"] = "db/migration/V1__init.sql"
-			}
-		} else {
-			templateMap["db/migration/flyway/V1__init_empty.sql"] = "db/migration/V1__init.sql"
-		}
-	}
-
-	if pc.DbMigrationTool == "Liquibase" {
-		templateMap["db/migration/liquibase/liquibase-changelog.xml"] = "db/migration/liquibase-changelog.xml"
-
-		if pc.SecuritySupport || pc.JwtSecuritySupport {
-			if pc.DbType == "PostgreSQL" {
-				templateMap["db/migration/liquibase/changelog/01-init-postgresql.xml"] = "db/migration/changelog/01-init.xml"
-			}
-			if pc.DbType == "MySQL" {
-				templateMap["db/migration/liquibase/changelog/01-init-mysql.xml"] = "db/migration/changelog/01-init.xml"
-			}
-			if pc.DbType == "MariaDB" {
-				templateMap["db/migration/liquibase/changelog/01-init-mariadb.xml"] = "db/migration/changelog/01-init.xml"
-			}
-		} else {
-			templateMap["db/migration/liquibase/changelog/01-init-empty.xml"] = "db/migration/changelog/01-init.xml"
-		}
-	}
-
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, srcMainResourcesPath+tmpl, srcMainResourcesPath+filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (pg projectGenerator) createSrcTestJava(pc ProjectConfig) error {
-	var srcTestJavaPath = "src/test/java/"
-	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
-
-	templateMap := map[string]string{
-		"ApplicationTests.java.tmpl":     "ApplicationTests.java",
-		"TestcontainersConfig.java.tmpl": "TestcontainersConfig.java",
-		"BaseIntegrationTest.java.tmpl":  "BaseIntegrationTest.java",
-		"TestApplication.java.tmpl":      "TestApplication.java",
-	}
-
-	if pc.Enabled("Security") {
-		templateMap["UserControllerTests.java.tmpl"] = "web/UserControllerTests.java"
-	}
-
-	if pc.Enabled("JWT Security") {
-		templateMap["LoginRestControllerTests.java.tmpl"] = "web/LoginRestControllerTests.java"
-		templateMap["UserRestControllerTests.java.tmpl"] = "web/UserRestControllerTests.java"
-	}
-
-	if pc.Enabled("Spring Modulith") {
-		templateMap["ModularityTests.java.tmpl"] = "ModularityTests.java"
-	}
-
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, srcTestJavaPath+tmpl, srcTestJavaPath+basePackagePath+"/"+filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (pg projectGenerator) createSrcTestResources(pc ProjectConfig) error {
-	var srcTestResourcesPath = "src/test/resources/"
-	templateMap := map[string]string{
-		"logback-test.xml.tmpl": "logback-test.xml",
-	}
-
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, srcTestResourcesPath+tmpl, srcTestResourcesPath+filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (pg projectGenerator) createCIConfigFiles(pc ProjectConfig) error {
-	templateMap := map[string]string{
-		"ci/github/workflows/ci.yml.tmpl": ".github/workflows/ci.yml",
-	}
-
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, tmpl, filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (pg projectGenerator) createComposeConfigFiles(pc ProjectConfig) error {
-	if !pc.DockerComposeSupport {
-		return nil
-	}
-	templateMap := map[string]string{
-		"compose.yml.tmpl": "compose.yml",
-	}
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, tmpl, filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (pg projectGenerator) createReadMeFile(pc ProjectConfig) error {
-	templateMap := map[string]string{
-		"README.md.tmpl": "README.md",
-	}
-	for tmpl, filePath := range templateMap {
-		err := pg.executeTemplate(pc, tmpl, filePath)
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -418,7 +187,7 @@ func (pg projectGenerator) formatCode(pc ProjectConfig) error {
 	dirName := pc.AppName
 	executable := "./mvnw"
 	formatCmd := "spotless:apply"
-	if pc.BuildTool == "Gradle" {
+	if pc.BuildTool == BuildToolGradle {
 		executable = "./gradlew"
 		formatCmd = "spotlessApply"
 	}
