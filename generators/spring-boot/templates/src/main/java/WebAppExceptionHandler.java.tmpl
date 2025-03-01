@@ -1,6 +1,9 @@
 package {{ .BasePackage }}.web;
 
 import {{ .BasePackage }}.domain.ResourceNotFoundException;
+{{- if .SecuritySupport }}
+import org.springframework.security.access.AccessDeniedException;
+{{ end }}
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,6 +19,17 @@ class GlobalExceptionHandler {
         modelAndView.setViewName("error/404");
         return modelAndView;
     }
+
+    {{- if .SecuritySupport }}
+    @ExceptionHandler(AccessDeniedException.class)
+    ModelAndView handle(AccessDeniedException e) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("message", e.getMessage());
+        modelAndView.addObject("exception", e);
+        modelAndView.setViewName("error/403");
+        return modelAndView;
+    }
+    {{ end }}
 
     @ExceptionHandler(Exception.class)
     ModelAndView handle(Exception e) {

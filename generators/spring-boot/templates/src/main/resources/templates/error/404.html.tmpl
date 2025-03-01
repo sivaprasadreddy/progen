@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+  <title>PageNotFound</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+  <h2>The requested page could not be found</h2>
+  <p>Click <a href="#" th:href="@{/}">Home</a> to go to the Home page</p>
+</div>
+
+</body>
+</html>

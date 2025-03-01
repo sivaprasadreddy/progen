@@ -22,12 +22,15 @@ func (t ThymeleafConfig) createThymeleafTemplateFiles(pc ProjectConfig) error {
 		templateMap["static/css/styles.css"] = "static/css/styles.css"
 		templateMap["templates/index.html.tmpl"] = "templates/index.html"
 		templateMap["templates/layout.html.tmpl"] = "templates/layout.html"
+		templateMap["templates/error/404.html.tmpl"] = "templates/error/404.html"
+		templateMap["templates/error/500.html.tmpl"] = "templates/error/500.html"
 	}
 
 	if pc.ThymeleafSupport && pc.SecuritySupport {
 		templateMap["templates/login.html.tmpl"] = "templates/login.html"
 		templateMap["templates/registration.html.tmpl"] = "templates/registration.html"
 		templateMap["templates/registration-success.html.tmpl"] = "templates/registration-success.html"
+		templateMap["templates/error/403.html.tmpl"] = "templates/error/403.html"
 	}
 
 	for tmpl, filePath := range templateMap {

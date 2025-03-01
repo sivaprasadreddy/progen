@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-{{- if or .SecuritySupport .JwtSecuritySupport }}
+{{- if .JwtSecuritySupport }}
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 {{ end }}
@@ -52,7 +52,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiErrors);
     }
 
-    {{- if or .SecuritySupport .JwtSecuritySupport }}
+    {{- if .JwtSecuritySupport }}
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handle(AuthenticationException e) {
         var errors = List.of(e.getMessage());

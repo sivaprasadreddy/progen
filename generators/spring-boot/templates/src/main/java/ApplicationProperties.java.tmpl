@@ -6,16 +6,21 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "app")
 public record ApplicationProperties(
+        {{- if eq .AppType "REST API" }}
         CorsProperties cors
         {{- if .JwtSecuritySupport }}
         ,JwtProperties jwt
         {{ end }}
+        {{ end }}
         ) {
+
+{{- if eq .AppType "REST API" }}
     public record CorsProperties(
         @DefaultValue("/**") String pathPattern,
         @DefaultValue("*") String allowedOrigins,
         @DefaultValue("*") String allowedMethods,
         @DefaultValue("*") String allowedHeaders) {}
+{{ end }}
 
 {{- if .JwtSecuritySupport }}
     public record JwtProperties(
