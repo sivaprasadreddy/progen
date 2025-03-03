@@ -10,6 +10,25 @@ The reasons for creating this new **progen** CLI tool are:
 * We should be able to use the tool without requiring the installation of other languages SDKs.
   For example, for generating a Java application, we shouldn't need to install Node.js or Python, etc.
 
+## Features
+The progen generates a Spring Boot application with the following features configured:
+
+* [Spring Boot](https://spring.io/projects/spring-boot) project with Maven and Gradle support
+* [Spring Data JPA](https://spring.io/projects/spring-data-jpa) integration with MySQL, Postgresql, MariaDB support
+* [Flyway](https://www.red-gate.com/products/flyway/community/) and [Liquibase](https://www.liquibase.com/) database migration support
+* [Spring Security](https://spring.io/projects/spring-security) Configuration for WebApp
+* JWT based Spring Security Configuration for REST APIs
+* [Spring Modulith](https://spring.io/projects/spring-modulith) Configuration
+* [Spring Cloud AWS](https://awspring.io/) support with [LocalStack](https://www.localstack.cloud/) configuration
+* Swagger UI Integration using [springdoc-openapi](https://springdoc.org/)
+* [Testcontainers](https://java.testcontainers.org/) based Testing and Local Development Setup
+* [Docker Compose](https://docs.docker.com/compose/) based Local Development Setup
+* GitHub Actions Configuration
+* Code formatting using [Spotless](https://github.com/diffplug/spotless)
+* [JUnit 5](https://junit.org/junit5/)
+* [Taskfile](https://taskfile.dev/) to execute commonly used commands
+
+
 ## Installation
 
 ### Using OS specific binary
