@@ -2,7 +2,9 @@ spring.application.name={{ .ArtifactID }}
 {{- if .DockerComposeSupport }}
 spring.docker.compose.lifecycle-management=start_only
 {{ end }}
+
 ######## App Configuration  #########
+{{- if eq .AppType "REST API" }}
 app.cors.path-pattern=/api/**
 app.cors.allowed-origins=*
 app.cors.allowed-methods=*
@@ -12,6 +14,7 @@ app.jwt.issuer={{ .AppName }}
 app.jwt.expires-in=604800
 app.jwt.secret=secretsecretsecret12345678901234567890
 {{ end }}
+{{- end }}
 
 ################ Actuator #####################
 management.endpoints.web.exposure.include=configprops,env,health,info,logfile,loggers
