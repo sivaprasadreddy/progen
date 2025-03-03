@@ -1,10 +1,14 @@
-package {{ .BasePackage }}.domain;
+package {{ .BasePackage }}.domain.services;
 
 import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import {{ .BasePackage }}.domain.repositories.UserRepository;
+import {{ .BasePackage }}.domain.entities.User;
+import {{ .BasePackage }}.domain.model.CreateUserCmd;
 
 @Service
 @Transactional(readOnly = true)

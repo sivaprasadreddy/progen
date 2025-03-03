@@ -12,7 +12,6 @@ const DbMigrationToolFlyway = "Flyway"
 const DbMigrationToolLiquibase = "Liquibase"
 
 const FeatureDockerComposeSupport = "Docker Compose"
-const FeatureSpringModulithSupport = "Spring Modulith"
 const FeatureSpringCloudAWSSupport = "Spring Cloud AWS"
 const FeatureThymeleafSupport = "Thymeleaf"
 const FeatureHTMXSupport = "HTMX"

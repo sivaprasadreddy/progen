@@ -126,7 +126,6 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 
 	otherFeatureOptions := []huh.Option[string]{
 		huh.NewOption("Docker Compose", "Docker Compose").Selected(true),
-		huh.NewOption("Spring Modulith", "Spring Modulith"),
 		huh.NewOption("Spring Cloud AWS", "Spring Cloud AWS"),
 	}
 

@@ -1,8 +1,8 @@
-package {{ .BasePackage }}.web;
+package {{ .BasePackage }}.web.controllers;
 
-import {{ .BasePackage }}.domain.CreateUserCmd;
-import {{ .BasePackage }}.domain.Role;
-import {{ .BasePackage }}.domain.UserService;
+import {{ .BasePackage }}.domain.model.CreateUserCmd;
+import {{ .BasePackage }}.domain.model.Role;
+import {{ .BasePackage }}.domain.services.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

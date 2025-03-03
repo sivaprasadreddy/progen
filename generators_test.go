@@ -32,11 +32,11 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		migrationTool string
 		features      []string
 	}{
-		{"Web App", "Maven", "MySQL", "Flyway", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security"}},
-		{"Web App", "Gradle", "PostgreSQL", "Liquibase", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security"}},
+		{"Web App", "Maven", "MySQL", "Flyway", []string{"Docker Compose", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security"}},
+		{"Web App", "Gradle", "PostgreSQL", "Liquibase", []string{"Docker Compose", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security"}},
 
-		{"REST API", "Maven", "MariaDB", "Flyway", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "JWT Security"}},
-		{"REST API", "Gradle", "PostgreSQL", "Liquibase", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "JWT Security"}},
+		{"REST API", "Maven", "MariaDB", "Flyway", []string{"Docker Compose", "Spring Cloud AWS", "JWT Security"}},
+		{"REST API", "Gradle", "PostgreSQL", "Liquibase", []string{"Docker Compose", "Spring Cloud AWS", "JWT Security"}},
 	}
 
 	for _, tt := range options {

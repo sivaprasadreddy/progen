@@ -1,7 +1,7 @@
 package {{ .BasePackage }}.web;
 
-import {{ .BasePackage }}.domain.BadRequestException;
-import {{ .BasePackage }}.domain.ResourceNotFoundException;
+import {{ .BasePackage }}.domain.exceptions.BadRequestException;
+import {{ .BasePackage }}.domain.exceptions.ResourceNotFoundException;
 import java.util.List;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;

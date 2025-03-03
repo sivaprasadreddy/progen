@@ -1,8 +1,9 @@
-package {{ .BasePackage }}.domain;
+package {{ .BasePackage }}.domain.repositories;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import {{ .BasePackage }}.domain.entities.User;
 
-interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailIgnoreCase(String email);
 }

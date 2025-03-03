@@ -1,10 +1,10 @@
-package {{ .BasePackage }}.web;
+package {{ .BasePackage }}.web.utils;
 
-import {{ .BasePackage }}.domain.SecurityUser;
+import {{ .BasePackage }}.domain.model.SecurityUser;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-class UserContextUtils {
+public class UserContextUtils {
     public static Long getCurrentUserIdOrThrow() {
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof SecurityUser securityUser) {

@@ -31,7 +31,6 @@ type ProjectConfig struct {
 	DbMigrationTool       string
 	Features              []string
 	DockerComposeSupport  bool
-	SpringModulithSupport bool
 	SpringCloudAWSSupport bool
 	ThymeleafSupport      bool
 	HTMXSupport           bool
@@ -66,7 +65,6 @@ func GenerateProject(pc ProjectConfig) error {
 
 func updateFeatureFlags(pc *ProjectConfig) {
 	pc.DockerComposeSupport = pc.EnabledDockerComposeSupport()
-	pc.SpringModulithSupport = pc.EnabledSpringModulithSupport()
 	pc.SpringCloudAWSSupport = pc.EnabledSpringCloudAWSSupport()
 	pc.ThymeleafSupport = pc.EnabledThymeleafSupport()
 	pc.HTMXSupport = pc.EnabledHTMXSupport()
@@ -80,10 +78,6 @@ func (p ProjectConfig) EnabledSecuritySupport() bool {
 
 func (p ProjectConfig) EnabledJwtSecuritySupport() bool {
 	return p.Enabled(FeatureJwtSecuritySupport)
-}
-
-func (p ProjectConfig) EnabledSpringModulithSupport() bool {
-	return p.Enabled(FeatureSpringModulithSupport)
 }
 
 func (p ProjectConfig) EnabledSpringCloudAWSSupport() bool {
@@ -140,9 +134,6 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		return err
 	}
 	if err := NewDbMigrationsConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewSpringModulithConfig(pg).generate(pc); err != nil {
 		return err
 	}
 	if err := NewSecurityConfig(pg).generate(pc); err != nil {

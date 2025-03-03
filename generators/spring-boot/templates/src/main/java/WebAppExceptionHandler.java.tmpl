@@ -1,6 +1,6 @@
-package {{ .BasePackage }}.web;
+package {{ .BasePackage }}.web.advices;
 
-import {{ .BasePackage }}.domain.ResourceNotFoundException;
+import {{ .BasePackage }}.domain.exceptions.ResourceNotFoundException;
 {{- if .SecuritySupport }}
 import org.springframework.security.access.AccessDeniedException;
 {{ end }}

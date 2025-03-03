@@ -18,9 +18,6 @@
 	<properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>21</java.version>
-{{- if .SpringModulithSupport }}
-        <spring-modulith.version>1.3.2</spring-modulith.version>
-{{ end }}
 {{- if .SpringCloudAWSSupport }}
         <spring-cloud-aws.version>3.3.0</spring-cloud-aws.version>
 {{ end }}
@@ -143,20 +140,6 @@
             <version>${springdoc-openapi.version}</version>
         </dependency>
         {{- end }}
-        {{- if .SpringModulithSupport }}
-        <dependency>
-            <groupId>org.springframework.modulith</groupId>
-            <artifactId>spring-modulith-starter-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.modulith</groupId>
-            <artifactId>spring-modulith-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.modulith</groupId>
-            <artifactId>spring-modulith-docs</artifactId>
-        </dependency>
-        {{ end }}
         {{- if .SpringCloudAWSSupport }}
         <dependency>
             <groupId>io.awspring.cloud</groupId>
@@ -245,13 +228,6 @@
             <scope>test</scope>
         </dependency>
         {{ end }}
-        {{- if .SpringModulithSupport }}
-        <dependency>
-            <groupId>org.springframework.modulith</groupId>
-            <artifactId>spring-modulith-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -310,15 +286,6 @@
                 <groupId>io.awspring.cloud</groupId>
                 <artifactId>spring-cloud-aws-dependencies</artifactId>
                 <version>${spring-cloud-aws.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        {{ end }}
-        {{- if .SpringModulithSupport }}
-            <dependency>
-                <groupId>org.springframework.modulith</groupId>
-                <artifactId>spring-modulith-bom</artifactId>
-                <version>${spring-modulith.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

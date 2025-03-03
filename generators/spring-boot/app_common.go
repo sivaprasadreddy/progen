@@ -33,9 +33,9 @@ func (a AppCommonConfig) createSrcMainJava(pc ProjectConfig) error {
 		"Application.java.tmpl":               "Application.java",
 		"ApplicationProperties.java.tmpl":     "ApplicationProperties.java",
 		"WebMvcConfig.java.tmpl":              "config/WebMvcConfig.java",
-		"BaseEntity.java.tmpl":                "domain/BaseEntity.java",
-		"BadRequestException.java.tmpl":       "domain/BadRequestException.java",
-		"ResourceNotFoundException.java.tmpl": "domain/ResourceNotFoundException.java",
+		"BaseEntity.java.tmpl":                "domain/entities/BaseEntity.java",
+		"BadRequestException.java.tmpl":       "domain/exceptions/BadRequestException.java",
+		"ResourceNotFoundException.java.tmpl": "domain/exceptions/ResourceNotFoundException.java",
 	}
 
 	for tmpl, filePath := range templateMap {

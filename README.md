@@ -18,7 +18,6 @@ The progen generates a Spring Boot application with the following features confi
 * [Flyway](https://www.red-gate.com/products/flyway/community/) and [Liquibase](https://www.liquibase.com/) database migration support
 * [Spring Security](https://spring.io/projects/spring-security) Configuration for WebApp
 * JWT based Spring Security Configuration for REST APIs
-* [Spring Modulith](https://spring.io/projects/spring-modulith) Configuration
 * [Spring Cloud AWS](https://awspring.io/) support with [LocalStack](https://www.localstack.cloud/) configuration
 * Swagger UI Integration using [springdoc-openapi](https://springdoc.org/)
 * [Testcontainers](https://java.testcontainers.org/) based Testing and Local Development Setup
