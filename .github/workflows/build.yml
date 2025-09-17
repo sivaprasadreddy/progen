@@ -28,7 +28,7 @@ jobs:
 #          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
 
       - name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
 
