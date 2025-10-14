@@ -24,7 +24,7 @@ public class TestcontainersConfig {
     @Bean
     @ServiceConnection
     PostgreSQLContainer<?> postgres() {
-        return new PostgreSQLContainer<>(parse("postgres:17-alpine"));
+        return new PostgreSQLContainer<>(parse("postgres:18-alpine"));
     }
 {{- end }}
 {{- if eq .DbType "MySQL" }}
@@ -38,7 +38,7 @@ public class TestcontainersConfig {
     @Bean
     @ServiceConnection
     MariaDBContainer<?> mariadb() {
-        return new MariaDBContainer<>(parse("mariadb:11.0.3"));
+        return new MariaDBContainer<>(parse("mariadb:12"));
     }
 {{- end }}
 {{- if .SpringCloudAWSSupport }}

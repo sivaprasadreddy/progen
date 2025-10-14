@@ -1,7 +1,7 @@
 services:
   {{- if eq .DbType "PostgreSQL" }}
   postgres:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -22,7 +22,7 @@ services:
   {{- end }}
   {{- if eq .DbType "MariaDB" }}
   mariadb:
-    image: mariadb:11.0.3
+    image: mariadb:12
     environment:
       - MYSQL_DATABASE=test
       - MYSQL_USER=user
