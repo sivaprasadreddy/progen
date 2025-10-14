@@ -118,6 +118,9 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 	if err := NewBuildToolConfig(pg).generate(pc); err != nil {
 		return err
 	}
+	if err := NewSdkmanConfig(pg).generate(pc); err != nil {
+		return err
+	}
 	if err := NewTaskfileConfig(pg).generate(pc); err != nil {
 		return err
 	}

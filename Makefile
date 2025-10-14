@@ -24,8 +24,13 @@ build:
 run:
 	@go run main.go
 
-# Test the application
+# Run basic tests only
 test:
+	@echo "Testing..."
+	@go test -v -short ./...
+
+# Run all tests
+all-tests:
 	@echo "Testing..."
 	@go test -v ./...
 
