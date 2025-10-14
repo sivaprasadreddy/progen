@@ -106,6 +106,10 @@ func (p ProjectConfig) Enabled(feature string) bool {
 	return p.Features != nil && slices.Contains(p.Features, feature)
 }
 
+type configGenerator interface {
+	generate(ProjectConfig) error
+}
+
 type projectGenerator struct {
 	tmplFS embed.FS
 }
@@ -115,49 +119,29 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		return err
 	}
 
-	if err := NewBuildToolConfig(pg).generate(pc); err != nil {
-		return err
+	generators := []configGenerator{
+		NewBuildToolConfig(pg),
+		NewSdkmanConfig(pg),
+		NewTaskfileConfig(pg),
+		NewRenovateConfig(pg),
+		NewGitIgnoreConfig(pg),
+		NewDockerComposeConfig(pg),
+		NewGhActionsConfig(pg),
+		NewReadMeConfig(pg),
+		NewAppCommonConfig(pg),
+		NewThymeleafConfig(pg),
+		NewDbMigrationsConfig(pg),
+		NewSpringModulithConfig(pg),
+		NewSecurityConfig(pg),
 	}
-	if err := NewSdkmanConfig(pg).generate(pc); err != nil {
-		return err
+
+	for _, gen := range generators {
+		if err := gen.generate(pc); err != nil {
+			return err
+		}
 	}
-	if err := NewTaskfileConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewRenovateConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewGitIgnoreConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewDockerComposeConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewGhActionsConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewReadMeConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewAppCommonConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewThymeleafConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewDbMigrationsConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewSpringModulithConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := NewSecurityConfig(pg).generate(pc); err != nil {
-		return err
-	}
-	if err := pg.formatCode(pc); err != nil {
-		return err
-	}
-	return nil
+
+	return pg.formatCode(pc)
 }
 
 func (pg projectGenerator) copyTemplateDir(pc ProjectConfig, origin, dirName string) error {
@@ -189,23 +173,31 @@ func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targe
 }
 
 func (pg projectGenerator) formatCode(pc ProjectConfig) error {
-	var hostOS = runtime.GOOS
-	dirName := pc.AppName
-	executable := "./mvnw"
-	formatCmd := "spotless:apply"
-	if pc.BuildTool == BuildToolGradle {
-		executable = "./gradlew"
-		formatCmd = "spotlessApply"
-	}
-	appFormatCmd := fmt.Sprintf("cd %s; %s %s;", dirName, executable, formatCmd)
-	cmd := exec.Command("/bin/sh", "-c", appFormatCmd)
-	if hostOS == "windows" {
-		appFormatCmd = fmt.Sprintf("cd %s && %s %s", dirName, executable, formatCmd)
-		cmd = exec.Command("cmd", "/C", appFormatCmd)
-	}
-	//fmt.Println("appTestCmd: ", appTestCmd)
+	executable, formatCmd := pg.getBuildToolCommands(pc.BuildTool)
+	appFormatCmd := pg.buildCommandString(pc.AppName, executable, formatCmd)
+	cmd := pg.createOSCommand(appFormatCmd)
 	_, err := cmd.CombinedOutput()
-	//fmt.Println("Error:", err)
-	//fmt.Println("Output:", string(out))
 	return err
+}
+
+func (pg projectGenerator) getBuildToolCommands(buildTool string) (executable, formatCmd string) {
+	if buildTool == BuildToolGradle {
+		return "./gradlew", "spotlessApply"
+	}
+	return "./mvnw", "spotless:apply"
+}
+
+func (pg projectGenerator) buildCommandString(dirName, executable, formatCmd string) string {
+	separator := ";"
+	if runtime.GOOS == "windows" {
+		separator = "&&"
+	}
+	return fmt.Sprintf("cd %s %s %s %s", dirName, separator, executable, formatCmd)
+}
+
+func (pg projectGenerator) createOSCommand(command string) *exec.Cmd {
+	if runtime.GOOS == "windows" {
+		return exec.Command("cmd", "/C", command)
+	}
+	return exec.Command("/bin/sh", "-c", command)
 }
