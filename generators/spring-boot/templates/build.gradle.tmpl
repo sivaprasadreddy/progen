@@ -94,8 +94,9 @@ dependencies {
     implementation "org.liquibase:liquibase-core"
     {{- end }}
     {{- if .SpringModulithSupport }}
+    implementation "com.tngtech.archunit:archunit:1.4.1"
     implementation "org.springframework.modulith:spring-modulith-starter-core"
-    // implementation "org.springframework.modulith:spring-modulith-actuator"
+    implementation "org.springframework.modulith:spring-modulith-actuator"
     implementation "org.springframework.modulith:spring-modulith-docs"
     {{- end }}
     {{- if .SpringCloudAWSSupport }}

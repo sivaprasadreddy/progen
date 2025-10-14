@@ -121,6 +121,9 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 	if err := NewTaskfileConfig(pg).generate(pc); err != nil {
 		return err
 	}
+	if err := NewRenovateConfig(pg).generate(pc); err != nil {
+		return err
+	}
 	if err := NewGitIgnoreConfig(pg).generate(pc); err != nil {
 		return err
 	}

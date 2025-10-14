@@ -2,10 +2,10 @@
 A CLI tool for generating Spring Boot projects.
 
 ## Motivation
-There are few good project generator tools exist such as [JHipster](https://www.jhipster.tech/), [Bootify](https://bootify.io/), [generator-springboot](https://github.com/sivaprasadreddy/generator-springboot).
+There are a few good project generator tools exist, such as [JHipster](https://www.jhipster.tech/), [Bootify](https://bootify.io/), [generator-springboot](https://github.com/sivaprasadreddy/generator-springboot).
 
 The reasons for creating this new **progen** CLI tool are:
-* To generate the application with minimal code and the most commonly used features and configurations only.
+* To generate the application with minimal code and include only the most commonly used features and configurations.
 * We should be able to use the tool offline to create the projects.
 * We should be able to use the tool without requiring the installation of other languages SDKs.
   For example, for generating a Java application, we shouldn't need to install Node.js or Python, etc.

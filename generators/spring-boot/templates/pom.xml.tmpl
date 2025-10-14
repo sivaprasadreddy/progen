@@ -145,15 +145,18 @@
         {{- end }}
         {{- if .SpringModulithSupport }}
         <dependency>
+          <groupId>com.tngtech.archunit</groupId>
+          <artifactId>archunit</artifactId>
+          <version>1.4.1</version> <!-- temp fix to support Java 25 -->
+        </dependency>
+        <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-core</artifactId>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-actuator</artifactId>
         </dependency>
-        -->
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-docs</artifactId>

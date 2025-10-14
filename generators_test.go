@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
-	"github.com/stretchr/testify/assert"
 	"os/exec"
 	"runtime"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
+
+	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
+	"github.com/stretchr/testify/assert"
 )
 
 var hostOS = runtime.GOOS
