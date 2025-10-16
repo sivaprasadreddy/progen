@@ -1,4 +1,4 @@
-package spring_boot
+package springboot
 
 type ThymeleafConfig struct {
 	pg projectGenerator

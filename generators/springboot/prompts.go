@@ -1,4 +1,4 @@
-package spring_boot
+package springboot
 
 import (
 	"errors"
@@ -54,7 +54,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	inputs := []huh.Field{
 		huh.NewInput().
 			Title("Enter Application Name:").
-			Description("Ex: spring-boot-demo").
+			Description("Ex: springboot-demo").
 			Validate(func(str string) error {
 				return helpers.ValidateApplicationName(str)
 			}).Value(&answers.AppName),
@@ -72,7 +72,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 
 		huh.NewInput().
 			Title("Enter ArtifactId:").
-			Description("Ex: spring-boot-demo").
+			Description("Ex: springboot-demo").
 			Validate(func(str string) error {
 				if str == "" {
 					return errors.New("ArtifactId is required")

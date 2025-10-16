@@ -1,4 +1,4 @@
-package spring_boot
+package springboot
 
 type BuildToolConfig struct {
 	pg projectGenerator

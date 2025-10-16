@@ -1,12 +1,11 @@
 // Package spring_boot provides functionality for generating Spring Boot projects
 // with various configurations and features.
-package spring_boot
+package springboot
 
 import (
 	"embed"
 	"encoding/json"
 	"fmt"
-	"os"
 	"os/exec"
 	"path"
 	"runtime"
@@ -79,11 +78,12 @@ func GenerateInitConfig() error {
 }
 
 func writeConfigFile(pc ProjectConfig, filePath string) error {
-	file, err := json.MarshalIndent(pc, "", " ")
+	data, err := json.MarshalIndent(pc, "", " ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal project config: %w", err)
 	}
-	if err = os.WriteFile(filePath, file, FilePermission); err != nil {
+	_, err = helpers.CreateFileWithData(filePath, data)
+	if err != nil {
 		return fmt.Errorf("failed to write .progen.json file: %w", err)
 	}
 	return nil
@@ -160,7 +160,10 @@ func (pg projectGenerator) formatCode(pc ProjectConfig) error {
 	executable, formatCmd := pg.getBuildToolCommands(pc.BuildTool)
 	appFormatCmd := pg.buildCommandString(pc.AppName, executable, formatCmd)
 	cmd := pg.createOSCommand(appFormatCmd)
-	_, err := cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("failed to format project code\n%w", output)
+	}
 	return err
 }
 

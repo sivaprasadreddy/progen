@@ -1,4 +1,4 @@
-package spring_boot
+package springboot
 
 type ReadMeConfig struct {
 	pg projectGenerator

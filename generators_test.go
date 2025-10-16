@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	sb "github.com/sivaprasadreddy/progen/generators/spring-boot"
+	sb "github.com/sivaprasadreddy/progen/generators/springboot"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,7 +48,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 	for _, tt := range options {
 		t.Run(tt.appType.String()+"-"+tt.buildTool.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
 			t.Log("Generating App with Options: ", tt)
-			appName := "spring-boot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+			appName := "springboot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 
 			pc := sb.ProjectConfig{
 				AppType:               tt.appType,
@@ -113,7 +113,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 	for _, tt := range options {
 		t.Run(tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
 			t.Log("Generating App with Options: ", tt)
-			appName := "my-spring-boot-mvn-api-" + strings.ToLower(tt.dbType.String()) + "-" + strings.ToLower(tt.migrationTool.String())
+			appName := "my-springboot-mvn-api-" + strings.ToLower(tt.dbType.String()) + "-" + strings.ToLower(tt.migrationTool.String())
 
 			pc := sb.ProjectConfig{
 				AppType:            sb.RestApi,

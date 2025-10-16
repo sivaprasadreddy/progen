@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/sivaprasadreddy/progen/generators/helpers"
-	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
+	"github.com/sivaprasadreddy/progen/generators/springboot"
 	"github.com/spf13/cobra"
 )
 

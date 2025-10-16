@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	springboot "github.com/sivaprasadreddy/progen/generators/spring-boot"
+	"github.com/sivaprasadreddy/progen/generators/springboot"
 )
 
 func invokeGenerator() error {

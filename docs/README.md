@@ -4,5 +4,5 @@
 Using [Charm VHS](https://github.com/charmbracelet/vhs)
 
 ```shell
-$ vhs spring-boot.tape
+$ vhs springboot.tape
 ```

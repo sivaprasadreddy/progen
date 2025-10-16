@@ -13,6 +13,9 @@ import (
 	"strings"
 )
 
+const FilePermission = 0755
+const DirPermission = 0700
+
 func CopyDir(tmplFS embed.FS, origin, projectName, dirName string) error {
 	err := fs.WalkDir(tmplFS, origin, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -40,7 +43,7 @@ func copyFile(tmplFS fs.FS, origin, filePath, projectName, dirName string) error
 
 	ensureDir(targetFilePath)
 
-	if err := os.WriteFile(targetFilePath, fileContent, 0755); err != nil {
+	if err := os.WriteFile(targetFilePath, fileContent, FilePermission); err != nil {
 		return err
 	}
 
@@ -60,7 +63,7 @@ func CopyTemplateFile(tmplFS fs.FS, filePath, projectName, destFileName string) 
 
 	ensureDir(targetFilePath)
 
-	if err := os.WriteFile(targetFilePath, fileContent, 0755); err != nil {
+	if err := os.WriteFile(targetFilePath, fileContent, FilePermission); err != nil {
 		return err
 	}
 
@@ -88,10 +91,24 @@ func RecreateDir(dirName string) error {
 
 func CreateFile(filePath string) *os.File {
 	parent := filepath.Dir(filePath)
-	_ = os.MkdirAll(parent, 0700)
+	_ = os.MkdirAll(parent, DirPermission)
 	f, err := os.Create(filePath)
 	FatalIfErr(err)
 	return f
+}
+
+func CreateFileWithData(filePath string, data []byte) (*os.File, error) {
+	parent := filepath.Dir(filePath)
+	_ = os.MkdirAll(parent, DirPermission)
+	f, err := os.Create(filePath)
+	if err != nil {
+		return nil, err
+	}
+	err = os.WriteFile(filePath, data, FilePermission)
+	if err != nil {
+		return nil, err
+	}
+	return f, err
 }
 
 func ValidateApplicationName(val interface{}) error {
