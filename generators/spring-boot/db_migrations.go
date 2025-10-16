@@ -15,15 +15,15 @@ func (d DbMigrationsConfig) generate(pc ProjectConfig) error {
 func (d DbMigrationsConfig) createDbMigrationFiles(pc ProjectConfig) error {
 	templateMap := map[string]string{}
 
-	if pc.DbMigrationTool == DbMigrationToolFlyway {
+	if pc.DbMigrationTool == Flyway {
 		if pc.SecuritySupport || pc.JwtSecuritySupport {
-			if pc.DbType == DbPostgreSQL {
+			if pc.DbType == PostgreSQL {
 				templateMap["db/migration/flyway/V1__init_postgresql.sql"] = "db/migration/V1__init.sql"
 			}
-			if pc.DbType == DbMySQL {
+			if pc.DbType == MySQL {
 				templateMap["db/migration/flyway/V1__init_mysql.sql"] = "db/migration/V1__init.sql"
 			}
-			if pc.DbType == DbMariaDB {
+			if pc.DbType == MariaDB {
 				templateMap["db/migration/flyway/V1__init_mariadb.sql"] = "db/migration/V1__init.sql"
 			}
 		} else {
@@ -31,17 +31,17 @@ func (d DbMigrationsConfig) createDbMigrationFiles(pc ProjectConfig) error {
 		}
 	}
 
-	if pc.DbMigrationTool == DbMigrationToolLiquibase {
+	if pc.DbMigrationTool == Liquibase {
 		templateMap["db/migration/liquibase/liquibase-changelog.xml"] = "db/migration/liquibase-changelog.xml"
 
 		if pc.SecuritySupport || pc.JwtSecuritySupport {
-			if pc.DbType == DbPostgreSQL {
+			if pc.DbType == PostgreSQL {
 				templateMap["db/migration/liquibase/changelog/01-init-postgresql.xml"] = "db/migration/changelog/01-init.xml"
 			}
-			if pc.DbType == DbMySQL {
+			if pc.DbType == MySQL {
 				templateMap["db/migration/liquibase/changelog/01-init-mysql.xml"] = "db/migration/changelog/01-init.xml"
 			}
-			if pc.DbType == DbMariaDB {
+			if pc.DbType == MariaDB {
 				templateMap["db/migration/liquibase/changelog/01-init-mariadb.xml"] = "db/migration/changelog/01-init.xml"
 			}
 		} else {

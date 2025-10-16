@@ -18,15 +18,15 @@ func getAnswers() (ProjectConfig, error) {
 }
 
 func getProjectConfigAnswers() (*ProjectConfig, error) {
-	var appType = AppTypeRestApi
+	var appType = RestApi
 
 	appTypeForm := huh.NewForm(
 		huh.NewGroup(
-			huh.NewSelect[string]().
+			huh.NewSelect[AppType]().
 				Title("Select App Type:").
 				Options(
-					huh.NewOption(AppTypeRestApi, AppTypeRestApi).Selected(true),
-					huh.NewOption(AppTypeWebApp, AppTypeWebApp),
+					huh.NewOption(RestApi.String(), RestApi).Selected(true),
+					huh.NewOption(WebApp.String(), WebApp),
 				).Value(&appType),
 		),
 	)
@@ -45,8 +45,8 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		AppVersion:      "1.0.0",
 		BasePackage:     "com.mycompany.myapp",
 		BuildTool:       BuildToolMaven,
-		DbType:          DbPostgreSQL,
-		DbMigrationTool: DbMigrationToolFlyway,
+		DbType:          PostgreSQL,
+		DbMigrationTool: Flyway,
 	}
 
 	var features []string
@@ -100,26 +100,26 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 				return nil
 			}).Value(&answers.BasePackage),
 
-		huh.NewSelect[string]().
+		huh.NewSelect[BuildTool]().
 			Title("Select Build Tool:").
 			Options(
-				huh.NewOption(BuildToolMaven, BuildToolMaven).Selected(true),
-				huh.NewOption(BuildToolGradle, BuildToolGradle),
+				huh.NewOption(BuildToolMaven.String(), BuildToolMaven).Selected(true),
+				huh.NewOption(BuildToolGradle.String(), BuildToolGradle),
 			).Value(&answers.BuildTool),
 
-		huh.NewSelect[string]().
+		huh.NewSelect[DatabaseType]().
 			Title("Select Database:").
 			Options(
-				huh.NewOption(DbPostgreSQL, DbPostgreSQL).Selected(true),
-				huh.NewOption(DbMySQL, DbMySQL),
-				huh.NewOption(DbMariaDB, DbMariaDB),
+				huh.NewOption(PostgreSQL.String(), PostgreSQL).Selected(true),
+				huh.NewOption(MySQL.String(), MySQL),
+				huh.NewOption(MariaDB.String(), MariaDB),
 			).Value(&answers.DbType),
 
-		huh.NewSelect[string]().
+		huh.NewSelect[DbMigrationTool]().
 			Title("Select Database Migration Tool:").
 			Options(
-				huh.NewOption(DbMigrationToolFlyway, DbMigrationToolFlyway).Selected(true),
-				huh.NewOption(DbMigrationToolLiquibase, DbMigrationToolLiquibase),
+				huh.NewOption(Flyway.String(), Flyway).Selected(true),
+				huh.NewOption(Liquibase.String(), Liquibase),
 			).Value(&answers.DbMigrationTool),
 	}
 
@@ -129,14 +129,14 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 	}
 
-	if answers.AppType == AppTypeWebApp {
+	if answers.AppType == WebApp {
 		otherFeatureOptions = append(otherFeatureOptions,
 			huh.NewOption(FeatureSecuritySupport, FeatureSecuritySupport),
 			huh.NewOption(FeatureThymeleafSupport, FeatureThymeleafSupport).Selected(true),
 			huh.NewOption(FeatureHTMXSupport, FeatureHTMXSupport))
 	}
 
-	if answers.AppType == AppTypeRestApi {
+	if answers.AppType == RestApi {
 		otherFeatureOptions = append(otherFeatureOptions,
 			huh.NewOption(FeatureJwtSecuritySupport, FeatureJwtSecuritySupport),
 		)

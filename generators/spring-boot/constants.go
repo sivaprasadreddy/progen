@@ -8,18 +8,57 @@ const srcMainResourcesPath = "src/main/resources/"
 const srcTestJavaPath = "src/test/java/"
 const srcTestResourcesPath = "src/test/resources/"
 
-const AppTypeRestApi = "REST API"
-const AppTypeWebApp = "Web App"
+type AppType string
 
-const BuildToolMaven = "Maven"
-const BuildToolGradle = "Gradle"
+const (
+	RestApi AppType = "REST API"
+	WebApp  AppType = "Web App"
+)
 
-const DbPostgreSQL = "PostgreSQL"
-const DbMySQL = "MySQL"
-const DbMariaDB = "MariaDB"
+func (a AppType) String() string {
+	switch a {
+	case RestApi:
+		return "REST API"
+	case WebApp:
+		return "Web App"
+	default:
+		return "Unknown"
+	}
+}
 
-const DbMigrationToolFlyway = "Flyway"
-const DbMigrationToolLiquibase = "Liquibase"
+type BuildTool string
+
+const (
+	BuildToolMaven  BuildTool = "Maven"
+	BuildToolGradle BuildTool = "Gradle"
+)
+
+func (s BuildTool) String() string {
+	return string(s)
+}
+
+type DatabaseType string
+
+const (
+	PostgreSQL DatabaseType = "PostgreSQL"
+	MySQL      DatabaseType = "MySQL"
+	MariaDB    DatabaseType = "MariaDB"
+)
+
+func (s DatabaseType) String() string {
+	return string(s)
+}
+
+type DbMigrationTool string
+
+const (
+	Flyway    DbMigrationTool = "Flyway"
+	Liquibase DbMigrationTool = "Liquibase"
+)
+
+func (s DbMigrationTool) String() string {
+	return string(s)
+}
 
 const FeatureDockerComposeSupport = "Docker Compose"
 const FeatureSpringModulithSupport = "Spring Modulith"

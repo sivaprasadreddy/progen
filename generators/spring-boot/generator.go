@@ -22,15 +22,15 @@ const templatesRootDir = "templates"
 
 // ProjectConfig holds all configuration options for generating a Spring Boot project.
 type ProjectConfig struct {
-	AppType               string
+	AppType               AppType
 	AppName               string
 	GroupID               string
 	ArtifactID            string
 	AppVersion            string
 	BasePackage           string
-	BuildTool             string
-	DbType                string
-	DbMigrationTool       string
+	BuildTool             BuildTool
+	DbType                DatabaseType
+	DbMigrationTool       DbMigrationTool
 	DockerComposeSupport  bool
 	SpringModulithSupport bool
 	SpringCloudAWSSupport bool
@@ -58,15 +58,15 @@ func GenerateProject(pc ProjectConfig) error {
 
 func GenerateInitConfig() error {
 	pc := ProjectConfig{
-		AppType:               AppTypeRestApi,
+		AppType:               RestApi,
 		AppName:               "myapp",
 		GroupID:               "com.mycompany",
 		ArtifactID:            "myapp",
 		AppVersion:            "1.0.0",
 		BasePackage:           "com.mycompany.myapp",
 		BuildTool:             BuildToolMaven,
-		DbType:                DbPostgreSQL,
-		DbMigrationTool:       DbMigrationToolFlyway,
+		DbType:                PostgreSQL,
+		DbMigrationTool:       Flyway,
 		DockerComposeSupport:  true,
 		SpringModulithSupport: false,
 		SpringCloudAWSSupport: false,
@@ -164,7 +164,7 @@ func (pg projectGenerator) formatCode(pc ProjectConfig) error {
 	return err
 }
 
-func (pg projectGenerator) getBuildToolCommands(buildTool string) (executable, formatCmd string) {
+func (pg projectGenerator) getBuildToolCommands(buildTool BuildTool) (executable, formatCmd string) {
 	isWindows := runtime.GOOS == "windows"
 
 	if buildTool == BuildToolGradle {
