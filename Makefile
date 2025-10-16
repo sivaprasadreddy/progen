@@ -30,7 +30,7 @@ test:
 	@go test -v -short ./...
 
 # Run all tests
-all-tests:
+all_tests:
 	@echo "Testing..."
 	@go test -v ./...
 
