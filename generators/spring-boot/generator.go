@@ -64,7 +64,7 @@ func GenerateInitConfig() error {
 		ArtifactID:            "myapp",
 		AppVersion:            "1.0.0",
 		BasePackage:           "com.mycompany.myapp",
-		BuildTool:             BuildToolMaven,
+		BuildTool:             Maven,
 		DbType:                PostgreSQL,
 		DbMigrationTool:       Flyway,
 		DockerComposeSupport:  true,
@@ -167,7 +167,7 @@ func (pg projectGenerator) formatCode(pc ProjectConfig) error {
 func (pg projectGenerator) getBuildToolCommands(buildTool BuildTool) (executable, formatCmd string) {
 	isWindows := runtime.GOOS == "windows"
 
-	if buildTool == BuildToolGradle {
+	if buildTool == Gradle {
 		if isWindows {
 			return "gradlew.bat", "spotlessApply"
 		}

@@ -39,10 +39,10 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		SecuritySupport       bool
 		JwtSecuritySupport    bool
 	}{
-		{sb.WebApp, sb.BuildToolMaven, sb.MySQL, sb.Flyway, true, true, true, true, true, true, false},
-		{sb.WebApp, sb.BuildToolGradle, sb.PostgreSQL, sb.Liquibase, true, true, true, true, true, true, false},
-		{sb.RestApi, sb.BuildToolMaven, sb.MariaDB, sb.Flyway, true, true, true, false, false, false, true},
-		{sb.RestApi, sb.BuildToolGradle, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false, true},
+		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true, true, true, true, false},
+		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true, true, true, true, false},
+		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, true, true, false, false, false, true},
+		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false, true},
 	}
 
 	for _, tt := range options {
@@ -70,7 +70,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 			}
 			err := sb.GenerateProject(pc)
 			assert.Nil(t, err)
-			if tt.buildTool == sb.BuildToolMaven {
+			if tt.buildTool == sb.Maven {
 				err = testGeneratedProject(appName, mvnExec, "test")
 			} else {
 				err = testGeneratedProject(appName, gradleExec, "build")
@@ -122,7 +122,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 				ArtifactID:         appName,
 				AppVersion:         "1.0",
 				BasePackage:        "com.sivalabs.myapp",
-				BuildTool:          sb.BuildToolMaven,
+				BuildTool:          sb.Maven,
 				DbType:             tt.dbType,
 				DbMigrationTool:    tt.migrationTool,
 				JwtSecuritySupport: tt.JwtSecuritySupport,

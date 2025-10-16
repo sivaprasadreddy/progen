@@ -9,18 +9,5 @@ func NewReadMeConfig(pg projectGenerator) *ReadMeConfig {
 }
 
 func (r ReadMeConfig) generate(pc ProjectConfig) error {
-	return r.createReadMeFile(pc)
-}
-
-func (r ReadMeConfig) createReadMeFile(pc ProjectConfig) error {
-	templateMap := map[string]string{
-		"README.md.tmpl": "README.md",
-	}
-	for tmpl, filePath := range templateMap {
-		err := r.pg.executeTemplate(pc, tmpl, filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return r.pg.executeTemplate(pc, "README.md.tmpl", "README.md")
 }

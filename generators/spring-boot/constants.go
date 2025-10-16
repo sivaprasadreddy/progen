@@ -29,8 +29,8 @@ func (a AppType) String() string {
 type BuildTool string
 
 const (
-	BuildToolMaven  BuildTool = "Maven"
-	BuildToolGradle BuildTool = "Gradle"
+	Maven  BuildTool = "Maven"
+	Gradle BuildTool = "Gradle"
 )
 
 func (s BuildTool) String() string {

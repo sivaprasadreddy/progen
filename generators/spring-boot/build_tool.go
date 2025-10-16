@@ -9,7 +9,7 @@ func NewBuildToolConfig(pg projectGenerator) *BuildToolConfig {
 }
 
 func (b BuildToolConfig) generate(pc ProjectConfig) error {
-	if pc.BuildTool == BuildToolMaven {
+	if pc.BuildTool == Maven {
 		if err := b.createMavenWrapper(pc); err != nil {
 			return err
 		}

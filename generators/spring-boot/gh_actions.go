@@ -9,10 +9,6 @@ func NewGhActionsConfig(pg projectGenerator) *GhActionsConfig {
 }
 
 func (g GhActionsConfig) generate(pc ProjectConfig) error {
-	return g.createCIConfigFiles(pc)
-}
-
-func (g GhActionsConfig) createCIConfigFiles(pc ProjectConfig) error {
 	templateMap := map[string]string{
 		"ci/github/workflows/ci.yml.tmpl": ".github/workflows/ci.yml",
 	}

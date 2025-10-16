@@ -12,18 +12,5 @@ func (d DockerComposeConfig) generate(pc ProjectConfig) error {
 	if !pc.DockerComposeSupport {
 		return nil
 	}
-	return d.createComposeConfigFiles(pc)
-}
-
-func (d DockerComposeConfig) createComposeConfigFiles(pc ProjectConfig) error {
-	templateMap := map[string]string{
-		"compose.yml.tmpl": "compose.yml",
-	}
-	for tmpl, filePath := range templateMap {
-		err := d.pg.executeTemplate(pc, tmpl, filePath)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return d.pg.executeTemplate(pc, "compose.yml.tmpl", "compose.yml")
 }

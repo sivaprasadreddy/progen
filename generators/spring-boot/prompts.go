@@ -44,7 +44,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		ArtifactID:      "myapp",
 		AppVersion:      "1.0.0",
 		BasePackage:     "com.mycompany.myapp",
-		BuildTool:       BuildToolMaven,
+		BuildTool:       Maven,
 		DbType:          PostgreSQL,
 		DbMigrationTool: Flyway,
 	}
@@ -103,8 +103,8 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		huh.NewSelect[BuildTool]().
 			Title("Select Build Tool:").
 			Options(
-				huh.NewOption(BuildToolMaven.String(), BuildToolMaven).Selected(true),
-				huh.NewOption(BuildToolGradle.String(), BuildToolGradle),
+				huh.NewOption(Maven.String(), Maven).Selected(true),
+				huh.NewOption(Gradle.String(), Gradle),
 			).Value(&answers.BuildTool),
 
 		huh.NewSelect[DatabaseType]().

@@ -14,18 +14,15 @@ func (s SpringModulithConfig) generate(pc ProjectConfig) error {
 	if !pc.SpringModulithSupport {
 		return nil
 	}
-	if err := s.createSrcTestJava(pc); err != nil {
-		return err
-	}
-	return nil
+	return s.createSrcTestJava(pc)
 }
 
 func (s SpringModulithConfig) createSrcTestJava(pc ProjectConfig) error {
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
 
-	templateMap := map[string]string{}
-
-	templateMap["ModularityTests.java.tmpl"] = "ModularityTests.java"
+	templateMap := map[string]string{
+		"ModularityTests.java.tmpl": "ModularityTests.java",
+	}
 
 	for tmpl, filePath := range templateMap {
 		err := s.pg.executeTemplate(pc, srcTestJavaPath+tmpl, srcTestJavaPath+basePackagePath+"/"+filePath)

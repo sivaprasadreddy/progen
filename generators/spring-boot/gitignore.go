@@ -9,9 +9,5 @@ func NewGitIgnoreConfig(pg projectGenerator) *GitIgnoreConfig {
 }
 
 func (g GitIgnoreConfig) generate(pc ProjectConfig) error {
-	return g.createGitIgnore(pc)
-}
-
-func (g GitIgnoreConfig) createGitIgnore(pc ProjectConfig) error {
 	return g.pg.executeTemplate(pc, "gitignore.tmpl", ".gitignore")
 }
