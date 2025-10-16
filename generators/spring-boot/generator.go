@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path"
 	"runtime"
-	"slices"
 	"text/template"
 
 	"github.com/sivaprasadreddy/progen/generators/helpers"
@@ -29,7 +28,6 @@ type ProjectConfig struct {
 	BuildTool             string
 	DbType                string
 	DbMigrationTool       string
-	Features              []string
 	DockerComposeSupport  bool
 	SpringModulithSupport bool
 	SpringCloudAWSSupport bool
@@ -47,63 +45,46 @@ func Run() {
 }
 
 func GenerateProject(pc ProjectConfig) error {
-	updateFeatureFlags(&pc)
 	pg := projectGenerator{tmplFS: tmplsFS}
-	err := pg.generate(pc)
-	if err != nil {
+	if err := pg.generate(pc); err != nil {
 		return err
 	}
+	return writeConfigFile(pc, pc.AppName+"/.progen.json")
+}
+
+func GenerateInitConfig() error {
+	pc := ProjectConfig{
+		AppType:               AppTypeRestApi,
+		AppName:               "myapp",
+		GroupID:               "com.mycompany",
+		ArtifactID:            "myapp",
+		AppVersion:            "1.0.0",
+		BasePackage:           "com.mycompany.myapp",
+		BuildTool:             BuildToolMaven,
+		DbType:                DbPostgreSQL,
+		DbMigrationTool:       DbMigrationToolFlyway,
+		DockerComposeSupport:  true,
+		SpringModulithSupport: false,
+		SpringCloudAWSSupport: false,
+		ThymeleafSupport:      false,
+		HTMXSupport:           false,
+		SecuritySupport:       false,
+		JwtSecuritySupport:    false,
+	}
+	return writeConfigFile(pc, ".progen.json")
+}
+
+func writeConfigFile(pc ProjectConfig, filePath string) error {
 	file, err := json.MarshalIndent(pc, "", " ")
 	if err != nil {
 		fmt.Println("failed to marshall projectConfig")
-	} else {
-		if err = os.WriteFile(pc.AppName+"/.progen.json", file, 0644); err != nil {
-			fmt.Println("failed to write .progrn.json file")
-		}
+		return err
+	}
+	if err = os.WriteFile(filePath, file, 0644); err != nil {
+		fmt.Println("failed to write .progen.json file")
+		return err
 	}
 	return nil
-}
-
-func updateFeatureFlags(pc *ProjectConfig) {
-	pc.DockerComposeSupport = pc.EnabledDockerComposeSupport()
-	pc.SpringModulithSupport = pc.EnabledSpringModulithSupport()
-	pc.SpringCloudAWSSupport = pc.EnabledSpringCloudAWSSupport()
-	pc.ThymeleafSupport = pc.EnabledThymeleafSupport()
-	pc.HTMXSupport = pc.EnabledHTMXSupport()
-	pc.SecuritySupport = pc.EnabledSecuritySupport()
-	pc.JwtSecuritySupport = pc.EnabledJwtSecuritySupport()
-}
-
-func (p ProjectConfig) EnabledSecuritySupport() bool {
-	return p.Enabled(FeatureSecuritySupport)
-}
-
-func (p ProjectConfig) EnabledJwtSecuritySupport() bool {
-	return p.Enabled(FeatureJwtSecuritySupport)
-}
-
-func (p ProjectConfig) EnabledSpringModulithSupport() bool {
-	return p.Enabled(FeatureSpringModulithSupport)
-}
-
-func (p ProjectConfig) EnabledSpringCloudAWSSupport() bool {
-	return p.Enabled(FeatureSpringCloudAWSSupport)
-}
-
-func (p ProjectConfig) EnabledThymeleafSupport() bool {
-	return p.Enabled(FeatureThymeleafSupport)
-}
-
-func (p ProjectConfig) EnabledHTMXSupport() bool {
-	return p.Enabled(FeatureHTMXSupport)
-}
-
-func (p ProjectConfig) EnabledDockerComposeSupport() bool {
-	return p.Enabled(FeatureDockerComposeSupport)
-}
-
-func (p ProjectConfig) Enabled(feature string) bool {
-	return p.Features != nil && slices.Contains(p.Features, feature)
 }
 
 type configGenerator interface {

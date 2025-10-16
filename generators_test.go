@@ -27,17 +27,22 @@ func init() {
 
 func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 	var options = []struct {
-		appType       string
-		buildTool     string
-		dbType        string
-		migrationTool string
-		features      []string
+		appType               string
+		buildTool             string
+		dbType                string
+		migrationTool         string
+		DockerComposeSupport  bool
+		SpringModulithSupport bool
+		SpringCloudAWSSupport bool
+		ThymeleafSupport      bool
+		HTMXSupport           bool
+		SecuritySupport       bool
+		JwtSecuritySupport    bool
 	}{
-		{"Web App", "Maven", "MySQL", "Flyway", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security"}},
-		{"Web App", "Gradle", "PostgreSQL", "Liquibase", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "Thymeleaf", "HTMX", "Security"}},
-
-		{"REST API", "Maven", "MariaDB", "Flyway", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "JWT Security"}},
-		{"REST API", "Gradle", "PostgreSQL", "Liquibase", []string{"Docker Compose", "Spring Modulith", "Spring Cloud AWS", "JWT Security"}},
+		{springboot.AppTypeWebApp, springboot.BuildToolMaven, springboot.DbMySQL, springboot.DbMigrationToolFlyway, true, true, true, true, true, true, false},
+		{springboot.AppTypeWebApp, springboot.BuildToolGradle, springboot.DbPostgreSQL, springboot.DbMigrationToolLiquibase, true, true, true, true, true, true, false},
+		{springboot.AppTypeRestApi, springboot.BuildToolMaven, springboot.DbMariaDB, springboot.DbMigrationToolFlyway, true, true, true, false, false, false, true},
+		{springboot.AppTypeRestApi, springboot.BuildToolGradle, springboot.DbPostgreSQL, springboot.DbMigrationToolLiquibase, true, true, true, false, false, false, true},
 	}
 
 	for _, tt := range options {
@@ -46,20 +51,26 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 			appName := "spring-boot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 
 			pc := springboot.ProjectConfig{
-				AppType:         tt.appType,
-				AppName:         appName,
-				GroupID:         "com.sivalabs",
-				ArtifactID:      appName,
-				AppVersion:      "1.0",
-				BasePackage:     "com.sivalabs.myapp",
-				BuildTool:       tt.buildTool,
-				DbType:          tt.dbType,
-				DbMigrationTool: tt.migrationTool,
-				Features:        tt.features,
+				AppType:               tt.appType,
+				AppName:               appName,
+				GroupID:               "com.sivalabs",
+				ArtifactID:            appName,
+				AppVersion:            "1.0",
+				BasePackage:           "com.sivalabs.myapp",
+				BuildTool:             tt.buildTool,
+				DbType:                tt.dbType,
+				DbMigrationTool:       tt.migrationTool,
+				DockerComposeSupport:  tt.DockerComposeSupport,
+				SpringModulithSupport: tt.SpringModulithSupport,
+				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
+				ThymeleafSupport:      tt.ThymeleafSupport,
+				HTMXSupport:           tt.HTMXSupport,
+				SecuritySupport:       tt.SecuritySupport,
+				JwtSecuritySupport:    tt.JwtSecuritySupport,
 			}
 			err := springboot.GenerateProject(pc)
 			assert.Nil(t, err)
-			if tt.buildTool == "Maven" {
+			if tt.buildTool == springboot.BuildToolMaven {
 				err = testGeneratedProject(appName, mvnExec, "test")
 			} else {
 				err = testGeneratedProject(appName, gradleExec, "build")
@@ -78,25 +89,25 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 		t.Skip("skipping all combination tests in short mode")
 	}
 	var options = []struct {
-		dbType        string
-		migrationTool string
-		features      []string
+		dbType             string
+		migrationTool      string
+		JwtSecuritySupport bool
 	}{
-		{"MySQL", "Flyway", []string{}},
-		{"PostgreSQL", "Flyway", []string{}},
-		{"MariaDB", "Flyway", []string{}},
+		{springboot.DbMySQL, springboot.DbMigrationToolFlyway, false},
+		{springboot.DbPostgreSQL, springboot.DbMigrationToolFlyway, false},
+		{springboot.DbMariaDB, springboot.DbMigrationToolFlyway, false},
 
-		{"MySQL", "Liquibase", []string{}},
-		{"PostgreSQL", "Liquibase", []string{}},
-		{"MariaDB", "Liquibase", []string{}},
+		{springboot.DbMySQL, springboot.DbMigrationToolLiquibase, false},
+		{springboot.DbPostgreSQL, springboot.DbMigrationToolLiquibase, false},
+		{springboot.DbMariaDB, springboot.DbMigrationToolLiquibase, false},
 
-		{"MySQL", "Flyway", []string{"JWT Security"}},
-		{"MariaDB", "Flyway", []string{"JWT Security"}},
-		{"PostgreSQL", "Flyway", []string{"JWT Security"}},
+		{springboot.DbMySQL, springboot.DbMigrationToolFlyway, true},
+		{springboot.DbMariaDB, springboot.DbMigrationToolFlyway, true},
+		{springboot.DbPostgreSQL, springboot.DbMigrationToolFlyway, true},
 
-		{"MySQL", "Liquibase", []string{"JWT Security"}},
-		{"MariaDB", "Liquibase", []string{"JWT Security"}},
-		{"PostgreSQL", "Liquibase", []string{"JWT Security"}},
+		{springboot.DbMySQL, springboot.DbMigrationToolLiquibase, true},
+		{springboot.DbMariaDB, springboot.DbMigrationToolLiquibase, true},
+		{springboot.DbPostgreSQL, springboot.DbMigrationToolLiquibase, true},
 	}
 
 	for _, tt := range options {
@@ -105,16 +116,16 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 			appName := "my-spring-boot-mvn-api-" + strings.ToLower(tt.dbType) + "-" + strings.ToLower(tt.migrationTool)
 
 			pc := springboot.ProjectConfig{
-				AppType:         "REST API",
-				AppName:         appName,
-				GroupID:         "com.sivalabs",
-				ArtifactID:      appName,
-				AppVersion:      "1.0",
-				BasePackage:     "com.sivalabs.myapp",
-				BuildTool:       "Maven",
-				DbType:          tt.dbType,
-				DbMigrationTool: tt.migrationTool,
-				Features:        tt.features,
+				AppType:            springboot.AppTypeRestApi,
+				AppName:            appName,
+				GroupID:            "com.sivalabs",
+				ArtifactID:         appName,
+				AppVersion:         "1.0",
+				BasePackage:        "com.sivalabs.myapp",
+				BuildTool:          springboot.BuildToolMaven,
+				DbType:             tt.dbType,
+				DbMigrationTool:    tt.migrationTool,
+				JwtSecuritySupport: tt.JwtSecuritySupport,
 			}
 			err := springboot.GenerateProject(pc)
 			assert.Nil(t, err)

@@ -3,6 +3,7 @@ package spring_boot
 import (
 	"errors"
 	"os"
+	"slices"
 
 	"github.com/charmbracelet/huh"
 	"github.com/sivaprasadreddy/progen/generators/helpers"
@@ -16,19 +17,16 @@ func getAnswers() (ProjectConfig, error) {
 	return *answers, nil
 }
 
-const appTypeRestApi = "REST API"
-const appTypeWebApp = "Web App"
-
 func getProjectConfigAnswers() (*ProjectConfig, error) {
-	var appType = appTypeRestApi
+	var appType = AppTypeRestApi
 
 	appTypeForm := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
 				Title("Select App Type:").
 				Options(
-					huh.NewOption(appTypeRestApi, appTypeRestApi).Selected(true),
-					huh.NewOption(appTypeWebApp, appTypeWebApp),
+					huh.NewOption(AppTypeRestApi, AppTypeRestApi).Selected(true),
+					huh.NewOption(AppTypeWebApp, AppTypeWebApp),
 				).Value(&appType),
 		),
 	)
@@ -46,11 +44,12 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		ArtifactID:      "myapp",
 		AppVersion:      "1.0.0",
 		BasePackage:     "com.mycompany.myapp",
-		BuildTool:       "Maven",
-		DbType:          "PostgreSQL",
-		DbMigrationTool: "Flyway",
-		Features:        []string{},
+		BuildTool:       BuildToolMaven,
+		DbType:          DbPostgreSQL,
+		DbMigrationTool: DbMigrationToolFlyway,
 	}
+
+	var features []string
 
 	inputs := []huh.Field{
 		huh.NewInput().
@@ -104,49 +103,49 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		huh.NewSelect[string]().
 			Title("Select Build Tool:").
 			Options(
-				huh.NewOption("Maven", "Maven").Selected(true),
-				huh.NewOption("Gradle", "Gradle"),
+				huh.NewOption(BuildToolMaven, BuildToolMaven).Selected(true),
+				huh.NewOption(BuildToolGradle, BuildToolGradle),
 			).Value(&answers.BuildTool),
 
 		huh.NewSelect[string]().
 			Title("Select Database:").
 			Options(
-				huh.NewOption("PostgreSQL", "PostgreSQL").Selected(true),
-				huh.NewOption("MySQL", "MySQL"),
-				huh.NewOption("MariaDB", "MariaDB"),
+				huh.NewOption(DbPostgreSQL, DbPostgreSQL).Selected(true),
+				huh.NewOption(DbMySQL, DbMySQL),
+				huh.NewOption(DbMariaDB, DbMariaDB),
 			).Value(&answers.DbType),
 
 		huh.NewSelect[string]().
 			Title("Select Database Migration Tool:").
 			Options(
-				huh.NewOption("Flyway", "Flyway").Selected(true),
-				huh.NewOption("Liquibase", "Liquibase"),
+				huh.NewOption(DbMigrationToolFlyway, DbMigrationToolFlyway).Selected(true),
+				huh.NewOption(DbMigrationToolLiquibase, DbMigrationToolLiquibase),
 			).Value(&answers.DbMigrationTool),
 	}
 
 	otherFeatureOptions := []huh.Option[string]{
-		huh.NewOption("Docker Compose", "Docker Compose").Selected(true),
-		huh.NewOption("Spring Modulith", "Spring Modulith"),
-		huh.NewOption("Spring Cloud AWS", "Spring Cloud AWS"),
+		huh.NewOption(FeatureDockerComposeSupport, FeatureDockerComposeSupport).Selected(true),
+		huh.NewOption(FeatureSpringModulithSupport, FeatureSpringModulithSupport),
+		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 	}
 
-	if answers.AppType == appTypeWebApp {
+	if answers.AppType == AppTypeWebApp {
 		otherFeatureOptions = append(otherFeatureOptions,
-			huh.NewOption("Security", "Security"),
-			huh.NewOption("Thymeleaf", "Thymeleaf").Selected(true),
-			huh.NewOption("HTMX", "HTMX"))
+			huh.NewOption(FeatureSecuritySupport, FeatureSecuritySupport),
+			huh.NewOption(FeatureThymeleafSupport, FeatureThymeleafSupport).Selected(true),
+			huh.NewOption(FeatureHTMXSupport, FeatureHTMXSupport))
 	}
 
-	if answers.AppType == appTypeRestApi {
+	if answers.AppType == AppTypeRestApi {
 		otherFeatureOptions = append(otherFeatureOptions,
-			huh.NewOption("JWT Security", "JWT Security"),
+			huh.NewOption(FeatureJwtSecuritySupport, FeatureJwtSecuritySupport),
 		)
 	}
 
 	otherFeaturesSelect := huh.NewMultiSelect[string]().
 		Title("Select Other Features:").
 		Options(otherFeatureOptions...).
-		Value(&answers.Features)
+		Value(&features)
 
 	inputs = append(inputs, otherFeaturesSelect)
 
@@ -158,5 +157,20 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	} else if err != nil {
 		return &answers, err
 	}
+	updateFeatureFlags(&answers, features)
 	return &answers, nil
+}
+
+func updateFeatureFlags(pc *ProjectConfig, features []string) {
+	pc.DockerComposeSupport = isEnabled(features, FeatureDockerComposeSupport)
+	pc.SpringModulithSupport = isEnabled(features, FeatureSpringModulithSupport)
+	pc.SpringCloudAWSSupport = isEnabled(features, FeatureSpringCloudAWSSupport)
+	pc.ThymeleafSupport = isEnabled(features, FeatureThymeleafSupport)
+	pc.HTMXSupport = isEnabled(features, FeatureHTMXSupport)
+	pc.SecuritySupport = isEnabled(features, FeatureSecuritySupport)
+	pc.JwtSecuritySupport = isEnabled(features, FeatureJwtSecuritySupport)
+}
+
+func isEnabled(features []string, feature string) bool {
+	return features != nil && slices.Contains(features, feature)
 }

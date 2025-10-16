@@ -10,7 +10,7 @@ The reasons for creating this new **progen** CLI tool are:
 * We should be able to use the tool without requiring the installation of other languages SDKs.
   For example, for generating a Java application, we shouldn't need to install Node.js or Python, etc.
 
-## Features
+## features
 The progen generates a Spring Boot application with the following features configured:
 
 * [Spring Boot](https://spring.io/projects/spring-boot) project with Maven and Gradle support

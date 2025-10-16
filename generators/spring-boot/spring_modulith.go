@@ -18,7 +18,7 @@ func (s SpringModulithConfig) generate(pc ProjectConfig) error {
 }
 
 func (s SpringModulithConfig) createSrcTestJava(pc ProjectConfig) error {
-	if !pc.EnabledSpringModulithSupport() {
+	if !pc.SpringModulithSupport {
 		return nil
 	}
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")

@@ -70,11 +70,11 @@ func (s SecurityConfig) createSrcTestJava(pc ProjectConfig) error {
 
 	templateMap := map[string]string{}
 
-	if pc.EnabledSecuritySupport() {
+	if pc.SecuritySupport {
 		templateMap["UserControllerTests.java.tmpl"] = "web/UserControllerTests.java"
 	}
 
-	if pc.EnabledJwtSecuritySupport() {
+	if pc.JwtSecuritySupport {
 		templateMap["LoginRestControllerTests.java.tmpl"] = "web/LoginRestControllerTests.java"
 		templateMap["UserRestControllerTests.java.tmpl"] = "web/UserRestControllerTests.java"
 	}
