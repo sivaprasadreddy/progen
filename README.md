@@ -51,7 +51,15 @@ $ progen --help
 ## Usage:
 
 ```shell
+# To use interactive shell
 $ progen
+
+# To create progen config file
+$ progen init
+Generated .progen.json successfully
+
+# Generating a new project using .progen.json configuration
+$ progen -c .progen.json
 ```
 
 ## License

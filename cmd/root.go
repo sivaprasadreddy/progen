@@ -18,7 +18,11 @@ var rootCmd = &cobra.Command{
 	Short: "Spring Boot Project Generator CLI",
 	Long:  `A CLI tool for generating Spring Boot applications`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := invokeGenerator()
+		configFile, err := cmd.Flags().GetString("config")
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = invokeGenerator(configFile)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -27,4 +31,5 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.Version = VERSION
+	rootCmd.Flags().StringP("config", "c", "", "--config .progen.json")
 }

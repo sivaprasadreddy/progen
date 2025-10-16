@@ -27,3 +27,5 @@ dist/
 
 # .DS_Store file of MacOS
 .DS_Store
+/.progen.json
+reviews.md

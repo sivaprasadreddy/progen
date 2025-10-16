@@ -6,9 +6,11 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"runtime"
+	"strings"
 	"text/template"
 
 	"github.com/sivaprasadreddy/progen/generators/helpers"
@@ -39,8 +41,33 @@ type ProjectConfig struct {
 	JwtSecuritySupport    bool
 }
 
-func Run() error {
-	projectConfig, err := getAnswers()
+var defaultProjectConfig = ProjectConfig{
+	AppType:               RestApi,
+	AppName:               "myapp",
+	GroupID:               "com.mycompany",
+	ArtifactID:            "myapp",
+	AppVersion:            "1.0.0",
+	BasePackage:           "com.mycompany.myapp",
+	BuildTool:             Maven,
+	DbType:                PostgreSQL,
+	DbMigrationTool:       Flyway,
+	DockerComposeSupport:  true,
+	SpringModulithSupport: false,
+	SpringCloudAWSSupport: false,
+	ThymeleafSupport:      false,
+	HTMXSupport:           false,
+	SecuritySupport:       false,
+	JwtSecuritySupport:    false,
+}
+
+func Run(configFile string) error {
+	var projectConfig ProjectConfig
+	var err error
+	if strings.TrimSpace(configFile) == "" {
+		projectConfig, err = getAnswers()
+	} else {
+		projectConfig, err = loadConfig(configFile)
+	}
 	helpers.FatalIfErr(err)
 	err = GenerateProject(projectConfig)
 	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
@@ -56,25 +83,68 @@ func GenerateProject(pc ProjectConfig) error {
 }
 
 func GenerateInitConfig() error {
-	pc := ProjectConfig{
-		AppType:               RestApi,
-		AppName:               "myapp",
-		GroupID:               "com.mycompany",
-		ArtifactID:            "myapp",
-		AppVersion:            "1.0.0",
-		BasePackage:           "com.mycompany.myapp",
-		BuildTool:             Maven,
-		DbType:                PostgreSQL,
-		DbMigrationTool:       Flyway,
-		DockerComposeSupport:  true,
-		SpringModulithSupport: false,
-		SpringCloudAWSSupport: false,
-		ThymeleafSupport:      false,
-		HTMXSupport:           false,
-		SecuritySupport:       false,
-		JwtSecuritySupport:    false,
+	return writeConfigFile(defaultProjectConfig, ".progen.json")
+}
+
+func loadConfig(configFile string) (ProjectConfig, error) {
+	var config ProjectConfig
+	data, err := os.ReadFile(configFile)
+	if err != nil {
+		return config, fmt.Errorf("failed to read config file: %w", err)
 	}
-	return writeConfigFile(pc, ".progen.json")
+	if err := json.Unmarshal(data, &config); err != nil {
+		return config, fmt.Errorf("failed to unmarshal config file: %w", err)
+	}
+	return validateAndSanitize(config), nil
+}
+
+func validateAndSanitize(pc ProjectConfig) ProjectConfig {
+	// Validate string fields
+	if strings.TrimSpace(pc.AppName) == "" {
+		fmt.Printf("WARNING: AppName '%s' is invalid. Using default: %s\n", pc.AppName, defaultProjectConfig.AppName)
+		pc.AppName = defaultProjectConfig.AppName
+	}
+	if strings.TrimSpace(pc.GroupID) == "" {
+		fmt.Printf("WARNING: GroupID '%s' is invalid. Using default: %s\n", pc.GroupID, defaultProjectConfig.GroupID)
+		pc.GroupID = defaultProjectConfig.GroupID
+	}
+	if strings.TrimSpace(pc.ArtifactID) == "" {
+		fmt.Printf("WARNING: ArtifactID '%s' is invalid. Using default: %s\n", pc.ArtifactID, defaultProjectConfig.ArtifactID)
+		pc.ArtifactID = defaultProjectConfig.ArtifactID
+	}
+	if strings.TrimSpace(pc.AppVersion) == "" {
+		fmt.Printf("WARNING: AppVersion '%s' is invalid. Using default: %s\n", pc.AppVersion, defaultProjectConfig.AppVersion)
+		pc.AppVersion = defaultProjectConfig.AppVersion
+	}
+	if strings.TrimSpace(pc.BasePackage) == "" {
+		fmt.Printf("WARNING: BasePackage '%s' is invalid. Using default: %s\n", pc.BasePackage, defaultProjectConfig.BasePackage)
+		pc.BasePackage = defaultProjectConfig.BasePackage
+	}
+	// Validate AppType
+	if pc.AppType != RestApi && pc.AppType != WebApp {
+		fmt.Printf("WARNING: AppType '%s' is invalid. Using default: %s\n", pc.AppType, defaultProjectConfig.AppType)
+		pc.AppType = defaultProjectConfig.AppType
+	}
+
+	// Validate BuildTool
+	if pc.BuildTool != Maven && pc.BuildTool != Gradle {
+		fmt.Printf("WARNING: BuildTool '%s' is invalid. Using default: %s\n", pc.BuildTool, defaultProjectConfig.BuildTool)
+		pc.BuildTool = defaultProjectConfig.BuildTool
+	}
+
+	// Validate DatabaseType
+	if pc.DbType != PostgreSQL && pc.DbType != MySQL && pc.DbType != MariaDB {
+		fmt.Printf("WARNING: DbType '%s' is invalid. Using default: %s\n", pc.DbType, defaultProjectConfig.DbType)
+		pc.DbType = defaultProjectConfig.DbType
+	}
+
+	// Validate DbMigrationTool
+	if pc.DbMigrationTool != Flyway && pc.DbMigrationTool != Liquibase {
+		fmt.Printf("WARNING: DbMigrationTool '%s' is invalid. Using default: %s\n", pc.DbMigrationTool, defaultProjectConfig.DbMigrationTool)
+		pc.DbMigrationTool = defaultProjectConfig.DbMigrationTool
+	}
+
+	return pc
 }
 
 func writeConfigFile(pc ProjectConfig, filePath string) error {
