@@ -11,6 +11,9 @@ func NewSpringModulithConfig(pg projectGenerator) *SpringModulithConfig {
 }
 
 func (s SpringModulithConfig) generate(pc ProjectConfig) error {
+	if !pc.SpringModulithSupport {
+		return nil
+	}
 	if err := s.createSrcTestJava(pc); err != nil {
 		return err
 	}
@@ -18,9 +21,6 @@ func (s SpringModulithConfig) generate(pc ProjectConfig) error {
 }
 
 func (s SpringModulithConfig) createSrcTestJava(pc ProjectConfig) error {
-	if !pc.SpringModulithSupport {
-		return nil
-	}
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
 
 	templateMap := map[string]string{}

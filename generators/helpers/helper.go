@@ -40,7 +40,7 @@ func copyFile(tmplFS fs.FS, origin, filePath, projectName, dirName string) error
 
 	ensureDir(targetFilePath)
 
-	if err := os.WriteFile(targetFilePath, fileContent, 0777); err != nil {
+	if err := os.WriteFile(targetFilePath, fileContent, 0755); err != nil {
 		return err
 	}
 
@@ -60,7 +60,7 @@ func CopyTemplateFile(tmplFS fs.FS, filePath, projectName, destFileName string) 
 
 	ensureDir(targetFilePath)
 
-	if err := os.WriteFile(targetFilePath, fileContent, 0777); err != nil {
+	if err := os.WriteFile(targetFilePath, fileContent, 0755); err != nil {
 		return err
 	}
 
@@ -71,9 +71,7 @@ func ensureDir(fileName string) {
 	dirName := filepath.Dir(fileName)
 	if _, serr := os.Stat(dirName); serr != nil {
 		merr := os.MkdirAll(dirName, os.ModePerm)
-		if merr != nil {
-			panic(merr)
-		}
+		FatalIfErr(merr)
 	}
 }
 
@@ -92,9 +90,7 @@ func CreateFile(filePath string) *os.File {
 	parent := filepath.Dir(filePath)
 	_ = os.MkdirAll(parent, 0700)
 	f, err := os.Create(filePath)
-	if err != nil {
-		panic(err)
-	}
+	FatalIfErr(err)
 	return f
 }
 
@@ -105,7 +101,7 @@ func ValidateApplicationName(val interface{}) error {
 	}
 	appName := strings.Trim(str, " ")
 	if stat, err := os.Stat(appName); err == nil && stat.IsDir() {
-		return errors.New(fmt.Sprintf("A directory with name '%s' already exist", appName))
+		return fmt.Errorf("a directory with name '%s' already exists", appName)
 	}
 	return nil
 }

@@ -5,6 +5,5 @@ import (
 )
 
 func invokeGenerator() error {
-	springboot.Run()
-	return nil
+	return springboot.Run()
 }

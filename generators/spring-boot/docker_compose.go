@@ -9,13 +9,13 @@ func NewDockerComposeConfig(pg projectGenerator) *DockerComposeConfig {
 }
 
 func (d DockerComposeConfig) generate(pc ProjectConfig) error {
+	if !pc.DockerComposeSupport {
+		return nil
+	}
 	return d.createComposeConfigFiles(pc)
 }
 
 func (d DockerComposeConfig) createComposeConfigFiles(pc ProjectConfig) error {
-	if !pc.DockerComposeSupport {
-		return nil
-	}
 	templateMap := map[string]string{
 		"compose.yml.tmpl": "compose.yml",
 	}

@@ -9,13 +9,13 @@ func NewThymeleafConfig(pg projectGenerator) *ThymeleafConfig {
 }
 
 func (t ThymeleafConfig) generate(pc ProjectConfig) error {
+	if !pc.ThymeleafSupport {
+		return nil
+	}
 	return t.createThymeleafTemplateFiles(pc)
 }
 
 func (t ThymeleafConfig) createThymeleafTemplateFiles(pc ProjectConfig) error {
-	if !pc.ThymeleafSupport {
-		return nil
-	}
 	templateMap := map[string]string{}
 
 	if pc.ThymeleafSupport {

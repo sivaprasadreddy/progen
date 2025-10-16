@@ -21,7 +21,7 @@ func (s SecurityConfig) generate(pc ProjectConfig) error {
 }
 
 func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
-	if pc.SecuritySupport == false && pc.JwtSecuritySupport == false {
+	if !pc.SecuritySupport && !pc.JwtSecuritySupport {
 		return nil
 	}
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")

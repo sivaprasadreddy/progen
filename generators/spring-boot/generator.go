@@ -1,3 +1,5 @@
+// Package spring_boot provides functionality for generating Spring Boot projects
+// with various configurations and features.
 package spring_boot
 
 import (
@@ -18,6 +20,7 @@ var tmplsFS embed.FS
 
 const templatesRootDir = "templates"
 
+// ProjectConfig holds all configuration options for generating a Spring Boot project.
 type ProjectConfig struct {
 	AppType               string
 	AppName               string
@@ -37,11 +40,12 @@ type ProjectConfig struct {
 	JwtSecuritySupport    bool
 }
 
-func Run() {
+func Run() error {
 	projectConfig, err := getAnswers()
 	helpers.FatalIfErr(err)
 	err = GenerateProject(projectConfig)
 	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
+	return err
 }
 
 func GenerateProject(pc ProjectConfig) error {
@@ -77,12 +81,10 @@ func GenerateInitConfig() error {
 func writeConfigFile(pc ProjectConfig, filePath string) error {
 	file, err := json.MarshalIndent(pc, "", " ")
 	if err != nil {
-		fmt.Println("failed to marshall projectConfig")
-		return err
+		return fmt.Errorf("failed to marshal project config: %w", err)
 	}
-	if err = os.WriteFile(filePath, file, 0644); err != nil {
-		fmt.Println("failed to write .progen.json file")
-		return err
+	if err = os.WriteFile(filePath, file, FilePermission); err != nil {
+		return fmt.Errorf("failed to write .progen.json file: %w", err)
 	}
 	return nil
 }
@@ -146,6 +148,7 @@ func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targe
 		return err
 	}
 	f := helpers.CreateFile(path.Join(".", pc.AppName, targetFilePath))
+	defer f.Close()
 	err = tmpl.Execute(f, pc)
 	if err != nil {
 		return err
@@ -162,18 +165,23 @@ func (pg projectGenerator) formatCode(pc ProjectConfig) error {
 }
 
 func (pg projectGenerator) getBuildToolCommands(buildTool string) (executable, formatCmd string) {
+	isWindows := runtime.GOOS == "windows"
+
 	if buildTool == BuildToolGradle {
+		if isWindows {
+			return "gradlew.bat", "spotlessApply"
+		}
 		return "./gradlew", "spotlessApply"
+	}
+
+	if isWindows {
+		return "mvnw.cmd", "spotless:apply"
 	}
 	return "./mvnw", "spotless:apply"
 }
 
 func (pg projectGenerator) buildCommandString(dirName, executable, formatCmd string) string {
-	separator := ";"
-	if runtime.GOOS == "windows" {
-		separator = "&&"
-	}
-	return fmt.Sprintf("cd %s %s %s %s", dirName, separator, executable, formatCmd)
+	return fmt.Sprintf("cd %s && %s %s", dirName, executable, formatCmd)
 }
 
 func (pg projectGenerator) createOSCommand(command string) *exec.Cmd {

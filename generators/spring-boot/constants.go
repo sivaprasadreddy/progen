@@ -1,5 +1,8 @@
 package spring_boot
 
+const FilePermission = 0644
+const DirPermission = 0755
+
 const srcMainJavaPath = "src/main/java/"
 const srcMainResourcesPath = "src/main/resources/"
 const srcTestJavaPath = "src/test/java/"
