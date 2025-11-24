@@ -5,7 +5,7 @@ set -e
 APP="progen"
 CLI_URI="https://github.com/sivaprasadreddy/${APP}/releases/download"
 CLI_DIR="$HOME/.${APP}"
-CLI_VERSION="v0.0.9"
+CLI_VERSION="v1.0.0"
 CLI_ARCHIVES_FOLDER="${CLI_DIR}/archives"
 
 mkdir -p "${CLI_ARCHIVES_FOLDER}"
