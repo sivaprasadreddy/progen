@@ -30,12 +30,12 @@ func (a AppCommonConfig) createSrcMainJava(pc ProjectConfig) error {
 	basePackagePath := strings.ReplaceAll(pc.BasePackage, ".", "/")
 
 	templateMap := map[string]string{
-		"Application.java.tmpl":               "Application.java",
-		"ApplicationProperties.java.tmpl":     "ApplicationProperties.java",
-		"WebMvcConfig.java.tmpl":              "config/WebMvcConfig.java",
-		"BaseEntity.java.tmpl":                "domain/BaseEntity.java",
-		"BadRequestException.java.tmpl":       "domain/BadRequestException.java",
-		"ResourceNotFoundException.java.tmpl": "domain/ResourceNotFoundException.java",
+		"Application.java.tmpl":                      "Application.java",
+		"ApplicationProperties.java.tmpl":            "ApplicationProperties.java",
+		"config/WebMvcConfig.java.tmpl":              "config/WebMvcConfig.java",
+		"domain/BaseEntity.java.tmpl":                "domain/BaseEntity.java",
+		"domain/BadRequestException.java.tmpl":       "domain/BadRequestException.java",
+		"domain/ResourceNotFoundException.java.tmpl": "domain/ResourceNotFoundException.java",
 	}
 
 	for tmpl, filePath := range templateMap {

@@ -29,31 +29,31 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 	templateMap := map[string]string{}
 
 	if pc.SecuritySupport || pc.JwtSecuritySupport {
-		templateMap["Role.java.tmpl"] = "domain/Role.java"
-		templateMap["User.java.tmpl"] = "domain/User.java"
-		templateMap["UserRepository.java.tmpl"] = "domain/UserRepository.java"
-		templateMap["UserService.java.tmpl"] = "domain/UserService.java"
-		templateMap["SecurityUser.java.tmpl"] = "domain/SecurityUser.java"
-		templateMap["SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
-		templateMap["SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
-		templateMap["UserContextUtils.java.tmpl"] = "web/UserContextUtils.java"
-		templateMap["CreateUserCmd.java.tmpl"] = "domain/CreateUserCmd.java"
+		templateMap["domain/Role.java.tmpl"] = "domain/Role.java"
+		templateMap["domain/User.java.tmpl"] = "domain/User.java"
+		templateMap["domain/UserRepository.java.tmpl"] = "domain/UserRepository.java"
+		templateMap["domain/UserService.java.tmpl"] = "domain/UserService.java"
+		templateMap["domain/SecurityUser.java.tmpl"] = "domain/SecurityUser.java"
+		templateMap["config/SecurityConfig.java.tmpl"] = "config/SecurityConfig.java"
+		templateMap["security/SecurityUserDetailsService.java.tmpl"] = "security/SecurityUserDetailsService.java"
+		templateMap["web/UserContextUtils.java.tmpl"] = "web/UserContextUtils.java"
+		templateMap["domain/CreateUserCmd.java.tmpl"] = "domain/CreateUserCmd.java"
 	}
 
 	if pc.SecuritySupport {
-		templateMap["WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
-		templateMap["WebAppExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
-		templateMap["UserController.java.tmpl"] = "web/UserController.java"
+		templateMap["config/WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
+		templateMap["web/WebAppExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
+		templateMap["web/UserController.java.tmpl"] = "web/UserController.java"
 	}
 
 	if pc.JwtSecuritySupport {
-		templateMap["JwtWebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
-		templateMap["AuthToken.java.tmpl"] = "security/AuthToken.java"
-		templateMap["TokenHelper.java.tmpl"] = "security/TokenHelper.java"
-		templateMap["TokenAuthenticationFilter.java.tmpl"] = "security/TokenAuthenticationFilter.java"
-		templateMap["RestApiExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
-		templateMap["LoginRestController.java.tmpl"] = "web/LoginRestController.java"
-		templateMap["UserRestController.java.tmpl"] = "web/UserRestController.java"
+		templateMap["config/JwtWebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
+		templateMap["security/AuthToken.java.tmpl"] = "security/AuthToken.java"
+		templateMap["security/TokenHelper.java.tmpl"] = "security/TokenHelper.java"
+		templateMap["security/TokenAuthenticationFilter.java.tmpl"] = "security/TokenAuthenticationFilter.java"
+		templateMap["web/RestApiExceptionHandler.java.tmpl"] = "web/GlobalExceptionHandler.java"
+		templateMap["web/LoginRestController.java.tmpl"] = "web/LoginRestController.java"
+		templateMap["web/UserRestController.java.tmpl"] = "web/UserRestController.java"
 	}
 
 	for tmpl, filePath := range templateMap {
@@ -71,12 +71,12 @@ func (s SecurityConfig) createSrcTestJava(pc ProjectConfig) error {
 	templateMap := map[string]string{}
 
 	if pc.SecuritySupport {
-		templateMap["UserControllerTests.java.tmpl"] = "web/UserControllerTests.java"
+		templateMap["web/UserControllerTests.java.tmpl"] = "web/UserControllerTests.java"
 	}
 
 	if pc.JwtSecuritySupport {
-		templateMap["LoginRestControllerTests.java.tmpl"] = "web/LoginRestControllerTests.java"
-		templateMap["UserRestControllerTests.java.tmpl"] = "web/UserRestControllerTests.java"
+		templateMap["web/LoginRestControllerTests.java.tmpl"] = "web/LoginRestControllerTests.java"
+		templateMap["web/UserRestControllerTests.java.tmpl"] = "web/UserRestControllerTests.java"
 	}
 
 	for tmpl, filePath := range templateMap {
