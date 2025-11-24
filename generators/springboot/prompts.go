@@ -126,7 +126,8 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	otherFeatureOptions := []huh.Option[string]{
 		huh.NewOption(FeatureDockerComposeSupport, FeatureDockerComposeSupport).Selected(true),
 		huh.NewOption(FeatureSpringModulithSupport, FeatureSpringModulithSupport),
-		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
+		//TODO: Temporarily disabled until Spring Cloud AWS supports Spring Boot 4
+		//huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 	}
 
 	if answers.AppType == WebApp {

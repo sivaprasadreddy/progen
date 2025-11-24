@@ -2,13 +2,17 @@ package {{ .BasePackage }}.web;
 
 import {{ .BasePackage }}.domain.SecurityUser;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 class UserContextUtils {
     public static Long getCurrentUserIdOrThrow() {
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof SecurityUser securityUser) {
-            return securityUser.getId();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            var principal = authentication.getPrincipal();
+            if (principal instanceof SecurityUser securityUser) {
+                return securityUser.getId();
+            }
         }
         throw new AccessDeniedException("Access denied");
     }

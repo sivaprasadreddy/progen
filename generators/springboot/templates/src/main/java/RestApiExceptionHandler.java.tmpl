@@ -35,14 +35,14 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
         ApiErrors apiErrors = ApiErrors.from(errors);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(apiErrors);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(apiErrors);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Object> handle(BadRequestException e) {
         var errors = List.of(e.getMessage());
         ApiErrors apiErrors = ApiErrors.from(errors);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(apiErrors);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(apiErrors);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

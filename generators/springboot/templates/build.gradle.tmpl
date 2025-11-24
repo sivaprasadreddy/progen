@@ -1,6 +1,6 @@
 plugins {
 	id "java"
-	id "org.springframework.boot" version "3.5.6"
+	id "org.springframework.boot" version "4.0.0"
     id "io.spring.dependency-management" version "1.1.7"
     id "com.gorylenko.gradle-git-properties" version "2.5.3"
     id "com.diffplug.spotless" version "8.0.0"
@@ -27,13 +27,13 @@ repositories {
 
 ext {
 {{- if eq .AppType "REST API" }}
-  set('springdocOpenapiVersion', "2.8.13")
+  set('springdocOpenapiVersion', "3.0.0")
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
   set('awspringVersion', "3.4.0")
 {{- end }}
 {{- if .SpringModulithSupport }}
-  set('springModulithVersion', "1.4.3")
+  set('springModulithVersion', "2.0.0")
 {{- end }}
 {{- if .ThymeleafSupport }}
   set('bootstrapVersion', "5.3.8")
@@ -41,10 +41,10 @@ ext {
   set('fontawesomeVersion', "7.0.1")
 {{- end }}
 {{- if .HTMXSupport }}
-  set('htmxVersion', "2.0.7")
+  set('htmxVersion', "2.0.8")
 {{- end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-  set('htmxSpringBootThymeleafVersion', "4.0.1")
+  set('htmxSpringBootThymeleafVersion', "5.0.0-rc.1")
 {{- end }}
 {{- if .JwtSecuritySupport }}
   set('jjwtVersion', "0.12.6")
@@ -52,7 +52,7 @@ ext {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-webmvc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     {{- if or .SecuritySupport .JwtSecuritySupport }}
@@ -82,22 +82,22 @@ dependencies {
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client"
     {{- end }}
     {{- if eq .DbMigrationTool "Flyway"}}
+    implementation "org.springframework.boot:spring-boot-starter-flyway"
     {{- if eq .DbType "PostgreSQL" }}
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
     {{- end }}
-    implementation "org.flywaydb:flyway-core"
     {{- if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
     implementation "org.flywaydb:flyway-mysql"
     {{- end }}
     {{- end }}
     {{- if eq .DbMigrationTool "Liquibase"}}
-    implementation "org.liquibase:liquibase-core"
+    implementation "org.springframework.boot:spring-boot-starter-liquibase"
     {{- end }}
     {{- if .SpringModulithSupport }}
     implementation "com.tngtech.archunit:archunit:1.4.1"
     implementation "org.springframework.modulith:spring-modulith-starter-core"
-    implementation "org.springframework.modulith:spring-modulith-actuator"
     implementation "org.springframework.modulith:spring-modulith-docs"
+    runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
     {{- end }}
     {{- if .SpringCloudAWSSupport }}
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
@@ -123,10 +123,23 @@ dependencies {
     developmentOnly "org.springframework.boot:spring-boot-docker-compose"
     {{- end }}
 
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+
+    {{- if eq .DbMigrationTool "Flyway"}}
+    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+    {{- end }}
+    {{- if eq .DbMigrationTool "Liquibase"}}
+    testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
+    {{- end }}
     {{- if or .SecuritySupport .JwtSecuritySupport }}
-    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    {{- end }}
+    {{- if .ThymeleafSupport }}
+    testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
     {{- end }}
     {{- if .SpringCloudAWSSupport }}
     implementation "io.awspring.cloud:spring-cloud-aws-testcontainers"
@@ -135,21 +148,18 @@ dependencies {
     testImplementation "org.springframework.modulith:spring-modulith-starter-test"
     {{- end }}
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
-    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:testcontainers-junit-jupiter"
     {{- if eq .DbType "PostgreSQL" }}
-    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.testcontainers:testcontainers-postgresql"
     {{- end }}
     {{- if eq .DbType "MySQL" }}
-    testImplementation "org.testcontainers:mysql"
+    testImplementation "org.testcontainers:testcontainers-mysql"
     {{- end }}
     {{- if eq .DbType "MariaDB" }}
-    testImplementation "org.testcontainers:mariadb"
+    testImplementation "org.testcontainers:testcontainers-mariadb"
     {{- end }}
     {{- if .SpringCloudAWSSupport }}
-    testImplementation "org.testcontainers:localstack"
-    {{- end }}
-    {{- if eq .AppType "REST API" }}
-    testImplementation "io.rest-assured:rest-assured"
+    testImplementation "org.testcontainers:testcontainers-localstack"
     {{- end }}
 }
 

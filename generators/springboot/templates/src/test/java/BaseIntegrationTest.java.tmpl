@@ -2,14 +2,11 @@ package {{ .BasePackage }};
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 {{- if eq .AppType "REST API" }}
-import io.restassured.RestAssured;
-import jakarta.annotation.PostConstruct;
 {{ end }}
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 {{- if .SpringCloudAWSSupport }}
 import org.springframework.test.context.TestPropertySource;
@@ -28,13 +25,7 @@ public abstract class BaseIntegrationTest {
     protected MockMvcTester mvc;
 
 {{- if eq .AppType "REST API" }}
-    @LocalServerPort
-    int port;
 
-    @PostConstruct
-    void setUpBase() {
-        RestAssured.port = port;
-    }
 {{ end }}
 
 }

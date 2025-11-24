@@ -7,7 +7,7 @@
 	<parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>4.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 	<groupId>{{ .GroupID }}</groupId>
@@ -19,7 +19,7 @@
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>25</java.version>
 {{- if .SpringModulithSupport }}
-        <spring-modulith.version>1.4.3</spring-modulith.version>
+        <spring-modulith.version>2.0.0</spring-modulith.version>
 {{ end }}
 {{- if .SpringCloudAWSSupport }}
         <spring-cloud-aws.version>3.4.0</spring-cloud-aws.version>
@@ -30,25 +30,25 @@
   		<font_awesome.version>7.0.1</font_awesome.version>
 {{ end }}
 {{- if .HTMXSupport }}
-        <htmx.org.version>2.0.7</htmx.org.version>
+        <htmx.org.version>2.0.8</htmx.org.version>
 {{ end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-        <htmx-spring-boot-thymeleaf.version>4.0.1</htmx-spring-boot-thymeleaf.version>
+        <htmx-spring-boot-thymeleaf.version>5.0.0-rc.1</htmx-spring-boot-thymeleaf.version>
 {{ end }}
 {{- if .JwtSecuritySupport }}
         <jjwt.version>0.12.6</jjwt.version>
 {{ end }}
 {{- if eq .AppType "REST API" }}
-        <springdoc-openapi.version>2.8.13</springdoc-openapi.version>
+        <springdoc-openapi.version>3.0.0</springdoc-openapi.version>
 {{ end }}
-        <spotless.version>3.0.0</spotless.version>
+        <spotless.version>3.1.0</spotless.version>
         <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
 	</properties>
 
 	<dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -114,8 +114,8 @@
         {{- end }}
         {{- if eq .DbMigrationTool "Flyway"}}
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         {{- if eq .DbType "PostgreSQL"}}
         <dependency>
@@ -132,8 +132,8 @@
         {{- end }}
         {{- if eq .DbMigrationTool "Liquibase"}}
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase</artifactId>
         </dependency>
         {{- end }}
         {{- if eq .AppType "REST API" }}
@@ -156,6 +156,7 @@
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-actuator</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.modulith</groupId>
@@ -239,15 +240,51 @@
         </dependency>
         {{ end }}
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-webmvc-test</artifactId>
+              <scope>test</scope>
+        </dependency>
+        <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-validation-test</artifactId>
+              <scope>test</scope>
+        </dependency>
+        {{- if .ThymeleafSupport }}
+        <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-thymeleaf-test</artifactId>
+              <scope>test</scope>
+        </dependency>
+        {{ end }}
+        <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-actuator-test</artifactId>
+              <scope>test</scope>
+        </dependency>
+        <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+              <scope>test</scope>
         </dependency>
         {{- if or .SecuritySupport .JwtSecuritySupport }}
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-security-test</artifactId>
+              <scope>test</scope>
+        </dependency>
+        {{ end }}
+        {{- if eq .DbMigrationTool "Flyway"}}
+        <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-flyway-test</artifactId>
+              <scope>test</scope>
+        </dependency>
+        {{ end }}
+        {{- if eq .DbMigrationTool "Liquibase"}}
+        <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-liquibase-test</artifactId>
+              <scope>test</scope>
         </dependency>
         {{ end }}
         {{- if .SpringModulithSupport }}
@@ -264,34 +301,34 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         {{- if eq .DbType "PostgreSQL" }}
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         {{- end }}
         {{- if eq .DbType "MySQL" }}
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
+            <artifactId>testcontainers-mysql</artifactId>
             <scope>test</scope>
         </dependency>
         {{- end }}
         {{- if eq .DbType "MariaDB" }}
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mariadb</artifactId>
+            <artifactId>testcontainers-mariadb</artifactId>
             <scope>test</scope>
         </dependency>
         {{- end }}
         {{- if .SpringCloudAWSSupport }}
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>localstack</artifactId>
+            <artifactId>testcontainers-localstack</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -299,13 +336,6 @@
             <artifactId>spring-cloud-aws-testcontainers</artifactId>
         </dependency>
         {{- end }}
-        {{- if eq .AppType "REST API" }}
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-        </dependency>
-        {{ end }}
     </dependencies>
 
     <dependencyManagement>

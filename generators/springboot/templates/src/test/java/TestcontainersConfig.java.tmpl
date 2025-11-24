@@ -6,13 +6,13 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 {{- if eq .DbType "PostgreSQL" }}
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 {{- end }}
 {{- if eq .DbType "MySQL" }}
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.mysql.MySQLContainer;
 {{- end }}
 {{- if eq .DbType "MariaDB" }}
-import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.mariadb.MariaDBContainer;
 {{ end }}
 {{- if .SpringCloudAWSSupport }}
 import org.testcontainers.containers.localstack.LocalStackContainer;
@@ -23,22 +23,22 @@ public class TestcontainersConfig {
 {{- if eq .DbType "PostgreSQL" }}
     @Bean
     @ServiceConnection
-    PostgreSQLContainer<?> postgres() {
-        return new PostgreSQLContainer<>(parse("postgres:18-alpine"));
+    PostgreSQLContainer postgres() {
+        return new PostgreSQLContainer(parse("postgres:18-alpine"));
     }
 {{- end }}
 {{- if eq .DbType "MySQL" }}
     @Bean
     @ServiceConnection
-    MySQLContainer<?> mysql() {
-        return new MySQLContainer<>(parse("mysql:8.1.0"));
+    MySQLContainer mysql() {
+        return new MySQLContainer(parse("mysql:8.1.0"));
     }
 {{- end }}
 {{- if eq .DbType "MariaDB" }}
     @Bean
     @ServiceConnection
-    MariaDBContainer<?> mariadb() {
-        return new MariaDBContainer<>(parse("mariadb:12"));
+    MariaDBContainer mariadb() {
+        return new MariaDBContainer(parse("mariadb:12"));
     }
 {{- end }}
 {{- if .SpringCloudAWSSupport }}

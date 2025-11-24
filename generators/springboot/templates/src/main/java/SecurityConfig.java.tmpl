@@ -1,5 +1,9 @@
 package {{ .BasePackage }}.config;
 
+{{- if .JwtSecuritySupport }}
+import {{ .BasePackage }}.security.TokenAuthenticationFilter;
+import {{ .BasePackage }}.security.TokenHelper;
+{{ end }}
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,10 +24,15 @@ class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(
             UserDetailsService uds, PasswordEncoder pe) {
-        var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(uds);
+        var authProvider = new DaoAuthenticationProvider(uds);
         authProvider.setPasswordEncoder(pe);
 
         return new ProviderManager(authProvider);
     }
+    {{- if .JwtSecuritySupport }}
+    @Bean
+    public TokenAuthenticationFilter tokenAuthenticationFilter(TokenHelper tokenHelper, UserDetailsService uds) {
+        return new TokenAuthenticationFilter(tokenHelper, uds);
+    }
+    {{ end }}
 }

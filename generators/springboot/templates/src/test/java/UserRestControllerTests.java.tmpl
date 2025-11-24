@@ -1,37 +1,40 @@
 package {{ .BasePackage }}.web;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.blankOrNullString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
 import {{ .BasePackage }}.BaseIntegrationTest;
+import {{ .BasePackage }}.domain.Role;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 class UserRestControllerTests extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Given valid user details, user should be created successfully")
     void shouldCreateUserSuccessfully() {
-        given().contentType("application/json")
-                .body(
+        MvcTestResult testResult = mvc.post()
+                .uri("/api/users")
+                .contentType("application/json")
+                .content(
                         """
-              {
-                  "name":"User123",
-                  "email":"user123@gmail.com",
-                  "password":"secret"
-                }
-              """)
-                .when()
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.value())
-                .assertThat()
-                .body("name", equalTo("User123"))
-                .body("email", equalTo("user123@gmail.com"))
-                .body("role", equalTo("ROLE_USER"));
+                        {
+                          "name":"User123",
+                          "email":"user123@gmail.com",
+                          "password":"secret"
+                        }
+                        """)
+                .exchange();
+        assertThat(testResult)
+                .hasStatus(CREATED)
+                .bodyJson()
+                .convertTo(UserRestController.RegistrationResponse.class)
+                .satisfies(response -> {
+                    assertThat(response).isNotNull();
+                    assertThat(response.role()).isEqualTo(Role.ROLE_USER);
+                    assertThat(response.email()).isEqualTo("user123@gmail.com");
+                    assertThat(response.name()).isEqualTo("User123");
+                });
     }
 }
