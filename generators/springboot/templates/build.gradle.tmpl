@@ -44,10 +44,10 @@ ext {
   set('htmxVersion', "2.0.8")
 {{- end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-  set('htmxSpringBootThymeleafVersion', "5.0.0-rc.1")
+  set('htmxSpringBootThymeleafVersion', "5.0.0")
 {{- end }}
 {{- if .JwtSecuritySupport }}
-  set('jjwtVersion', "0.12.6")
+  set('jjwtVersion', "0.13.0")
 {{- end }}
 }
 
@@ -202,7 +202,7 @@ spotless {
         importOrder()
         removeUnusedImports()
         formatAnnotations()
-        palantirJavaFormat("2.74.0")
+        palantirJavaFormat("2.83.0")
     }
     groovyGradle {
         target '*.gradle'

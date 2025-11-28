@@ -33,10 +33,10 @@
         <htmx.org.version>2.0.8</htmx.org.version>
 {{ end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-        <htmx-spring-boot-thymeleaf.version>5.0.0-rc.1</htmx-spring-boot-thymeleaf.version>
+        <htmx-spring-boot-thymeleaf.version>5.0.0</htmx-spring-boot-thymeleaf.version>
 {{ end }}
 {{- if .JwtSecuritySupport }}
-        <jjwt.version>0.12.6</jjwt.version>
+        <jjwt.version>0.13.0</jjwt.version>
 {{ end }}
 {{- if eq .AppType "REST API" }}
         <springdoc-openapi.version>3.0.0</springdoc-openapi.version>
@@ -411,7 +411,7 @@
                         <removeUnusedImports />
                         <formatAnnotations />
                         <palantirJavaFormat>
-                            <version>2.74.0</version>
+                            <version>2.83.0</version>
                         </palantirJavaFormat>
                     </java>
                     <pom>
