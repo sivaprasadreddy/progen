@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	github.com/charmbracelet/huh v0.8.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 )
 
