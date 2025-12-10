@@ -13,17 +13,17 @@ The reasons for creating this new **progen** CLI tool are:
 ## features
 The progen generates a Spring Boot application with the following features configured:
 
-* [Spring Boot](https://spring.io/projects/spring-boot) project with Maven and Gradle support
-* [Spring Data JPA](https://spring.io/projects/spring-data-jpa) integration with MySQL, Postgresql, MariaDB support
+* [Spring Boot](https://spring.io/projects/spring-boot) project with **Maven** and **Gradle** support
+* [Spring Data JPA](https://spring.io/projects/spring-data-jpa) integration with **MySQL**, **Postgresql**, **MariaDB** support
 * [Flyway](https://www.red-gate.com/products/flyway/community/) and [Liquibase](https://www.liquibase.com/) database migration support
-* [Spring Security](https://spring.io/projects/spring-security) Configuration for WebApp
-* JWT based Spring Security Configuration for REST APIs
-* [Spring Modulith](https://spring.io/projects/spring-modulith) Configuration
+* [Spring Security](https://spring.io/projects/spring-security) configuration for Web Apps
+* **Spring Security JWT** configuration for REST APIs
+* [Spring Modulith](https://spring.io/projects/spring-modulith) configuration
 * [Spring Cloud AWS](https://awspring.io/) support with [LocalStack](https://www.localstack.cloud/) configuration
 * Swagger UI Integration using [springdoc-openapi](https://springdoc.org/)
 * [Testcontainers](https://java.testcontainers.org/) based Testing and Local Development Setup
 * [Docker Compose](https://docs.docker.com/compose/) based Local Development Setup
-* GitHub Actions Configuration
+* GitHub Actions configuration
 * Code formatting using [Spotless](https://github.com/diffplug/spotless)
 * [JUnit 5](https://junit.org/junit5/)
 * [Taskfile](https://taskfile.dev/) to execute commonly used commands
