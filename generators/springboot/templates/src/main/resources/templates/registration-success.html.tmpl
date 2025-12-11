@@ -2,14 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+      layout:decorate="~{layout}">
 <head>
   <title>Registration Successful</title>
 </head>
 <body>
     <div layout:fragment="content">
-      <h2 class="title is-2">Registration is successful</h2>
-      <h3 class="title is-3">Click <a href="/login">here</a> to Login</h3>
+      <div class="row justify-content-center pt-5">
+        <div class="col-md-8 col-lg-6 text-center">
+          <div class="alert alert-success" role="alert">
+            <h2 class="alert-heading">Registration is successful!</h2>
+            <p class="mb-0">Click <a href="/login" class="alert-link">here</a> to Login</p>
+          </div>
+        </div>
+      </div>
     </div>
 </body>
 </html>
