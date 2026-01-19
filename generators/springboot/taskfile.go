@@ -10,7 +10,7 @@ func NewTaskfileConfig(pg projectGenerator) *TaskfileConfig {
 
 func (t TaskfileConfig) generate(pc ProjectConfig) error {
 	if pc.BuildTool == Maven {
-		return t.pg.copyTemplateFile(pc, "Taskfile.maven.yml.tmpl", "Taskfile.yml")
+		return t.pg.executeTemplate(pc, "Taskfile.maven.yml.tmpl", "Taskfile.yml")
 	}
-	return t.pg.copyTemplateFile(pc, "Taskfile.gradle.yml.tmpl", "Taskfile.yml")
+	return t.pg.executeTemplate(pc, "Taskfile.gradle.yml.tmpl", "Taskfile.yml")
 }
