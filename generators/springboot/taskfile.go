@@ -1,5 +1,10 @@
 package springboot
 
+import (
+	"fmt"
+	"strings"
+)
+
 type TaskfileConfig struct {
 	pg projectGenerator
 }
@@ -9,11 +14,17 @@ func NewTaskfileConfig(pg projectGenerator) *TaskfileConfig {
 }
 
 func (t TaskfileConfig) generate(pc ProjectConfig) error {
-	//TODO; Taskfile templates has {{ .ArtifactID }} to replace
-	// But it also has many other placeholders using Go templates syntax that shouldn't be processed.
-	// Need to fix it to only replace {{ .ArtifactID }} and ignore other placeholders.
+	templateFile := "Taskfile.gradle.yml.tmpl"
 	if pc.BuildTool == Maven {
-		return t.pg.copyTemplateFile(pc, "Taskfile.maven.yml.tmpl", "Taskfile.yml")
+		templateFile = "Taskfile.maven.yml.tmpl"
 	}
-	return t.pg.copyTemplateFile(pc, "Taskfile.gradle.yml.tmpl", "Taskfile.yml")
+	templateFilePath := fmt.Sprintf("%s/%s", templatesRootDir, templateFile)
+	content, err := t.pg.tmplFS.ReadFile(templateFilePath)
+	if err != nil {
+		return err
+	}
+	newContent := strings.ReplaceAll(string(content), "{{ .ArtifactID }}", pc.ArtifactID)
+
+	targetFilePath := fmt.Sprintf("%s/%s", pc.AppName, "Taskfile.yml")
+	return t.pg.writeTargetFile([]byte(newContent), targetFilePath)
 }

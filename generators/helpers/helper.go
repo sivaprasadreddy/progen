@@ -70,6 +70,14 @@ func CopyTemplateFile(tmplFS fs.FS, filePath, projectName, destFileName string) 
 	return nil
 }
 
+func WriteTargetFile(content []byte, targetFilePath string) error {
+	ensureDir(targetFilePath)
+	if err := os.WriteFile(targetFilePath, content, FilePermission); err != nil {
+		return err
+	}
+	return nil
+}
+
 func ensureDir(fileName string) {
 	dirName := filepath.Dir(fileName)
 	if _, serr := os.Stat(dirName); serr != nil {

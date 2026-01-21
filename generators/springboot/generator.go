@@ -207,6 +207,10 @@ func (pg projectGenerator) copyTemplateFile(pc ProjectConfig, sourceFilePath, ta
 	return helpers.CopyTemplateFile(pg.tmplFS, templateFilePath, pc.AppName, targetFilePath)
 }
 
+func (pg projectGenerator) writeTargetFile(content []byte, targetFilePath string) error {
+	return helpers.WriteTargetFile(content, targetFilePath)
+}
+
 func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targetFilePath string) error {
 	templateFilePath := fmt.Sprintf("%s/%s", templatesRootDir, templatePath)
 	tmplFileContent, err := pg.tmplFS.ReadFile(templateFilePath)
