@@ -41,7 +41,9 @@
 {{- if eq .AppType "REST API" }}
         <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
 {{ end }}
+        <palantir-java-format.version>2.93.0</palantir-java-format.version>
         <spotless.version>3.6.0</spotless.version>
+        <archunit.version>1.4.2</archunit.version>
         <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
 	</properties>
 
@@ -144,11 +146,6 @@
         </dependency>
         {{- end }}
         {{- if .SpringModulithSupport }}
-        <dependency>
-          <groupId>com.tngtech.archunit</groupId>
-          <artifactId>archunit</artifactId>
-          <version>1.4.2</version>
-        </dependency>
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-core</artifactId>
@@ -336,6 +333,12 @@
             <artifactId>spring-cloud-aws-testcontainers</artifactId>
         </dependency>
         {{- end }}
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>${archunit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -411,7 +414,7 @@
                         <removeUnusedImports />
                         <formatAnnotations />
                         <palantirJavaFormat>
-                            <version>2.93.0</version>
+                            <version>${palantir-java-format.version}</version>
                         </palantirJavaFormat>
                     </java>
                     <pom>

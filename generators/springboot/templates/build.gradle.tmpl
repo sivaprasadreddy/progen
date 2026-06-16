@@ -49,6 +49,8 @@ ext {
 {{- if .JwtSecuritySupport }}
   set('jjwtVersion', "0.13.0")
 {{- end }}
+  set('palantirJavaFormatVersion', "2.93.0")
+  set('archunitVersion', "1.4.2")
 }
 
 dependencies {
@@ -94,7 +96,6 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-liquibase"
     {{- end }}
     {{- if .SpringModulithSupport }}
-    implementation "com.tngtech.archunit:archunit:1.4.2"
     implementation "org.springframework.modulith:spring-modulith-starter-core"
     implementation "org.springframework.modulith:spring-modulith-docs"
     runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
@@ -161,6 +162,7 @@ dependencies {
     {{- if .SpringCloudAWSSupport }}
     testImplementation "org.testcontainers:testcontainers-localstack"
     {{- end }}
+    testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"
 }
 
 dependencyManagement {
@@ -202,7 +204,7 @@ spotless {
         importOrder()
         removeUnusedImports()
         formatAnnotations()
-        palantirJavaFormat("2.93.0")
+        palantirJavaFormat("${palantirJavaFormatVersion}")
     }
     groovyGradle {
         target '*.gradle'
