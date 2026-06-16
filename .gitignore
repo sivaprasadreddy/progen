@@ -30,3 +30,4 @@ dist/
 /.progen.json
 reviews.md
 .junie/
+springboot-demo-*

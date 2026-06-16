@@ -1,9 +1,9 @@
 plugins {
 	id "java"
-	id "org.springframework.boot" version "4.0.0"
+	id "org.springframework.boot" version "4.1.0"
     id "io.spring.dependency-management" version "1.1.7"
-    id "com.gorylenko.gradle-git-properties" version "2.5.3"
-    id "com.diffplug.spotless" version "8.0.0"
+    id "com.gorylenko.gradle-git-properties" version "4.0.1"
+    id "com.diffplug.spotless" version "8.6.0"
 }
 
 group = "{{ .GroupID }}"
@@ -27,24 +27,24 @@ repositories {
 
 ext {
 {{- if eq .AppType "REST API" }}
-  set('springdocOpenapiVersion', "3.0.0")
+  set('springdocOpenapiVersion', "3.0.3")
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
-  set('awspringVersion', "3.4.0")
+  set('awspringVersion', "4.0.2")
 {{- end }}
 {{- if .SpringModulithSupport }}
-  set('springModulithVersion', "2.0.0")
+  set('springModulithVersion', "2.1.0")
 {{- end }}
 {{- if .ThymeleafSupport }}
   set('bootstrapVersion', "5.3.8")
   set('jqueryVersion', "3.7.1")
-  set('fontawesomeVersion', "7.0.1")
+  set('fontawesomeVersion', "7.2.0")
 {{- end }}
 {{- if .HTMXSupport }}
-  set('htmxVersion', "2.0.8")
+  set('htmxVersion', "2.0.10")
 {{- end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-  set('htmxSpringBootThymeleafVersion', "5.0.0")
+  set('htmxSpringBootThymeleafVersion', "5.1.0")
 {{- end }}
 {{- if .JwtSecuritySupport }}
   set('jjwtVersion', "0.13.0")
@@ -94,7 +94,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-liquibase"
     {{- end }}
     {{- if .SpringModulithSupport }}
-    implementation "com.tngtech.archunit:archunit:1.4.1"
+    implementation "com.tngtech.archunit:archunit:1.4.2"
     implementation "org.springframework.modulith:spring-modulith-starter-core"
     implementation "org.springframework.modulith:spring-modulith-docs"
     runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
@@ -202,7 +202,7 @@ spotless {
         importOrder()
         removeUnusedImports()
         formatAnnotations()
-        palantirJavaFormat("2.83.0")
+        palantirJavaFormat("2.93.0")
     }
     groovyGradle {
         target '*.gradle'
