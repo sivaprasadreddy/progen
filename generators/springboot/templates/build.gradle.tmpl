@@ -1,9 +1,9 @@
 plugins {
 	id "java"
-	id "org.springframework.boot" version "4.1.0"
-    id "io.spring.dependency-management" version "1.1.7"
-    id "com.gorylenko.gradle-git-properties" version "4.0.1"
-    id "com.diffplug.spotless" version "8.6.0"
+	id "org.springframework.boot" version "{{ .SpringBootVersion }}"
+    id "io.spring.dependency-management" version "{{ .GradleDependencyMgmtVersion }}"
+    id "com.gorylenko.gradle-git-properties" version "{{ .GradleGitPropertiesVersion }}"
+    id "com.diffplug.spotless" version "{{ .SpotlessGradlePluginVersion }}"
 }
 
 group = "{{ .GroupID }}"
@@ -11,7 +11,7 @@ version = "{{ .AppVersion }}"
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(25)
+    languageVersion = JavaLanguageVersion.of({{ .JavaVersion }})
   }
 }
 
@@ -27,30 +27,30 @@ repositories {
 
 ext {
 {{- if eq .AppType "REST API" }}
-  set('springdocOpenapiVersion', "3.0.3")
+  set('springdocOpenapiVersion', "{{ .SpringdocOpenapiVersion }}")
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
-  set('awspringVersion', "4.0.2")
+  set('awspringVersion', "{{ .SpringCloudAWSVersion }}")
 {{- end }}
 {{- if .SpringModulithSupport }}
-  set('springModulithVersion', "2.1.0")
+  set('springModulithVersion', "{{ .SpringModulithVersion }}")
 {{- end }}
 {{- if .ThymeleafSupport }}
-  set('bootstrapVersion', "5.3.8")
-  set('jqueryVersion', "3.7.1")
-  set('fontawesomeVersion', "7.2.0")
+  set('bootstrapVersion', "{{ .BootstrapVersion }}")
+  set('jqueryVersion', "{{ .JqueryVersion }}")
+  set('fontawesomeVersion', "{{ .FontAwesomeVersion }}")
 {{- end }}
 {{- if .HTMXSupport }}
-  set('htmxVersion', "2.0.10")
+  set('htmxVersion', "{{ .HtmxVersion }}")
 {{- end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-  set('htmxSpringBootThymeleafVersion', "5.1.0")
+  set('htmxSpringBootThymeleafVersion', "{{ .HtmxSpringBootThymeleafVersion }}")
 {{- end }}
 {{- if .JwtSecuritySupport }}
-  set('jjwtVersion', "0.13.0")
+  set('jjwtVersion', "{{ .JjwtVersion }}")
 {{- end }}
-  set('palantirJavaFormatVersion', "2.93.0")
-  set('archunitVersion', "1.4.2")
+  set('palantirJavaFormatVersion', "{{ .PalantirJavaFormatVersion }}")
+  set('archunitVersion', "{{ .ArchunitVersion }}")
 }
 
 dependencies {

@@ -7,7 +7,7 @@
 	<parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>{{ .SpringBootVersion }}</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 	<groupId>{{ .GroupID }}</groupId>
@@ -17,33 +17,33 @@
 
 	<properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>25</java.version>
+		<java.version>{{ .JavaVersion }}</java.version>
 {{- if .SpringModulithSupport }}
-        <spring-modulith.version>2.1.0</spring-modulith.version>
+        <spring-modulith.version>{{ .SpringModulithVersion }}</spring-modulith.version>
 {{ end }}
 {{- if .SpringCloudAWSSupport }}
-        <spring-cloud-aws.version>4.0.2</spring-cloud-aws.version>
+        <spring-cloud-aws.version>{{ .SpringCloudAWSVersion }}</spring-cloud-aws.version>
 {{ end }}
 {{- if .ThymeleafSupport }}
-        <bootstrap.version>5.3.8</bootstrap.version>
-  		<jquery.version>3.7.1</jquery.version>
-  		<font_awesome.version>7.2.0</font_awesome.version>
+        <bootstrap.version>{{ .BootstrapVersion }}</bootstrap.version>
+  		<jquery.version>{{ .JqueryVersion }}</jquery.version>
+  		<font_awesome.version>{{ .FontAwesomeVersion }}</font_awesome.version>
 {{ end }}
 {{- if .HTMXSupport }}
-        <htmx.org.version>2.0.10</htmx.org.version>
+        <htmx.org.version>{{ .HtmxVersion }}</htmx.org.version>
 {{ end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-        <htmx-spring-boot-thymeleaf.version>5.1.0</htmx-spring-boot-thymeleaf.version>
+        <htmx-spring-boot-thymeleaf.version>{{ .HtmxSpringBootThymeleafVersion }}</htmx-spring-boot-thymeleaf.version>
 {{ end }}
 {{- if .JwtSecuritySupport }}
-        <jjwt.version>0.13.0</jjwt.version>
+        <jjwt.version>{{ .JjwtVersion }}</jjwt.version>
 {{ end }}
 {{- if eq .AppType "REST API" }}
-        <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
+        <springdoc-openapi.version>{{ .SpringdocOpenapiVersion }}</springdoc-openapi.version>
 {{ end }}
-        <palantir-java-format.version>2.93.0</palantir-java-format.version>
-        <spotless.version>3.6.0</spotless.version>
-        <archunit.version>1.4.2</archunit.version>
+        <palantir-java-format.version>{{ .PalantirJavaFormatVersion }}</palantir-java-format.version>
+        <spotless.version>{{ .SpotlessMavenPluginVersion }}</spotless.version>
+        <archunit.version>{{ .ArchunitVersion }}</archunit.version>
         <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
 	</properties>
 

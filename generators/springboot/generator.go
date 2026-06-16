@@ -23,6 +23,7 @@ const templatesRootDir = "templates"
 
 // ProjectConfig holds all configuration options for generating a Spring Boot project.
 type ProjectConfig struct {
+	Versions              `json:"-"`
 	AppType               AppType
 	AppName               string
 	GroupID               string
@@ -75,6 +76,7 @@ func Run(configFile string) error {
 }
 
 func GenerateProject(pc ProjectConfig) error {
+	pc.Versions = defaultVersions()
 	pg := projectGenerator{tmplFS: tmplsFS}
 	if err := pg.generate(pc); err != nil {
 		return err
