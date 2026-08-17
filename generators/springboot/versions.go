@@ -5,19 +5,20 @@ const (
 	springBootVersion              = "4.1.0"
 	gradleDependencyMgmtVersion    = "1.1.7"
 	gradleGitPropertiesVersion     = "4.0.1"
-	spotlessGradlePluginVersion    = "8.6.0"
-	spotlessMavenPluginVersion     = "3.6.0"
+	spotlessGradlePluginVersion    = "8.9.0"
+	spotlessMavenPluginVersion     = "3.9.0"
 	springModulithVersion          = "2.1.0"
-	springCloudAWSVersion          = "4.0.2"
-	springdocOpenapiVersion        = "3.0.3"
+	springCloudAWSVersion          = "4.1.0"
+	springBootFlociTcVersion       = "2.14.0"
+	springdocOpenapiVersion        = "3.1.0"
 	bootstrapVersion               = "5.3.8"
 	jqueryVersion                  = "3.7.1"
-	fontAwesomeVersion             = "7.2.0"
+	fontAwesomeVersion             = "7.3.0"
 	htmxVersion                    = "2.0.10"
 	htmxSpringBootThymeleafVersion = "5.1.0"
 	jjwtVersion                    = "0.13.0"
 	archunitVersion                = "1.4.2"
-	palantirJavaFormatVersion      = "2.93.0"
+	palantirJavaFormatVersion      = "2.96.0"
 )
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.
@@ -30,6 +31,7 @@ type Versions struct {
 	SpotlessMavenPluginVersion     string
 	SpringModulithVersion          string
 	SpringCloudAWSVersion          string
+	SpringBootFlociTcVersion       string
 	SpringdocOpenapiVersion        string
 	BootstrapVersion               string
 	JqueryVersion                  string
@@ -51,6 +53,7 @@ func defaultVersions() Versions {
 		SpotlessMavenPluginVersion:     spotlessMavenPluginVersion,
 		SpringModulithVersion:          springModulithVersion,
 		SpringCloudAWSVersion:          springCloudAWSVersion,
+		SpringBootFlociTcVersion:       springBootFlociTcVersion,
 		SpringdocOpenapiVersion:        springdocOpenapiVersion,
 		BootstrapVersion:               bootstrapVersion,
 		JqueryVersion:                  jqueryVersion,

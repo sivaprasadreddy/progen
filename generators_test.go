@@ -62,13 +62,11 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				DbMigrationTool:       tt.migrationTool,
 				DockerComposeSupport:  tt.DockerComposeSupport,
 				SpringModulithSupport: tt.SpringModulithSupport,
-				//TODO: Temporarily disabled until Spring Cloud AWS supports Spring Boot 4
-				SpringCloudAWSSupport: false,
-				//SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
-				ThymeleafSupport:   tt.ThymeleafSupport,
-				HTMXSupport:        tt.HTMXSupport,
-				SecuritySupport:    tt.SecuritySupport,
-				JwtSecuritySupport: tt.JwtSecuritySupport,
+				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
+				ThymeleafSupport:      tt.ThymeleafSupport,
+				HTMXSupport:           tt.HTMXSupport,
+				SecuritySupport:       tt.SecuritySupport,
+				JwtSecuritySupport:    tt.JwtSecuritySupport,
 			}
 			err := sb.GenerateProject(pc)
 			assert.Nil(t, err)
@@ -80,8 +78,11 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 			assert.Nil(t, err)
 
 			//cleanup
-			err = deleteDir(appName)
-			assert.Nil(t, err)
+			//err = deleteDir(appName)
+			//assert.Nil(t, err)
+			if err == nil {
+				err = deleteDir(appName)
+			}
 		})
 	}
 }

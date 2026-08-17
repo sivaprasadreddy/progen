@@ -188,6 +188,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewDbMigrationsConfig(pg),
 		NewSpringModulithConfig(pg),
 		NewSecurityConfig(pg),
+		NewSpringCloudAwsConfig(pg),
 	}
 
 	for _, gen := range generators {

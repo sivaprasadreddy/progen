@@ -32,19 +32,15 @@ services:
       - "3306:3306"
   {{- end }}
   {{- if .SpringCloudAWSSupport }}
-  localstack:
-    image: localstack/localstack:4.0.3
+  floci:
+    image: floci/floci:latest-compat
     ports:
       - "4566:4566"
-    environment:
-      - DEFAULT_REGION=us-east-1
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - USE_SSL=0
-      - AWS_CBOR_DISABLE=1
     volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      #- "./.localstack:/etc/localstack/init/ready.d"  # ready hook
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./src/test/resources/floci-init/ready.d:/etc/floci/init/ready.d:ro
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
   {{- end }}
 
   {{ .ArtifactID }}:

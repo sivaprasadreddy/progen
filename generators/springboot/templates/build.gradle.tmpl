@@ -31,6 +31,7 @@ ext {
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
   set('awspringVersion', "{{ .SpringCloudAWSVersion }}")
+  set('bootTcFlociVersion', "{{ .SpringBootFlociTcVersion }}")
 {{- end }}
 {{- if .SpringModulithSupport }}
   set('springModulithVersion', "{{ .SpringModulithVersion }}")
@@ -142,9 +143,6 @@ dependencies {
     {{- if .ThymeleafSupport }}
     testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
     {{- end }}
-    {{- if .SpringCloudAWSSupport }}
-    implementation "io.awspring.cloud:spring-cloud-aws-testcontainers"
-    {{- end }}
     {{- if .SpringModulithSupport }}
     testImplementation "org.springframework.modulith:spring-modulith-starter-test"
     {{- end }}
@@ -160,7 +158,7 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers-mariadb"
     {{- end }}
     {{- if .SpringCloudAWSSupport }}
-    testImplementation "org.testcontainers:testcontainers-localstack"
+    testImplementation "io.floci:spring-boot-testcontainers-floci:${bootTcFlociVersion}"
     {{- end }}
     testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"
 }

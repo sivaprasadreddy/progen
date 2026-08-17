@@ -15,7 +15,8 @@ import org.testcontainers.mysql.MySQLContainer;
 import org.testcontainers.mariadb.MariaDBContainer;
 {{ end }}
 {{- if .SpringCloudAWSSupport }}
-import org.testcontainers.containers.localstack.LocalStackContainer;
+import io.floci.testcontainers.FlociContainer;
+import org.testcontainers.containers.BindMode;
 {{ end }}
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfig {
@@ -44,8 +45,9 @@ public class TestcontainersConfig {
 {{- if .SpringCloudAWSSupport }}
     @Bean
     @ServiceConnection
-    LocalStackContainer localstackContainer() {
-        return new LocalStackContainer(parse("localstack/localstack:4.0.3"));
+    FlociContainer flociContainer() {
+        return new FlociContainer("floci/floci:latest-compat")
+               .withClasspathResourceMapping("/floci-init/ready.d/", "/etc/floci/init/ready.d/", BindMode.READ_ONLY);
     }
 {{ end }}
 }
