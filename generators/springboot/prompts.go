@@ -5,7 +5,7 @@ import (
 	"os"
 	"slices"
 
-	"github.com/charmbracelet/huh"
+	"charm.land/huh/v2"
 	"github.com/sivaprasadreddy/progen/generators/helpers"
 )
 
