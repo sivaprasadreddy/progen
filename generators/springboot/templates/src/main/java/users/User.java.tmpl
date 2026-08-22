@@ -1,6 +1,8 @@
-package {{ .BasePackage }}.domain;
+package {{ .BasePackage }}.users;
 
 import jakarta.persistence.*;
+
+import {{ .BasePackage }}.domain.BaseEntity;
 
 @Entity
 @Table(name = "users")

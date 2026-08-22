@@ -1,6 +1,6 @@
 package {{ .BasePackage }}.config;
 
-import {{ .BasePackage }}.security.TokenAuthenticationFilter;
+import {{ .BasePackage }}.users.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -28,10 +28,10 @@ class WebSecurityConfig {
         "/error",
     };
 
-    private final TokenAuthenticationFilter tokenAuthFilter;
+    private final JwtFilter jwtFilter;
 
-    WebSecurityConfig(TokenAuthenticationFilter tokenAuthFilter) {
-        this.tokenAuthFilter = tokenAuthFilter;
+    WebSecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
     }
 
     @Bean
@@ -51,7 +51,7 @@ class WebSecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .permitAll());
-        http.addFilterBefore(tokenAuthFilter, BasicAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, BasicAuthenticationFilter.class);
         http.exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();

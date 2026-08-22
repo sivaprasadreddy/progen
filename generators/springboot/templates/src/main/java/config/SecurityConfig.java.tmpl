@@ -1,8 +1,8 @@
 package {{ .BasePackage }}.config;
 
 {{- if eq .AppType "REST API" }}
-import {{ .BasePackage }}.security.TokenAuthenticationFilter;
-import {{ .BasePackage }}.security.TokenHelper;
+import {{ .BasePackage }}.users.JwtFilter;
+import {{ .BasePackage }}.users.TokenHelper;
 {{ end }}
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,8 +31,8 @@ class SecurityConfig {
     }
     {{- if eq .AppType "REST API" }}
     @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter(TokenHelper tokenHelper, UserDetailsService uds) {
-        return new TokenAuthenticationFilter(tokenHelper, uds);
+    public JwtFilter jwtFilter(TokenHelper tokenHelper, UserDetailsService uds) {
+        return new JwtFilter(tokenHelper, uds);
     }
     {{ end }}
 }
