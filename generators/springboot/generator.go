@@ -1,5 +1,3 @@
-// Package spring_boot provides functionality for generating Spring Boot projects
-// with various configurations and features.
 package springboot
 
 import (
@@ -7,9 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
-	"runtime"
 	"strings"
 	"text/template"
 
@@ -71,7 +67,6 @@ func Run(configFile string) error {
 	}
 	helpers.FatalIfErr(err)
 	err = GenerateProject(projectConfig)
-	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
 	return err
 }
 
@@ -81,7 +76,9 @@ func GenerateProject(pc ProjectConfig) error {
 	if err := pg.generate(pc); err != nil {
 		return err
 	}
-	return writeConfigFile(pc, pc.AppName+"/.progen.json")
+	err := writeConfigFile(pc, pc.AppName+"/.progen.json")
+	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
+	return err
 }
 
 func GenerateInitConfig() error {
@@ -123,25 +120,25 @@ func validateAndSanitize(pc ProjectConfig) ProjectConfig {
 		pc.BasePackage = defaultProjectConfig.BasePackage
 	}
 	// Validate AppType
-	if pc.AppType != RestApi && pc.AppType != WebApp {
+	if !pc.AppType.IsValid() {
 		fmt.Printf("WARNING: AppType '%s' is invalid. Using default: %s\n", pc.AppType, defaultProjectConfig.AppType)
 		pc.AppType = defaultProjectConfig.AppType
 	}
 
 	// Validate BuildTool
-	if pc.BuildTool != Maven && pc.BuildTool != Gradle {
+	if !pc.BuildTool.IsValid() {
 		fmt.Printf("WARNING: BuildTool '%s' is invalid. Using default: %s\n", pc.BuildTool, defaultProjectConfig.BuildTool)
 		pc.BuildTool = defaultProjectConfig.BuildTool
 	}
 
 	// Validate DatabaseType
-	if pc.DbType != PostgreSQL && pc.DbType != MySQL && pc.DbType != MariaDB {
+	if !pc.DbType.IsValid() {
 		fmt.Printf("WARNING: DbType '%s' is invalid. Using default: %s\n", pc.DbType, defaultProjectConfig.DbType)
 		pc.DbType = defaultProjectConfig.DbType
 	}
 
 	// Validate DbMigrationTool
-	if pc.DbMigrationTool != Flyway && pc.DbMigrationTool != Liquibase {
+	if !pc.DbMigrationTool.IsValid() {
 		fmt.Printf("WARNING: DbMigrationTool '%s' is invalid. Using default: %s\n", pc.DbMigrationTool, defaultProjectConfig.DbMigrationTool)
 		pc.DbMigrationTool = defaultProjectConfig.DbMigrationTool
 	}
@@ -231,42 +228,4 @@ func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targe
 		return err
 	}
 	return nil
-}
-
-func (pg projectGenerator) formatCode(pc ProjectConfig) error {
-	executable, formatCmd := pg.getBuildToolCommands(pc.BuildTool)
-	appFormatCmd := pg.buildCommandString(pc.AppName, executable, formatCmd)
-	cmd := pg.createOSCommand(appFormatCmd)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("failed to format project code\n%w", output)
-	}
-	return err
-}
-
-func (pg projectGenerator) getBuildToolCommands(buildTool BuildTool) (executable, formatCmd string) {
-	isWindows := runtime.GOOS == "windows"
-
-	if buildTool == Gradle {
-		if isWindows {
-			return "gradlew.bat", "spotlessApply"
-		}
-		return "./gradlew", "spotlessApply"
-	}
-
-	if isWindows {
-		return "mvnw.cmd", "spotless:apply"
-	}
-	return "./mvnw", "spotless:apply"
-}
-
-func (pg projectGenerator) buildCommandString(dirName, executable, formatCmd string) string {
-	return fmt.Sprintf("cd %s && %s %s", dirName, executable, formatCmd)
-}
-
-func (pg projectGenerator) createOSCommand(command string) *exec.Cmd {
-	if runtime.GOOS == "windows" {
-		return exec.Command("cmd", "/C", command)
-	}
-	return exec.Command("/bin/sh", "-c", command)
 }

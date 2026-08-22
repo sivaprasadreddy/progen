@@ -23,6 +23,15 @@ func (a AppType) String() string {
 	}
 }
 
+func (a AppType) IsValid() bool {
+	switch a {
+	case RestApi, WebApp:
+		return true
+	default:
+		return false
+	}
+}
+
 type BuildTool string
 
 const (
@@ -32,6 +41,15 @@ const (
 
 func (s BuildTool) String() string {
 	return string(s)
+}
+
+func (s BuildTool) IsValid() bool {
+	switch s {
+	case Maven, Gradle:
+		return true
+	default:
+		return false
+	}
 }
 
 type DatabaseType string
@@ -46,6 +64,15 @@ func (s DatabaseType) String() string {
 	return string(s)
 }
 
+func (s DatabaseType) IsValid() bool {
+	switch s {
+	case PostgreSQL, MySQL, MariaDB:
+		return true
+	default:
+		return false
+	}
+}
+
 type DbMigrationTool string
 
 const (
@@ -55,6 +82,15 @@ const (
 
 func (s DbMigrationTool) String() string {
 	return string(s)
+}
+
+func (s DbMigrationTool) IsValid() bool {
+	switch s {
+	case Flyway, Liquibase:
+		return true
+	default:
+		return false
+	}
 }
 
 const FeatureDockerComposeSupport = "Docker Compose"
