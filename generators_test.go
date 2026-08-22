@@ -34,13 +34,11 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		SpringCloudAWSSupport bool
 		ThymeleafSupport      bool
 		HTMXSupport           bool
-		SecuritySupport       bool
-		JwtSecuritySupport    bool
 	}{
-		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true, true, false},
-		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true, true, false},
-		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, false, false, false, true},
-		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, false, false, false, true},
+		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true},
+		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true},
+		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, false, false},
+		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, false, false},
 	}
 
 	for _, tt := range options {
@@ -61,8 +59,6 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
 				ThymeleafSupport:      tt.ThymeleafSupport,
 				HTMXSupport:           tt.HTMXSupport,
-				SecuritySupport:       tt.SecuritySupport,
-				JwtSecuritySupport:    tt.JwtSecuritySupport,
 			}
 			err := sb.GenerateProject(pc)
 			assert.Nil(t, err)
@@ -88,25 +84,16 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 		t.Skip("skipping all combination tests in short mode")
 	}
 	var options = []struct {
-		dbType             sb.DatabaseType
-		migrationTool      sb.DbMigrationTool
-		JwtSecuritySupport bool
+		dbType        sb.DatabaseType
+		migrationTool sb.DbMigrationTool
 	}{
-		{sb.MySQL, sb.Flyway, false},
-		{sb.PostgreSQL, sb.Flyway, false},
-		{sb.MariaDB, sb.Flyway, false},
+		{sb.MySQL, sb.Flyway},
+		{sb.PostgreSQL, sb.Flyway},
+		{sb.MariaDB, sb.Flyway},
 
-		{sb.MySQL, sb.Liquibase, false},
-		{sb.PostgreSQL, sb.Liquibase, false},
-		{sb.MariaDB, sb.Liquibase, false},
-
-		{sb.MySQL, sb.Flyway, true},
-		{sb.MariaDB, sb.Flyway, true},
-		{sb.PostgreSQL, sb.Flyway, true},
-
-		{sb.MySQL, sb.Liquibase, true},
-		{sb.MariaDB, sb.Liquibase, true},
-		{sb.PostgreSQL, sb.Liquibase, true},
+		{sb.MySQL, sb.Liquibase},
+		{sb.PostgreSQL, sb.Liquibase},
+		{sb.MariaDB, sb.Liquibase},
 	}
 
 	for _, tt := range options {
@@ -115,16 +102,15 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 			appName := "my-springboot-mvn-api-" + strings.ToLower(tt.dbType.String()) + "-" + strings.ToLower(tt.migrationTool.String())
 
 			pc := sb.ProjectConfig{
-				AppType:            sb.RestApi,
-				AppName:            appName,
-				GroupID:            "com.sivalabs",
-				ArtifactID:         appName,
-				AppVersion:         "1.0",
-				BasePackage:        "com.sivalabs.myapp",
-				BuildTool:          sb.Maven,
-				DbType:             tt.dbType,
-				DbMigrationTool:    tt.migrationTool,
-				JwtSecuritySupport: tt.JwtSecuritySupport,
+				AppType:         sb.RestApi,
+				AppName:         appName,
+				GroupID:         "com.sivalabs",
+				ArtifactID:      appName,
+				AppVersion:      "1.0",
+				BasePackage:     "com.sivalabs.myapp",
+				BuildTool:       sb.Maven,
+				DbType:          tt.dbType,
+				DbMigrationTool: tt.migrationTool,
 			}
 			err := sb.GenerateProject(pc)
 			assert.Nil(t, err)

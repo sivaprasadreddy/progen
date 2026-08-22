@@ -8,10 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-{{- if .JwtSecuritySupport }}
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-{{ end }}
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -52,7 +50,6 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiErrors);
     }
 
-    {{- if .JwtSecuritySupport }}
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handle(AuthenticationException e) {
         var errors = List.of(e.getMessage());
@@ -66,8 +63,6 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ApiErrors apiErrors = ApiErrors.from(errors);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiErrors);
     }
-
-    {{ end }}
 
     record ApiErrors(List<String> errors) {
         public static ApiErrors from(List<String> errors) {

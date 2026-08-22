@@ -129,15 +129,8 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 
 	if answers.AppType == WebApp {
 		otherFeatureOptions = append(otherFeatureOptions,
-			huh.NewOption(FeatureSecuritySupport, FeatureSecuritySupport),
 			huh.NewOption(FeatureThymeleafSupport, FeatureThymeleafSupport).Selected(true),
 			huh.NewOption(FeatureHTMXSupport, FeatureHTMXSupport))
-	}
-
-	if answers.AppType == RestApi {
-		otherFeatureOptions = append(otherFeatureOptions,
-			huh.NewOption(FeatureJwtSecuritySupport, FeatureJwtSecuritySupport),
-		)
 	}
 
 	otherFeaturesSelect := huh.NewMultiSelect[string]().
@@ -163,8 +156,6 @@ func updateFeatureFlags(pc *ProjectConfig, features []string) {
 	pc.SpringCloudAWSSupport = isEnabled(features, FeatureSpringCloudAWSSupport)
 	pc.ThymeleafSupport = isEnabled(features, FeatureThymeleafSupport)
 	pc.HTMXSupport = isEnabled(features, FeatureHTMXSupport)
-	pc.SecuritySupport = isEnabled(features, FeatureSecuritySupport)
-	pc.JwtSecuritySupport = isEnabled(features, FeatureJwtSecuritySupport)
 }
 
 func isEnabled(features []string, feature string) bool {

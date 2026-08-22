@@ -32,8 +32,6 @@ type ProjectConfig struct {
 	SpringCloudAWSSupport bool
 	ThymeleafSupport      bool
 	HTMXSupport           bool
-	SecuritySupport       bool
-	JwtSecuritySupport    bool
 }
 
 var defaultProjectConfig = ProjectConfig{
@@ -49,8 +47,6 @@ var defaultProjectConfig = ProjectConfig{
 	SpringCloudAWSSupport: false,
 	ThymeleafSupport:      false,
 	HTMXSupport:           false,
-	SecuritySupport:       false,
-	JwtSecuritySupport:    false,
 }
 
 func Run(configFile string) error {

@@ -1,16 +1,18 @@
 package {{ .BasePackage }};
 
+{{- if eq .AppType "REST API" }}
 import jakarta.validation.constraints.NotEmpty;
+{{- end }}
 import org.springframework.boot.context.properties.ConfigurationProperties;
+{{- if eq .AppType "REST API" }}
 import org.springframework.boot.context.properties.bind.DefaultValue;
+{{- end }}
 
 @ConfigurationProperties(prefix = "app")
 public record ApplicationProperties(
         {{- if eq .AppType "REST API" }}
-        CorsProperties cors
-        {{- if .JwtSecuritySupport }}
-        ,JwtProperties jwt
-        {{ end }}
+        CorsProperties cors,
+        JwtProperties jwt
         {{ end }}
         ) {
 
@@ -20,9 +22,7 @@ public record ApplicationProperties(
         @DefaultValue("*") String allowedOrigins,
         @DefaultValue("*") String allowedMethods,
         @DefaultValue("*") String allowedHeaders) {}
-{{ end }}
 
-{{- if .JwtSecuritySupport }}
     public record JwtProperties(
             @DefaultValue("{{ .AppName }}") String issuer,
             @DefaultValue("604800") Long expiresIn,

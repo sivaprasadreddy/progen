@@ -45,7 +45,7 @@ ext {
 {{- if and .ThymeleafSupport .HTMXSupport }}
   set('htmxSpringBootThymeleafVersion', "{{ .HtmxSpringBootThymeleafVersion }}")
 {{- end }}
-{{- if .JwtSecuritySupport }}
+{{- if eq .AppType "REST API" }}
   set('jjwtVersion', "{{ .JjwtVersion }}")
 {{- end }}
   set('palantirJavaFormatVersion', "{{ .PalantirJavaFormatVersion }}")
@@ -56,15 +56,11 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webmvc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
-    {{- if or .SecuritySupport .JwtSecuritySupport }}
     implementation "org.springframework.boot:spring-boot-starter-security"
-    {{- end }}
     {{- if .ThymeleafSupport }}
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
     implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
-    {{- if .SecuritySupport }}
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6"
-    {{- end }}
     {{- if .HTMXSupport }}
     implementation "io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:${htmxSpringBootThymeleafVersion}"
     {{- end }}
@@ -110,7 +106,7 @@ dependencies {
     {{- if .HTMXSupport }}
     implementation "org.webjars.npm:htmx.org:${htmxVersion}"
     {{- end }}
-    {{- if .JwtSecuritySupport }}
+    {{- if eq .AppType "REST API" }}
     implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
@@ -131,9 +127,7 @@ dependencies {
     {{- if eq .DbMigrationTool "Liquibase"}}
     testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
     {{- end }}
-    {{- if or .SecuritySupport .JwtSecuritySupport }}
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
-    {{- end }}
     {{- if .ThymeleafSupport }}
     testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
     {{- end }}
