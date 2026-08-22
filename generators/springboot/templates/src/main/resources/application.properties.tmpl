@@ -1,7 +1,5 @@
 spring.application.name={{ .ArtifactID }}
-{{- if .DockerComposeSupport }}
 spring.docker.compose.lifecycle-management=start_only
-{{ end }}
 
 ######## App Configuration  #########
 {{- if eq .AppType "REST API" }}

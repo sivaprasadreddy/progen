@@ -5,9 +5,7 @@ import org.springframework.boot.SpringApplication;
 public class TestApplication {
 
     public static void main(String[] args) {
-        {{- if .DockerComposeSupport }}
         System.setProperty("spring.docker.compose.enabled", "false");
-        {{- end }}
         SpringApplication.from(Application::main)
                 .with(TestcontainersConfig.class)
                 .run(args);

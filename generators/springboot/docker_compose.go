@@ -9,8 +9,5 @@ func NewDockerComposeConfig(pg projectGenerator) *DockerComposeConfig {
 }
 
 func (d DockerComposeConfig) generate(pc ProjectConfig) error {
-	if !pc.DockerComposeSupport {
-		return nil
-	}
 	return d.pg.executeTemplate(pc, "compose.yml.tmpl", "compose.yml")
 }

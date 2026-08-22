@@ -29,7 +29,6 @@ type ProjectConfig struct {
 	BuildTool             BuildTool
 	DbType                DatabaseType
 	DbMigrationTool       DbMigrationTool
-	DockerComposeSupport  bool
 	SpringModulithSupport bool
 	SpringCloudAWSSupport bool
 	ThymeleafSupport      bool
@@ -48,7 +47,6 @@ var defaultProjectConfig = ProjectConfig{
 	BuildTool:             Maven,
 	DbType:                PostgreSQL,
 	DbMigrationTool:       Flyway,
-	DockerComposeSupport:  true,
 	SpringModulithSupport: false,
 	SpringCloudAWSSupport: false,
 	ThymeleafSupport:      false,
