@@ -11,9 +11,6 @@ func NewSpringModulithConfig(pg projectGenerator) *SpringModulithConfig {
 }
 
 func (s SpringModulithConfig) generate(pc ProjectConfig) error {
-	if !pc.SpringModulithSupport {
-		return nil
-	}
 	return s.createSrcTestJava(pc)
 }
 

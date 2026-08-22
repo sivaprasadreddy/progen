@@ -124,7 +124,6 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	}
 
 	otherFeatureOptions := []huh.Option[string]{
-		huh.NewOption(FeatureSpringModulithSupport, FeatureSpringModulithSupport),
 		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 	}
 
@@ -161,7 +160,6 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 }
 
 func updateFeatureFlags(pc *ProjectConfig, features []string) {
-	pc.SpringModulithSupport = isEnabled(features, FeatureSpringModulithSupport)
 	pc.SpringCloudAWSSupport = isEnabled(features, FeatureSpringCloudAWSSupport)
 	pc.ThymeleafSupport = isEnabled(features, FeatureThymeleafSupport)
 	pc.HTMXSupport = isEnabled(features, FeatureHTMXSupport)

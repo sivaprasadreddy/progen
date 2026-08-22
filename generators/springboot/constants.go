@@ -93,7 +93,6 @@ func (s DbMigrationTool) IsValid() bool {
 	}
 }
 
-const FeatureSpringModulithSupport = "Spring Modulith"
 const FeatureSpringCloudAWSSupport = "Spring Cloud AWS"
 const FeatureThymeleafSupport = "Thymeleaf"
 const FeatureHTMXSupport = "HTMX"

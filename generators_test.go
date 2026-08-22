@@ -31,17 +31,16 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		buildTool             sb.BuildTool
 		dbType                sb.DatabaseType
 		migrationTool         sb.DbMigrationTool
-		SpringModulithSupport bool
 		SpringCloudAWSSupport bool
 		ThymeleafSupport      bool
 		HTMXSupport           bool
 		SecuritySupport       bool
 		JwtSecuritySupport    bool
 	}{
-		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true, true, true, false},
-		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true, true, true, false},
-		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, true, false, false, false, true},
-		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, false, false, false, true},
+		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true, true, false},
+		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true, true, false},
+		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, false, false, false, true},
+		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, false, false, false, true},
 	}
 
 	for _, tt := range options {
@@ -59,7 +58,6 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				BuildTool:             tt.buildTool,
 				DbType:                tt.dbType,
 				DbMigrationTool:       tt.migrationTool,
-				SpringModulithSupport: tt.SpringModulithSupport,
 				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
 				ThymeleafSupport:      tt.ThymeleafSupport,
 				HTMXSupport:           tt.HTMXSupport,

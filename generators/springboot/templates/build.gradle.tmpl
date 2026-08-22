@@ -33,9 +33,7 @@ ext {
   set('awspringVersion', "{{ .SpringCloudAWSVersion }}")
   set('bootTcFlociVersion', "{{ .SpringBootFlociTcVersion }}")
 {{- end }}
-{{- if .SpringModulithSupport }}
   set('springModulithVersion', "{{ .SpringModulithVersion }}")
-{{- end }}
 {{- if .ThymeleafSupport }}
   set('bootstrapVersion', "{{ .BootstrapVersion }}")
   set('jqueryVersion', "{{ .JqueryVersion }}")
@@ -96,11 +94,9 @@ dependencies {
     {{- if eq .DbMigrationTool "Liquibase"}}
     implementation "org.springframework.boot:spring-boot-starter-liquibase"
     {{- end }}
-    {{- if .SpringModulithSupport }}
     implementation "org.springframework.modulith:spring-modulith-starter-core"
     implementation "org.springframework.modulith:spring-modulith-docs"
     runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
-    {{- end }}
     {{- if .SpringCloudAWSSupport }}
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
@@ -141,9 +137,7 @@ dependencies {
     {{- if .ThymeleafSupport }}
     testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
     {{- end }}
-    {{- if .SpringModulithSupport }}
     testImplementation "org.springframework.modulith:spring-modulith-starter-test"
-    {{- end }}
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
     testImplementation "org.testcontainers:testcontainers-junit-jupiter"
     {{- if eq .DbType "PostgreSQL" }}
@@ -166,9 +160,7 @@ dependencyManagement {
         {{- if .SpringCloudAWSSupport }}
         mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${awspringVersion}"
         {{- end }}
-        {{- if .SpringModulithSupport }}
         mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
-        {{- end }}
     }
 }
 

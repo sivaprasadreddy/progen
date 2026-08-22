@@ -18,9 +18,7 @@
 	<properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>{{ .JavaVersion }}</java.version>
-{{- if .SpringModulithSupport }}
         <spring-modulith.version>{{ .SpringModulithVersion }}</spring-modulith.version>
-{{ end }}
 {{- if .SpringCloudAWSSupport }}
         <spring-cloud-aws.version>{{ .SpringCloudAWSVersion }}</spring-cloud-aws.version>
         <spring-boot-floci-tc.version>{{ .SpringBootFlociTcVersion }}</spring-boot-floci-tc.version>
@@ -146,7 +144,6 @@
             <version>${springdoc-openapi.version}</version>
         </dependency>
         {{- end }}
-        {{- if .SpringModulithSupport }}
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-core</artifactId>
@@ -160,7 +157,6 @@
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-docs</artifactId>
         </dependency>
-        {{ end }}
         {{- if .SpringCloudAWSSupport }}
         <dependency>
             <groupId>io.awspring.cloud</groupId>
@@ -283,13 +279,11 @@
               <scope>test</scope>
         </dependency>
         {{ end }}
-        {{- if .SpringModulithSupport }}
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -348,7 +342,6 @@
                 <scope>import</scope>
             </dependency>
         {{ end }}
-        {{- if .SpringModulithSupport }}
             <dependency>
                 <groupId>org.springframework.modulith</groupId>
                 <artifactId>spring-modulith-bom</artifactId>
@@ -356,7 +349,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-        {{ end }}
         </dependencies>
     </dependencyManagement>
 
