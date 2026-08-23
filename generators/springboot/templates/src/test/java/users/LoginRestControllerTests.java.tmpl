@@ -3,36 +3,32 @@ package {{ .BasePackage }}.users;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import {{ .BasePackage }}.BaseIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.assertj.MvcTestResult;
+import org.springframework.http.MediaType;
 
 class LoginRestControllerTests extends BaseIntegrationTest {
 
     @Test
-    @DisplayName("Given valid credentials, user should be able to login successfully")
-    void shouldLoginSuccessfully() {
-        MvcTestResult testResult = mvc.post()
-                .uri("/api/login")
-                .contentType("application/json")
-                .content(
-                        """
-                        {
-                          "email": "admin@gmail.com",
-                          "password": "admin"
-                        }
-                        """)
-                .exchange();
-        assertThat(testResult)
-                .hasStatusOk()
-                .bodyJson()
-                .convertTo(LoginRestController.LoginResponse.class)
-                .satisfies(response -> {
-                    assertThat(response).isNotNull();
-                    assertThat(response.token()).isNotBlank();
-                    assertThat(response.email()).isEqualTo("admin@gmail.com");
-                    assertThat(response.name()).isEqualTo("Administrator");
-                });
+    void shouldLoginSuccessfullyWithValidCredentials() {
+        LoginRestController.LoginResponse response = restTestClient
+                    .post()
+                    .uri("/api/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("""
+                            {
+                              "email": "admin@gmail.com",
+                              "password": "admin"
+                            }
+                            """)
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .returnResult(LoginRestController.LoginResponse.class)
+                    .getResponseBody();
 
+        assertThat(response).isNotNull();
+        assertThat(response.token()).isNotBlank();
+        assertThat(response.email()).isEqualTo("admin@gmail.com");
+        assertThat(response.name()).isEqualTo("Administrator");
     }
 }

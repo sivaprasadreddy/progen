@@ -39,6 +39,8 @@
         <jjwt.version>{{ .JjwtVersion }}</jjwt.version>
         <springdoc-openapi.version>{{ .SpringdocOpenapiVersion }}</springdoc-openapi.version>
 {{ end }}
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <jacoco.minimum.coverage>40%</jacoco.minimum.coverage>
         <palantir-java-format.version>{{ .PalantirJavaFormatVersion }}</palantir-java-format.version>
         <spotless.version>{{ .SpotlessMavenPluginVersion }}</spotless.version>
         <archunit.version>{{ .ArchunitVersion }}</archunit.version>
@@ -388,6 +390,46 @@
                         <includeOnlyProperty>^git.commit.message.full$</includeOnlyProperty>
                     </includeOnlyProperties>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.minimum.coverage}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>

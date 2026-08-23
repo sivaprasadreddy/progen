@@ -1,39 +1,35 @@
 package {{ .BasePackage }}.users;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpStatus.CREATED;
 
 import {{ .BasePackage }}.BaseIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.assertj.MvcTestResult;
+import org.springframework.http.MediaType;
 
 class UserRestControllerTests extends BaseIntegrationTest {
 
     @Test
-    @DisplayName("Given valid user details, user should be created successfully")
     void shouldCreateUserSuccessfully() {
-        MvcTestResult testResult = mvc.post()
-                .uri("/api/users")
-                .contentType("application/json")
-                .content(
-                        """
-                        {
-                          "name":"User123",
-                          "email":"user123@gmail.com",
-                          "password":"secret"
-                        }
-                        """)
-                .exchange();
-        assertThat(testResult)
-                .hasStatus(CREATED)
-                .bodyJson()
-                .convertTo(UserRestController.RegistrationResponse.class)
-                .satisfies(response -> {
-                    assertThat(response).isNotNull();
-                    assertThat(response.role()).isEqualTo(Role.ROLE_USER);
-                    assertThat(response.email()).isEqualTo("user123@gmail.com");
-                    assertThat(response.name()).isEqualTo("User123");
-                });
+        UserRestController.RegistrationResponse response = restTestClient
+                    .post()
+                    .uri("/api/users")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("""
+                            {
+                              "name":"User123",
+                              "email":"user123@gmail.com",
+                              "password":"secret"
+                            }
+                            """)
+                    .exchange()
+                    .expectStatus()
+                    .isCreated()
+                    .returnResult(UserRestController.RegistrationResponse.class)
+                    .getResponseBody();
+
+        assertThat(response).isNotNull();
+        assertThat(response.role()).isEqualTo(Role.ROLE_USER);
+        assertThat(response.email()).isEqualTo("user123@gmail.com");
+        assertThat(response.name()).isEqualTo("User123");
     }
 }

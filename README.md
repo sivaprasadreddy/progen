@@ -16,17 +16,22 @@ The progen generates a Spring Boot application with the following features confi
 * [Spring Boot](https://spring.io/projects/spring-boot) project with **Maven** and **Gradle** support
 * [Spring Data JPA](https://spring.io/projects/spring-data-jpa) integration with **MySQL**, **Postgresql**, **MariaDB** support
 * [Flyway](https://www.red-gate.com/products/flyway/community/) and [Liquibase](https://www.liquibase.com/) database migration support
+* [Thymeleaf](https://www.thymeleaf.org/) with [TailwindCSS](https://tailwindcss.com/) for Web Apps
+* [HTMX](https://htmx.org/) with [htmx-spring-boot](https://github.com/wimdeblauwe/htmx-spring-boot)
 * [Spring Security](https://spring.io/projects/spring-security) configuration for Web Apps
 * **Spring Security JWT** configuration for REST APIs
 * [Spring Modulith](https://spring.io/projects/spring-modulith) configuration
-* [Spring Cloud AWS](https://awspring.io/) support with [LocalStack](https://www.localstack.cloud/) configuration
+* [Spring Cloud AWS](https://awspring.io/) support with [Floci](https://floci.io/floci/) configuration
+* Email support with [MailPit](https://mailpit.axllent.org/) and [Testcontainers Mailpit](https://github.com/martinellich/testcontainers-mailpit)
 * Swagger UI Integration using [springdoc-openapi](https://springdoc.org/)
 * [Testcontainers](https://java.testcontainers.org/) based Testing and Local Development Setup
 * [Docker Compose](https://docs.docker.com/compose/) based Local Development Setup
 * GitHub Actions configuration
 * Code formatting using [Spotless](https://github.com/diffplug/spotless)
-* [JUnit 5](https://junit.org/junit5/)
+* [SDKMAN](https://sdkman.io/) configuration
+* [JUnit](https://junit.org/)
 * [Taskfile](https://taskfile.dev/) to execute commonly used commands
+* [Renovate](https://docs.renovatebot.com/) 
 
 
 ## Installation

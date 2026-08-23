@@ -1,26 +1,38 @@
 package {{ .BasePackage }};
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+{{- if eq .AppType "Web App" }}
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+{{ end }}
 {{- if eq .AppType "REST API" }}
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
+import org.springframework.test.web.servlet.client.RestTestClient;
 {{ end }}
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
-{{- if .SpringCloudAWSSupport }}
-import org.springframework.test.context.TestPropertySource;
-{{ end }}
+import org.springframework.test.context.ActiveProfiles;
+
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@AutoConfigureMockMvc
 @Import(TestcontainersConfig.class)
+@ActiveProfiles("test")
+{{- if eq .AppType "Web App" }}
+@AutoConfigureMockMvc
+{{ end }}
+{{- if eq .AppType "REST API" }}
+@AutoConfigureRestTestClient
+{{ end }}
 public abstract class BaseIntegrationTest {
 
+{{- if eq .AppType "Web App" }}
     @Autowired
     protected MockMvcTester mvc;
+{{ end }}
 
 {{- if eq .AppType "REST API" }}
-
+    @Autowired
+    protected RestTestClient restTestClient;
 {{ end }}
 
 }
