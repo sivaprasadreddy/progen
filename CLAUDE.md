@@ -4,7 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Is
 
-**Progen** is a CLI tool (written in Go) that generates complete, production-ready Spring Boot projects. It works offline, ships as a single binary, and uses interactive prompts or a JSON config file to scaffold a full Java project — build files, Java source, tests, Docker Compose, GitHub Actions, database migrations, security setup, and more.
+**Progen** is a CLI tool (written in Go) that generates complete, production-ready Spring Boot projects. 
+It works offline, ships as a single binary, and uses interactive prompts or a JSON config file to scaffold a full Java project — build files, Java source, tests, Docker Compose, GitHub Actions, database migrations, security setup, and more.
 
 ## Commands
 

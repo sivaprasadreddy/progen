@@ -10,7 +10,7 @@ all: build
 
 # format the go source files
 fmt:
-	goimports -w .
+	go fmt ./...
 
 build:
 	@echo 'Building MacOS binary'
