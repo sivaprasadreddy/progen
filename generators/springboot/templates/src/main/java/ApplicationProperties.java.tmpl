@@ -1,18 +1,18 @@
 package {{ .BasePackage }};
 
-{{- if eq .AppType "REST API" }}
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-{{- end }}
 import org.springframework.boot.context.properties.ConfigurationProperties;
-{{- if eq .AppType "REST API" }}
 import org.springframework.boot.context.properties.bind.DefaultValue;
-{{- end }}
+import org.springframework.validation.annotation.Validated;
 
 @ConfigurationProperties(prefix = "app")
+@Validated
 public record ApplicationProperties(
         {{- if eq .AppType "REST API" }}
-        CorsProperties cors,
-        JwtProperties jwt
+        @Valid CorsProperties cors,
+        @Valid OpenApiProperties openApi,
+        @Valid JwtProperties jwt
         {{ end }}
         ) {
 
@@ -22,6 +22,19 @@ public record ApplicationProperties(
         @DefaultValue("*") String allowedOrigins,
         @DefaultValue("*") String allowedMethods,
         @DefaultValue("*") String allowedHeaders) {}
+
+    public record OpenApiProperties(
+            @DefaultValue("Blog API") String title,
+
+            @DefaultValue("Blog API Swagger Documentation") String description,
+
+            @DefaultValue("v1.0.0") String version,
+            @Valid OpenApiProperties.Contact contact) {
+
+        public record Contact(
+                @DefaultValue("SivaLabs") String name,
+                @DefaultValue("support@sivalabs.in") String email) {}
+    }
 
     public record JwtProperties(
             @DefaultValue("{{ .AppName }}") String issuer,

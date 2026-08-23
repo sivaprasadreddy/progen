@@ -2,17 +2,24 @@ name: Build
 
 on:
   push:
-    branches:
-      - '**'
-  pull_request:
-    branches: [ main ]
+    branches: [ "main", "fix/*", "feat/*" ]
+    paths-ignore:
+      - "*.md"
+      - ".gitignore"
+      - ".gitattributes"
+      - ".sdkmanrc"
+      - "README.md"
+      - "LICENSE"
+      - "Taskfile.yml"
+      - "renovate.json"
+      - "docs/**"
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -30,6 +37,7 @@ jobs:
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
      {{- end }}
+
      {{- if eq .BuildTool "Gradle" }}
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
@@ -39,6 +47,7 @@ jobs:
       - name: Build with Maven
         run: ./mvnw -ntp verify
      {{- end }}
+
      {{- if eq .BuildTool "Gradle" }}
       - name: Build with Gradle
         run: ./gradlew build

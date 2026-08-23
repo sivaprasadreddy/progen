@@ -35,11 +35,12 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		SpringCloudAWSSupport bool
 		ThymeleafSupport      bool
 		HTMXSupport           bool
+		EmailSupport          bool
 	}{
-		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true},
-		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true},
-		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, false, false},
-		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, false, false},
+		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true, true},
+		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true, false},
+		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, false, false, true},
 	}
 
 	for _, tt := range options {
@@ -60,6 +61,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
 				ThymeleafSupport:      tt.ThymeleafSupport,
 				HTMXSupport:           tt.HTMXSupport,
+				EmailSupport:          tt.EmailSupport,
 			}
 			err := sb.GenerateProject(pc)
 			assert.Nil(t, err)
@@ -112,6 +114,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 				BuildTool:       sb.Maven,
 				DbType:          tt.dbType,
 				DbMigrationTool: tt.migrationTool,
+				EmailSupport:    true,
 			}
 			err := sb.GenerateProject(pc)
 			assert.Nil(t, err)

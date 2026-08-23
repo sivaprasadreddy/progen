@@ -32,6 +32,7 @@ type ProjectConfig struct {
 	SpringCloudAWSSupport bool
 	ThymeleafSupport      bool
 	HTMXSupport           bool
+	EmailSupport          bool
 }
 
 var defaultProjectConfig = ProjectConfig{
@@ -47,6 +48,7 @@ var defaultProjectConfig = ProjectConfig{
 	SpringCloudAWSSupport: false,
 	ThymeleafSupport:      false,
 	HTMXSupport:           false,
+	EmailSupport:          false,
 }
 
 func GenerateProjectFromConfigFile(configFile string) error {
@@ -161,20 +163,21 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 	}
 
 	generators := []configGenerator{
-		NewBuildToolConfig(pg),
-		NewSdkmanConfig(pg),
-		NewTaskfileConfig(pg),
-		NewRenovateConfig(pg),
 		NewGitIgnoreConfig(pg),
-		NewDockerComposeConfig(pg),
-		NewGhActionsConfig(pg),
-		NewReadMeConfig(pg),
+		NewBuildToolConfig(pg),
 		NewAppCommonConfig(pg),
 		NewThymeleafConfig(pg),
 		NewDbMigrationsConfig(pg),
 		NewSpringModulithConfig(pg),
 		NewSecurityConfig(pg),
 		NewSpringCloudAwsConfig(pg),
+		NewEmailConfig(pg),
+		NewDockerComposeConfig(pg),
+		NewGhActionsConfig(pg),
+		NewReadMeConfig(pg),
+		NewSdkmanConfig(pg),
+		NewTaskfileConfig(pg),
+		NewRenovateConfig(pg),
 	}
 
 	for _, gen := range generators {

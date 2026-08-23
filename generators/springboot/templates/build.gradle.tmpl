@@ -46,6 +46,9 @@ ext {
 {{- if eq .AppType "REST API" }}
   set('jjwtVersion', "{{ .JjwtVersion }}")
 {{- end }}
+{{- if .EmailSupport }}
+  set('tcMailpitVersion', "{{ .TcMailpitVersion }}")
+{{- end }}
   set('palantirJavaFormatVersion', "{{ .PalantirJavaFormatVersion }}")
   set('archunitVersion', "{{ .ArchunitVersion }}")
 }
@@ -95,6 +98,9 @@ dependencies {
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
     {{- end }}
+    {{- if .EmailSupport }}
+    implementation "org.springframework.boot:spring-boot-starter-mail"
+    {{- end }}
     {{- if .ThymeleafSupport }}
     implementation "org.webjars:webjars-locator-lite"
     implementation "org.webjars:font-awesome:${fontawesomeVersion}"
@@ -141,6 +147,9 @@ dependencies {
     {{- end }}
     {{- if .SpringCloudAWSSupport }}
     testImplementation "io.floci:spring-boot-testcontainers-floci:${bootTcFlociVersion}"
+    {{- end }}
+    {{- if .EmailSupport }}
+    testImplementation "ch.martinelli.oss:testcontainers-mailpit:${tcMailpitVersion}"
     {{- end }}
     testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"
 }

@@ -23,6 +23,9 @@
         <spring-cloud-aws.version>{{ .SpringCloudAWSVersion }}</spring-cloud-aws.version>
         <spring-boot-floci-tc.version>{{ .SpringBootFlociTcVersion }}</spring-boot-floci-tc.version>
 {{ end }}
+{{- if .EmailSupport }}
+        <tc-mailpit.version>{{ .TcMailpitVersion }}</tc-mailpit.version>
+{{- end }}
 {{- if .ThymeleafSupport }}
         <font_awesome.version>{{ .FontAwesomeVersion }}</font_awesome.version>
 {{ end }}
@@ -157,6 +160,12 @@
         <dependency>
             <groupId>io.awspring.cloud</groupId>
             <artifactId>spring-cloud-aws-starter-s3</artifactId>
+        </dependency>
+        {{ end }}
+        {{- if .EmailSupport }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         {{ end }}
         {{- if .ThymeleafSupport }}
@@ -300,6 +309,14 @@
             <groupId>io.floci</groupId>
             <artifactId>spring-boot-testcontainers-floci</artifactId>
             <version>${spring-boot-floci-tc.version}</version>
+            <scope>test</scope>
+        </dependency>
+        {{- end }}
+        {{- if .EmailSupport }}
+        <dependency>
+            <groupId>ch.martinelli.oss</groupId>
+            <artifactId>testcontainers-mailpit</artifactId>
+            <version>${tc-mailpit.version}</version>
             <scope>test</scope>
         </dependency>
         {{- end }}

@@ -18,6 +18,10 @@ import org.testcontainers.mariadb.MariaDBContainer;
 import io.floci.testcontainers.FlociContainer;
 import org.testcontainers.containers.BindMode;
 {{ end }}
+{{- if .EmailSupport }}
+import ch.martinelli.oss.testcontainers.mailpit.MailpitContainer;
+{{ end }}
+
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfig {
 
@@ -48,6 +52,13 @@ public class TestcontainersConfig {
     FlociContainer flociContainer() {
         return new FlociContainer("floci/floci:latest-compat")
                .withClasspathResourceMapping("/floci-init/ready.d/", "/etc/floci/init/ready.d/", BindMode.READ_ONLY);
+    }
+{{ end }}
+{{- if .EmailSupport }}
+    @Bean
+    @ServiceConnection
+    MailpitContainer mailpit() {
+        return new MailpitContainer("axllent/mailpit:v1.30");
     }
 {{ end }}
 }

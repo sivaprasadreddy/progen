@@ -77,3 +77,15 @@ spring.liquibase.change-log=classpath:/db/migration/liquibase-changelog.xml
 spring.modulith.events.jdbc.schema-initialization.enabled=true
 spring.modulith.events.completion-mode=update
 spring.modulith.events.republish-outstanding-events-on-restart=true
+
+{{ if .EmailSupport }}
+#### Email ####
+spring.mail.host=${EMAIL_HOST:127.0.0.1}
+spring.mail.port=${EMAIL_PORT:1025}
+spring.mail.protocol=smtp
+spring.mail.username=${EMAIL_USERNAME:}
+spring.mail.password=${EMAIL_PASSWORD:}
+spring.mail.properties.mail.smtp.connectiontimeout=5000
+spring.mail.properties.mail.smtp.timeout=3000
+spring.mail.properties.mail.smtp.writetimeout=5000
+{{ end }}

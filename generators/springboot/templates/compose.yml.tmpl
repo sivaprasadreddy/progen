@@ -43,11 +43,23 @@ services:
       AWS_DEFAULT_REGION: us-east-1
   {{- end }}
 
+  {{- if .EmailSupport }}
+  mailpit:
+    image: axllent/mailpit:v1.30
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  {{- end }}
+
   {{ .ArtifactID }}:
     image: your_dockerhub_username/{{ .ArtifactID }}
     container_name: {{ .ArtifactID }}
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      {{- if .EmailSupport }}
+      EMAIL_HOST: mailpit
+      EMAIL_PORT: 1025
+      {{- end }}
       {{- if eq .DbType "PostgreSQL" }}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
@@ -74,6 +86,9 @@ services:
       {{- end }}
       {{- if eq .DbType "MariaDB" }}
       - mariadb
+      {{- end }}
+      {{- if .EmailSupport }}
+      - mailpit
       {{- end }}
     restart: unless-stopped
     profiles:
