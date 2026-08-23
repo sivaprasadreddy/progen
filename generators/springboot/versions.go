@@ -17,6 +17,7 @@ const (
 	htmxSpringBootThymeleafVersion = "5.1.0"
 	jjwtVersion                    = "0.13.0"
 	archunitVersion                = "1.5.0"
+	taikaiVersion                  = "1.66.0"
 	palantirJavaFormatVersion      = "2.96.0"
 )
 
@@ -38,6 +39,7 @@ type Versions struct {
 	HtmxSpringBootThymeleafVersion string
 	JjwtVersion                    string
 	ArchunitVersion                string
+	TaikaiVersion                  string
 	PalantirJavaFormatVersion      string
 }
 
@@ -59,6 +61,7 @@ func defaultVersions() Versions {
 		HtmxSpringBootThymeleafVersion: htmxSpringBootThymeleafVersion,
 		JjwtVersion:                    jjwtVersion,
 		ArchunitVersion:                archunitVersion,
+		TaikaiVersion:                  taikaiVersion,
 		PalantirJavaFormatVersion:      palantirJavaFormatVersion,
 	}
 }

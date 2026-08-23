@@ -44,6 +44,7 @@
         <palantir-java-format.version>{{ .PalantirJavaFormatVersion }}</palantir-java-format.version>
         <spotless.version>{{ .SpotlessMavenPluginVersion }}</spotless.version>
         <archunit.version>{{ .ArchunitVersion }}</archunit.version>
+        <taikai.version>{{ .TaikaiVersion }}</taikai.version>
         <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
 	</properties>
 
@@ -326,6 +327,12 @@
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
             <version>${archunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.enofex</groupId>
+            <artifactId>taikai</artifactId>
+            <version>${taikai.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

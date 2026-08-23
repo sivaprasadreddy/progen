@@ -8,15 +8,12 @@ class ModularityTests {
     private final ApplicationModules modules = ApplicationModules.of(Application.class);
 
     @Test
-    void verifiesModularStructure() {
-        System.out.println("==============Modules================");
-        System.out.println(modules);
-        System.out.println("=====================================");
+    void verifyModuleStructure() {
         modules.verify();
     }
 
     @Test
-    void createModuleDocumentation() {
+    void shouldCreateModuleDocumentation() {
         new Documenter(modules).writeDocumentation();
     }
 }

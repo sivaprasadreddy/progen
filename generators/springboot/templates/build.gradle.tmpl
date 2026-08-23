@@ -52,6 +52,7 @@ ext {
 {{- end }}
   set('palantirJavaFormatVersion', "{{ .PalantirJavaFormatVersion }}")
   set('archunitVersion', "{{ .ArchunitVersion }}")
+  set('taikaiVersion', "{{ .TaikaiVersion }}")
 }
 
 dependencies {
@@ -153,6 +154,7 @@ dependencies {
     testImplementation "ch.martinelli.oss:testcontainers-mailpit:${tcMailpitVersion}"
     {{- end }}
     testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"
+    testImplementation "com.enofex:taikai:${taikaiVersion}"
 }
 
 dependencyManagement {

@@ -2,11 +2,11 @@ package {{ .BasePackage }}.users;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import {{ .BasePackage }}.BaseIntegrationTest;
+import {{ .BasePackage }}.BaseIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-class LoginRestControllerTests extends BaseIntegrationTest {
+class LoginRestControllerTests extends BaseIT {
 
     @Test
     void shouldLoginSuccessfullyWithValidCredentials() {

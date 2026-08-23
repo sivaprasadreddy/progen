@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 class UserRestController {
-    private static final Logger log = LoggerFactory.getLogger(UserRestController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserRestController.class);
 
     private final UserService userService;
 
@@ -24,7 +24,7 @@ class UserRestController {
 
     @PostMapping("/api/users")
     ResponseEntity<RegistrationResponse> creatUser(@RequestBody @Valid RegistrationRequest req) {
-        log.info("Registration request for email: {}", req.email());
+        LOG.info("Registration request for email: {}", req.email());
         var cmd = new CreateUserCmd(req.name(), req.email(), req.password(), Role.ROLE_USER);
         userService.createUser(cmd);
         var response = new RegistrationResponse(req.name(), req.email(), Role.ROLE_USER);

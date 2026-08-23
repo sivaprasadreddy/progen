@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 class LoginRestController {
-    private static final Logger log = LoggerFactory.getLogger(LoginRestController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoginRestController.class);
 
     private final AuthenticationManager authManager;
     private final UserService userService;
@@ -31,7 +31,7 @@ class LoginRestController {
 
     @PostMapping("/api/login")
     LoginResponse login(@RequestBody @Valid LoginRequest req) {
-        log.info("Login request for email: {}", req.email());
+        LOG.info("Login request for email: {}", req.email());
         var user = userService
                 .findByEmail(req.email())
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));

@@ -71,7 +71,8 @@ func (a AppCommonConfig) createSrcTestJava(pc ProjectConfig) error {
 	templateMap := map[string]string{
 		"ApplicationTests.java.tmpl":     "ApplicationTests.java",
 		"TestcontainersConfig.java.tmpl": "TestcontainersConfig.java",
-		"BaseIntegrationTest.java.tmpl":  "BaseIntegrationTest.java",
+		"BaseIT.java.tmpl":               "BaseIT.java",
+		"ArchUnitTests.java.tmpl":        "ArchUnitTests.java",
 		"TestApplication.java.tmpl":      "TestApplication.java",
 	}
 

@@ -23,7 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 {{- if eq .AppType "REST API" }}
 @AutoConfigureRestTestClient
 {{ end }}
-public abstract class BaseIntegrationTest {
+public abstract class BaseIT {
 
 {{- if eq .AppType "Web App" }}
     @Autowired

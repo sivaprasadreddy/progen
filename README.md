@@ -33,12 +33,7 @@ The progen generates a Spring Boot application with the following features confi
 * [Taskfile](https://taskfile.dev/) to execute commonly used commands
 * [Renovate](https://docs.renovatebot.com/) 
 
-
 ## Installation
-
-### Using OS specific binary
-Download the latest binary for your OS and Architecture(arm64, x86_64) 
-from https://github.com/sivaprasadreddy/progen/releases.
 
 ### Using Go Install
 If you have Go installed on your machine, you can use the following command to install `progen`:
@@ -52,6 +47,11 @@ $ progen --help
 > On MacOS, you may get the error **"progen cannot be opened because the developer cannot be verified"**.
 > To fix this, you can select the progen binary in Finder, hold control and click, and select Open.
 > You will then be prompted to confirm that you want to open the binary. After confirming, you can run progen as usual.
+
+### Using OS specific binary
+Download the latest binary for your OS and Architecture(arm64, x86_64)
+from https://github.com/sivaprasadreddy/progen/releases.
+
 
 ## Usage:
 

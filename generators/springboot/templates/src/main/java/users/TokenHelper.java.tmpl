@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TokenHelper {
-    private static final Logger log = LoggerFactory.getLogger(TokenHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TokenHelper.class);
     private final ApplicationProperties props;
 
     public TokenHelper(ApplicationProperties props) {
@@ -47,7 +47,7 @@ public class TokenHelper {
             Claims claims = this.parseToken(token);
             return claims.getSubject();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }

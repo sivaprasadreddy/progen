@@ -2,11 +2,11 @@ package {{ .BasePackage }}.users;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import {{ .BasePackage }}.BaseIntegrationTest;
+import {{ .BasePackage }}.BaseIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-class UserRestControllerTests extends BaseIntegrationTest {
+class UserRestControllerTests extends BaseIT {
 
     @Test
     void shouldCreateUserSuccessfully() {
