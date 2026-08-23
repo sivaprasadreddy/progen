@@ -37,7 +37,6 @@ all_tests:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -f progen
 	@rm -rf dist
 
 .PHONY: all build run test clean

@@ -1,0 +1,52 @@
+version: "3"
+
+vars:
+  MAIN_SRC_DIR: .
+  DIST_DIR: dist
+  BINARY_NAME: progen
+  GOARCH: amd64
+
+tasks:
+  default:
+    cmds:
+      - task: test
+
+  fmt:
+    desc: Format Go source files
+    cmds:
+      - go fmt ./...
+
+  build:
+    desc: Compile binaries for macOS, Linux, Windows into dist/
+    cmds:
+      - echo "Building MacOS binary"
+      - GOARCH={{.GOARCH}} GOOS=darwin go build -o {{.DIST_DIR}}/{{.BINARY_NAME}}-darwin-{{.GOARCH}} {{.MAIN_SRC_DIR}}
+      - echo "Building Linux binary"
+      - GOARCH={{.GOARCH}} GOOS=linux go build -o {{.DIST_DIR}}/{{.BINARY_NAME}}-linux-{{.GOARCH}} {{.MAIN_SRC_DIR}}
+      - echo "Building Windows binary"
+      - GOARCH={{.GOARCH}} GOOS=windows go build -o {{.DIST_DIR}}/{{.BINARY_NAME}}-windows-{{.GOARCH}}.exe {{.MAIN_SRC_DIR}}
+
+  run:
+    desc: Run interactively
+    interactive: true
+    cmds:
+      - go run main.go
+
+  test:
+    desc: Run tests in short mode (skips permutation tests)
+    deps: [ fmt ]
+    cmds:
+      - echo "Testing..."
+      - go test -v -p 1 -short ./...
+
+  all_tests:
+    desc: Run all tests including slow integration tests
+    cmds:
+      - echo "Testing..."
+      - go test -v -p 1 ./...
+
+  clean:
+    desc: Remove dist/ and local progen binary
+    cmds:
+      - echo "Cleaning..."
+      - rm -rf {{.DIST_DIR}}
