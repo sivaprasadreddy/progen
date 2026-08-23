@@ -50,6 +50,7 @@ ext {
 {{- if .EmailSupport }}
   set('tcMailpitVersion', "{{ .TcMailpitVersion }}")
 {{- end }}
+  set('bootUIVersion', "{{ .BootUIVersion }}")
   set('palantirJavaFormatVersion', "{{ .PalantirJavaFormatVersion }}")
   set('archunitVersion', "{{ .ArchunitVersion }}")
   set('taikaiVersion', "{{ .TaikaiVersion }}")
@@ -115,6 +116,8 @@ dependencies {
     implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     {{- end }}
+    implementation "com.julien-dubois.bootui:bootui-spring-boot-starter:${bootUIVersion}"
+
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     developmentOnly "org.springframework.boot:spring-boot-docker-compose"
@@ -153,6 +156,7 @@ dependencies {
     {{- if .EmailSupport }}
     testImplementation "ch.martinelli.oss:testcontainers-mailpit:${tcMailpitVersion}"
     {{- end }}
+    testImplementation "org.awaitility:awaitility"
     testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"
     testImplementation "com.enofex:taikai:${taikaiVersion}"
 }

@@ -12,10 +12,13 @@ func (t ThymeleafConfig) generate(pc ProjectConfig) error {
 	if !pc.ThymeleafSupport {
 		return nil
 	}
-	return t.createThymeleafTemplateFiles(pc)
+	if err := t.createSrcMainResources(pc); err != nil {
+		return err
+	}
+	return nil
 }
 
-func (t ThymeleafConfig) createThymeleafTemplateFiles(pc ProjectConfig) error {
+func (t ThymeleafConfig) createSrcMainResources(pc ProjectConfig) error {
 	templateMap := map[string]string{
 		"static/css/styles.css":            "static/css/styles.css",
 		"templates/index.html.tmpl":        "templates/index.html",

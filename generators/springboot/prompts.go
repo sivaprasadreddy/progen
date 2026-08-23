@@ -137,6 +137,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	otherFeaturesSelect := huh.NewMultiSelect[string]().
 		Title("Select Other Features:").
 		Options(otherFeatureOptions...).
+		Height(len(otherFeatureOptions) + 2).
 		Value(&features)
 
 	inputs = append(inputs, otherFeaturesSelect)

@@ -31,7 +31,7 @@ services:
     ports:
       - "3306:3306"
   {{- end }}
-  {{- if .SpringCloudAWSSupport }}
+  {{ if .SpringCloudAWSSupport }}
   floci:
     image: floci/floci:latest-compat
     ports:
@@ -56,10 +56,6 @@ services:
     container_name: {{ .ArtifactID }}
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      {{- if .EmailSupport }}
-      EMAIL_HOST: mailpit
-      EMAIL_PORT: 1025
-      {{- end }}
       {{- if eq .DbType "PostgreSQL" }}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
@@ -75,6 +71,16 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: secret
       {{- end }}
+      {{- if .EmailSupport }}
+      EMAIL_HOST: mailpit
+      EMAIL_PORT: 1025
+      {{- end }}
+      {{- if .SpringCloudAWSSupport }}
+      SPRING_CLOUD_AWS_ENDPOINT: http://localhost:4566
+      SPRING_CLOUD_AWS_S3_ENDPOINT: http://localhost:4566
+      SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY: test
+      SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY: test
+      {{- end }}
     ports:
       - "8080:8080"
     depends_on:
@@ -89,6 +95,9 @@ services:
       {{- end }}
       {{- if .EmailSupport }}
       - mailpit
+      {{- end }}
+      {{- if .SpringCloudAWSSupport }}
+      - floci
       {{- end }}
     restart: unless-stopped
     profiles:

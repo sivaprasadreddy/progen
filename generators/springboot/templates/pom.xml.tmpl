@@ -39,6 +39,7 @@
         <jjwt.version>{{ .JjwtVersion }}</jjwt.version>
         <springdoc-openapi.version>{{ .SpringdocOpenapiVersion }}</springdoc-openapi.version>
 {{ end }}
+        <bootui.version>{{ .BootUIVersion }}</bootui.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <jacoco.minimum.coverage>40%</jacoco.minimum.coverage>
         <palantir-java-format.version>{{ .PalantirJavaFormatVersion }}</palantir-java-format.version>
@@ -209,6 +210,13 @@
         </dependency>
         {{ end }}
         <dependency>
+            <groupId>com.julien-dubois.bootui</groupId>
+            <artifactId>bootui-spring-boot-starter</artifactId>
+            <version>${bootui.version}</version>
+        </dependency>
+
+        <!-- Dev dependencies -->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
@@ -225,6 +233,8 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
               <groupId>org.springframework.boot</groupId>
               <artifactId>spring-boot-starter-webmvc-test</artifactId>
@@ -323,6 +333,11 @@
             <scope>test</scope>
         </dependency>
         {{- end }}
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>

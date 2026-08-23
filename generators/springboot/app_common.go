@@ -38,7 +38,6 @@ func (a AppCommonConfig) createSrcMainJava(pc ProjectConfig) error {
 		"shared/PagedResult.java.tmpl":               "shared/PagedResult.java",
 		"shared/BadRequestException.java.tmpl":       "shared/BadRequestException.java",
 		"shared/ResourceNotFoundException.java.tmpl": "shared/ResourceNotFoundException.java",
-		"shared/package-info.java.tmpl":              "shared/package-info.java",
 	}
 
 	for tmpl, filePath := range templateMap {

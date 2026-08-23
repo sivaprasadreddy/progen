@@ -9,13 +9,14 @@ const (
 	spotlessMavenPluginVersion     = "3.10.0"
 	springModulithVersion          = "2.1.0"
 	springCloudAWSVersion          = "4.1.0"
-	springBootFlociTcVersion       = "2.14.0"
+	springBootFlociTcVersion       = "2.15.0"
 	springdocOpenapiVersion        = "3.1.0"
 	tcMailpitVersion               = "1.3.1"
 	fontAwesomeVersion             = "7.3.0"
 	htmxVersion                    = "2.0.10"
 	htmxSpringBootThymeleafVersion = "5.1.0"
 	jjwtVersion                    = "0.13.0"
+	bootUIVersion                  = "1.14.1"
 	archunitVersion                = "1.5.0"
 	taikaiVersion                  = "1.66.0"
 	palantirJavaFormatVersion      = "2.96.0"
@@ -38,6 +39,7 @@ type Versions struct {
 	HtmxVersion                    string
 	HtmxSpringBootThymeleafVersion string
 	JjwtVersion                    string
+	BootUIVersion                  string
 	ArchunitVersion                string
 	TaikaiVersion                  string
 	PalantirJavaFormatVersion      string
@@ -59,6 +61,7 @@ func defaultVersions() Versions {
 		FontAwesomeVersion:             fontAwesomeVersion,
 		HtmxVersion:                    htmxVersion,
 		HtmxSpringBootThymeleafVersion: htmxSpringBootThymeleafVersion,
+		BootUIVersion:                  bootUIVersion,
 		JjwtVersion:                    jjwtVersion,
 		ArchunitVersion:                archunitVersion,
 		TaikaiVersion:                  taikaiVersion,
