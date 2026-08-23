@@ -14,11 +14,11 @@ make run         # Run interactively (go run main.go)
 make build       # Compile binaries for macOS, Linux, Windows → dist/
 make test        # Run tests in short mode (fast, skips permutation tests)
 make all_tests   # Run all tests including slow integration tests
-make fmt         # Format Go source with goimports
+make fmt         # Format Go source code
 make clean       # Remove dist/
 ```
 
 Running a single test:
 ```bash
-go test -v -run TestGenerateRestApiProjectWithMavenAndPostgresql ./...
+go test -v -run TestGenerateSpringBootWithAllFeatures ./...
 ```
