@@ -1,22 +1,53 @@
 spring.application.name={{ .ArtifactID }}
 spring.docker.compose.lifecycle-management=start_only
 
-######## App Configuration  #########
+#### App ####
 {{- if eq .AppType "REST API" }}
 app.cors.path-pattern=/api/**
 app.cors.allowed-origins=*
 app.cors.allowed-methods=*
 app.cors.allowed-headers=*
+app.openapi.title={{ .ArtifactID }} API
+app.openapi.description={{ .ArtifactID }} API Swagger Documentation
+app.openapi.version=v1.0.0
+app.openapi.contact.name=CompanyName
+app.openapi.contact.email=support@company.com
 app.jwt.issuer={{ .AppName }}
 app.jwt.expires-in=604800
 app.jwt.secret=secretsecretsecret12345678901234567890
 {{- end }}
 
-################ Actuator #####################
+#### Spring MVC ####
+server.compression.enabled=true
+server.http2.enabled=true
+spring.threads.virtual.enabled=true
+
+{{- if eq .AppType "REST API" }}
+#### API Versioning ####
+spring.mvc.apiversion.default=1.0
+spring.mvc.apiversion.use.header=API_VERSION
+spring.mvc.apiversion.supported=1.0
+{{- end }}
+
+{{- if eq .AppType "REST API" }}
+#### Springdoc ####
+springdoc.swagger-ui.enabled=false
+springdoc.paths-to-match=/api/**
+{{- end }}
+
+###### Logging ######
+logging.level.root=INFO
+logging.level.{{ .BasePackage }}=DEBUG
+logging.pattern.correlation=[${spring.application.name:},%X{traceId:-},%X{spanId:-}]
+logging.include-application-name=false
+#logging.level.org.springframework.security=DEBUG
+
+
+#### Actuator ####
 management.endpoints.web.exposure.include=configprops,env,health,info,logfile,loggers
 management.endpoint.health.show-details=when_authorized
 
-################ Database #####################
+#### Database ####
 spring.jpa.show-sql=true
 spring.jpa.open-in-view=false
 spring.data.jpa.repositories.bootstrap-mode=deferred
@@ -40,4 +71,9 @@ spring.flyway.locations=classpath:/db/migration
 {{- end }}
 {{- if eq .DbMigrationTool "Liquibase"}}
 spring.liquibase.change-log=classpath:/db/migration/liquibase-changelog.xml
-{{- end }}
+{{ end }}
+
+#### Spring Modulith ####
+spring.modulith.events.jdbc.schema-initialization.enabled=true
+spring.modulith.events.completion-mode=update
+spring.modulith.events.republish-outstanding-events-on-restart=true

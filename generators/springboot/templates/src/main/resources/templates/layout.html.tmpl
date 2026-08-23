@@ -9,58 +9,132 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="{{ .AppName }}">{{ .AppName }}</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/all.css}">
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="/webjars/font-awesome/css/all.css">
+        <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+        <script>
+            function toggleMobileMenu() {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            }
+            function toggleUserDropdown() {
+                const dropdown = document.getElementById('user-dropdown');
+                dropdown.classList.toggle('hidden');
+            }
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('user-dropdown');
+                const button = document.getElementById('user-menu-button');
+                if (dropdown && button && !button.contains(event.target) && !dropdown.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        </script>
 </head>
-<body>
-<main>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#" th:href="@{/}">
-                {{ .AppName }}
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="nav-link" href="/login"> Login </a>
-                    </li>
-                    <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="nav-link" th:href="@{/registration}"
-                           sec:authorize="isAnonymous()">
-                            Register
+<body class="bg-gray-50">
+<nav class="bg-gray-800 fixed w-full z-10 top-0">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+            <div class="flex items-center">
+                <a th:href="@{/}" class="text-white text-xl font-bold">{{ .AppName }}</a>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-4 flex items-center md:ml-6 space-x-4">
+                    <div sec:authorize="isAnonymous()">
+                        <a th:href="@{/login}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                            <i class="fas fa-sign-in-alt"></i> Login
                         </a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" href="#" sec:authentication="principal.name">
-                            User
+                        <a th:href="@{/registration}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                            <i class="fas fa-user-plus"></i> Register
                         </a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" href="/logout">
-                            <i class="fa-solid fa-right-from-bracket"></i> Logout
-                        </a>
-                    </li>
-                </ul>
+                    </div>
+                    <div sec:authorize="isAuthenticated()" class="relative">
+                        <button type="button" onclick="toggleUserDropdown()" id="user-menu-button" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                            <i class="fas fa-user mr-2"></i>
+                            <i class="fas fa-chevron-down ml-2"></i>
+                        </button>
+                        <div id="user-dropdown" class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                            <a th:href="@{/dashboard}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+                            </a>
+                            <hr class="my-1 border-gray-200">
+                            <form method="post" th:action="@{/logout}">
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button type="button" onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
-    </nav>
+    </div>
+    <div class="md:hidden hidden" id="mobile-menu">
+        <div class="space-y-1 px-2 pb-3 pt-2">
+            <div sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a th:href="@{/registration}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-user-plus"></i> Register
+                </a>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <form method="post" th:action="@{/logout}">
+                    <button type="submit" class="text-gray-300 hover:bg-gray-700 hover:text-white w-full text-left px-3 py-2 rounded-md text-base font-medium">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
 
-    <div id="app" class="container">
+<div class="pt-20 pb-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div th:if="${successMessage}" class="mb-4 rounded-lg bg-green-50 p-4 border border-green-200">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-400"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-green-800" th:text="${successMessage}"></p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button type="button" onclick="this.parentElement.parentElement.parentElement.remove()" class="inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${errorMessage}" class="mb-4 rounded-lg bg-red-50 p-4 border border-red-200">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-circle text-red-400"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-red-800" th:text="${errorMessage}"></p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button type="button" onclick="this.parentElement.parentElement.parentElement.remove()" class="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div layout:fragment="content">
             <!-- Your Page Content Here -->
         </div>
     </div>
-</main>
+</div>
 
-<script th:src="@{/webjars/jquery/jquery.js}"></script>
-<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}"></script>
 {{- if .HTMXSupport }}
 <script th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
 {{ end }}

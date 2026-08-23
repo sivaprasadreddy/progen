@@ -7,6 +7,7 @@ create table users
     role       varchar(20)  not null,
     created_at timestamp    not null,
     updated_at timestamp,
+    version    bigint       not null default 0,
     primary key (id),
     constraint user_email_unique unique (email)
 );

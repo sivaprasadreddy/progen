@@ -21,7 +21,7 @@ class SecurityUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Email " + userName + " not found"));
     }
 
-    private SecurityUser toSecurityUser(User user) {
+    private SecurityUser toSecurityUser(UserEntity user) {
         return new SecurityUser(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole());
     }
 }

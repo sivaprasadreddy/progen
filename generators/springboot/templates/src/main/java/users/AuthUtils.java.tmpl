@@ -1,0 +1,29 @@
+package {{ .BasePackage }}.users;
+
+import {{ .BasePackage }}.users.SecurityUser;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+public final class AuthUtils {
+    private AuthUtils() {}
+
+    public static Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            var principal = authentication.getPrincipal();
+            if (principal instanceof SecurityUser securityUser) {
+                return securityUser.getId();
+            }
+        }
+        return null;
+    }
+
+    public static Long getCurrentUserIdOrThrow() {
+        Long currentUserId = getCurrentUserId();
+        if (currentUserId == null) {
+            throw new AccessDeniedException("Access denied");
+        }
+        return currentUserId;
+    }
+}

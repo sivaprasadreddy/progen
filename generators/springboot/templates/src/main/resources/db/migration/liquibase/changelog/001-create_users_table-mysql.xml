@@ -29,6 +29,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="updated_at" type="datetime"/>
+            <column name="version" type="bigint" defaultValue="0"/>
         </createTable>
     </changeSet>
 

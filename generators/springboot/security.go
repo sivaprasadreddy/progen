@@ -25,7 +25,8 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 
 	templateMap := map[string]string{
 		"users/Role.java.tmpl":                       "users/Role.java",
-		"users/User.java.tmpl":                       "users/User.java",
+		"users/UserEntity.java.tmpl":                 "users/UserEntity.java",
+		"users/UserDto.java.tmpl":                    "users/UserDto.java",
 		"users/UserRepository.java.tmpl":             "users/UserRepository.java",
 		"users/UserService.java.tmpl":                "users/UserService.java",
 		"users/SecurityUser.java.tmpl":               "users/SecurityUser.java",
@@ -33,6 +34,7 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 		"users/SecurityUserDetailsService.java.tmpl": "users/SecurityUserDetailsService.java",
 		"users/UserContextUtils.java.tmpl":           "users/UserContextUtils.java",
 		"users/CreateUserCmd.java.tmpl":              "users/CreateUserCmd.java",
+		"users/AuthUtils.java.tmpl":                  "users/AuthUtils.java",
 	}
 
 	if pc.AppType == WebApp {

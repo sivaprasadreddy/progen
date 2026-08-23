@@ -11,8 +11,6 @@ const (
 	springCloudAWSVersion          = "4.1.0"
 	springBootFlociTcVersion       = "2.14.0"
 	springdocOpenapiVersion        = "3.1.0"
-	bootstrapVersion               = "5.3.8"
-	jqueryVersion                  = "3.7.1"
 	fontAwesomeVersion             = "7.3.0"
 	htmxVersion                    = "2.0.10"
 	htmxSpringBootThymeleafVersion = "5.1.0"
@@ -55,8 +53,6 @@ func defaultVersions() Versions {
 		SpringCloudAWSVersion:          springCloudAWSVersion,
 		SpringBootFlociTcVersion:       springBootFlociTcVersion,
 		SpringdocOpenapiVersion:        springdocOpenapiVersion,
-		BootstrapVersion:               bootstrapVersion,
-		JqueryVersion:                  jqueryVersion,
 		FontAwesomeVersion:             fontAwesomeVersion,
 		HtmxVersion:                    htmxVersion,
 		HtmxSpringBootThymeleafVersion: htmxSpringBootThymeleafVersion,

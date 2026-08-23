@@ -17,13 +17,13 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Optional<User> findByEmail(String email) {
+    public Optional<UserEntity> findByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email);
     }
 
     @Transactional
     public void createUser(CreateUserCmd cmd) {
-        var user = new User();
+        var user = new UserEntity();
         user.setName(cmd.name());
         user.setEmail(cmd.email());
         user.setPassword(passwordEncoder.encode(cmd.password()));

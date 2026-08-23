@@ -33,9 +33,12 @@ func (a AppCommonConfig) createSrcMainJava(pc ProjectConfig) error {
 		"Application.java.tmpl":                      "Application.java",
 		"ApplicationProperties.java.tmpl":            "ApplicationProperties.java",
 		"config/WebMvcConfig.java.tmpl":              "config/WebMvcConfig.java",
-		"domain/BaseEntity.java.tmpl":                "domain/BaseEntity.java",
-		"domain/BadRequestException.java.tmpl":       "domain/BadRequestException.java",
-		"domain/ResourceNotFoundException.java.tmpl": "domain/ResourceNotFoundException.java",
+		"config/PersistenceConfig.java.tmpl":         "config/PersistenceConfig.java",
+		"shared/BaseEntity.java.tmpl":                "shared/BaseEntity.java",
+		"shared/PagedResult.java.tmpl":               "shared/PagedResult.java",
+		"shared/BadRequestException.java.tmpl":       "shared/BadRequestException.java",
+		"shared/ResourceNotFoundException.java.tmpl": "shared/ResourceNotFoundException.java",
+		"shared/package-info.java.tmpl":              "shared/package-info.java",
 	}
 
 	for tmpl, filePath := range templateMap {
@@ -49,7 +52,8 @@ func (a AppCommonConfig) createSrcMainJava(pc ProjectConfig) error {
 
 func (a AppCommonConfig) createSrcMainResources(pc ProjectConfig) error {
 	templateMap := map[string]string{
-		"application.properties.tmpl": "application.properties",
+		"application.properties.tmpl":       "application.properties",
+		"application-local.properties.tmpl": "application-local.properties",
 	}
 
 	for tmpl, filePath := range templateMap {

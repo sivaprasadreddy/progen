@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 class UserController {
@@ -16,6 +17,11 @@ class UserController {
 
     UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/login")
+    String registrationForm() {
+        return "login";
     }
 
     @GetMapping("/registration")
@@ -26,22 +32,25 @@ class UserController {
 
     @PostMapping("/registration")
     String registerUser(
-            @ModelAttribute("user") @Valid UserRegistrationForm userRegistrationForm, BindingResult bindingResult) {
+            @ModelAttribute("user") @Valid UserRegistrationForm userRegistrationForm,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "registration";
         }
-        var cmd = new CreateUserCmd(
-                userRegistrationForm.name(),
-                userRegistrationForm.email(),
-                userRegistrationForm.password(),
-                Role.ROLE_USER);
-        userService.createUser(cmd);
-        return "redirect:/registration-success";
-    }
-
-    @GetMapping("/registration-success")
-    String registrationSuccess() {
-        return "registration-success";
+        try {
+            var cmd = new CreateUserCmd(
+                    userRegistrationForm.name(),
+                    userRegistrationForm.email(),
+                    userRegistrationForm.password(),
+                    Role.ROLE_USER);
+            userService.createUser(cmd);
+            redirectAttributes.addFlashAttribute("successMessage", "Registration successful! Please login.");
+            return "redirect:/login";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Registration failed: " + e.getMessage());
+            return "redirect:/registration";
+        }
     }
 
     public record UserRegistrationForm(

@@ -24,9 +24,7 @@
         <spring-boot-floci-tc.version>{{ .SpringBootFlociTcVersion }}</spring-boot-floci-tc.version>
 {{ end }}
 {{- if .ThymeleafSupport }}
-        <bootstrap.version>{{ .BootstrapVersion }}</bootstrap.version>
-  		<jquery.version>{{ .JqueryVersion }}</jquery.version>
-  		<font_awesome.version>{{ .FontAwesomeVersion }}</font_awesome.version>
+        <font_awesome.version>{{ .FontAwesomeVersion }}</font_awesome.version>
 {{ end }}
 {{- if .HTMXSupport }}
         <htmx.org.version>{{ .HtmxVersion }}</htmx.org.version>
@@ -165,16 +163,6 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator-lite</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>${bootstrap.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jquery</artifactId>
-            <version>${jquery.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>

@@ -2,11 +2,11 @@ package {{ .BasePackage }}.users;
 
 import jakarta.persistence.*;
 
-import {{ .BasePackage }}.domain.BaseEntity;
+import {{ .BasePackage }}.shared.BaseEntity;
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
 
     @Id
     {{- if eq .DbType "PostgreSQL" }}
