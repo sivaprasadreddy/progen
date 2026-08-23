@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/sivaprasadreddy/progen/generators/springboot"
 	"github.com/spf13/cobra"
 )
 
@@ -31,5 +32,5 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.Version = VERSION
-	rootCmd.Flags().StringP("config", "c", "", "--config .progen.json")
+	rootCmd.Flags().StringP("config", "c", "", "--config "+springboot.ProjectConfigFile)
 }

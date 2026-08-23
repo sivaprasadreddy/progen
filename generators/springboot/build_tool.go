@@ -31,10 +31,6 @@ func (b BuildToolConfig) createMavenBuildFiles(pc ProjectConfig) error {
 	return b.pg.executeTemplate(pc, "pom.xml.tmpl", "pom.xml")
 }
 
-func (b BuildToolConfig) createGitIgnore(pc ProjectConfig) error {
-	return b.pg.executeTemplate(pc, "gitignore.tmpl", ".gitignore")
-}
-
 func (b BuildToolConfig) createMavenWrapper(pc ProjectConfig) error {
 	return b.pg.copyTemplateDir(pc, "maven-wrapper", "")
 }

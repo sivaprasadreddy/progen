@@ -49,14 +49,11 @@ var defaultProjectConfig = ProjectConfig{
 	HTMXSupport:           false,
 }
 
-func Run(configFile string) error {
-	var projectConfig ProjectConfig
-	var err error
+func GenerateProjectFromConfigFile(configFile string) error {
 	if strings.TrimSpace(configFile) == "" {
-		projectConfig, err = getAnswers()
-	} else {
-		projectConfig, err = loadConfig(configFile)
+		return fmt.Errorf("configFile name is empty")
 	}
+	projectConfig, err := loadConfig(configFile)
 	helpers.FatalIfErr(err)
 	err = GenerateProject(projectConfig)
 	return err
@@ -68,13 +65,13 @@ func GenerateProject(pc ProjectConfig) error {
 	if err := pg.generate(pc); err != nil {
 		return err
 	}
-	err := writeConfigFile(pc, pc.AppName+"/.progen.json")
+	err := writeConfigFile(pc, pc.AppName+"/"+ProjectConfigFile)
 	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
 	return err
 }
 
 func GenerateInitConfig() error {
-	return writeConfigFile(defaultProjectConfig, ".progen.json")
+	return writeConfigFile(defaultProjectConfig, ProjectConfigFile)
 }
 
 func loadConfig(configFile string) (ProjectConfig, error) {
@@ -145,7 +142,7 @@ func writeConfigFile(pc ProjectConfig, filePath string) error {
 	}
 	_, err = helpers.CreateFileWithData(filePath, data)
 	if err != nil {
-		return fmt.Errorf("failed to write .progen.json file: %w", err)
+		return fmt.Errorf("failed to write %s file: %w", ProjectConfigFile, err)
 	}
 	return nil
 }

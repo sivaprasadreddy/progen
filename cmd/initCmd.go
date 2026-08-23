@@ -12,10 +12,10 @@ func init() {
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize .progen.json",
-	Long:  `Initialize .progen.json with default values`,
+	Short: "Initialize " + springboot.ProjectConfigFile,
+	Long:  "Initialize " + springboot.ProjectConfigFile + " with default values",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := springboot.GenerateInitConfig()
-		helpers.FatalIfErrOrMsg(err, "Generated .progen.json successfully")
+		helpers.FatalIfErrOrMsg(err, "Generated "+springboot.ProjectConfigFile+" successfully")
 	},
 }

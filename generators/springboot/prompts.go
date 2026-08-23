@@ -9,7 +9,7 @@ import (
 	"github.com/sivaprasadreddy/progen/generators/helpers"
 )
 
-func getAnswers() (ProjectConfig, error) {
+func GetAnswers() (ProjectConfig, error) {
 	answers, err := getProjectConfigAnswers()
 	if err != nil {
 		return ProjectConfig{}, err

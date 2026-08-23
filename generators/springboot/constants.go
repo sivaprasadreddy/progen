@@ -4,6 +4,7 @@ const srcMainJavaPath = "src/main/java/"
 const srcMainResourcesPath = "src/main/resources/"
 const srcTestJavaPath = "src/test/java/"
 const srcTestResourcesPath = "src/test/resources/"
+const ProjectConfigFile = ".progen.json"
 
 type AppType string
 
