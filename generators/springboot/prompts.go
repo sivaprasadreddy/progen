@@ -42,6 +42,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		ArtifactID:      "myapp",
 		AppVersion:      "1.0.0",
 		BuildTool:       Maven,
+		PersistenceType: SpringDataJPA,
 		DbType:          PostgreSQL,
 		DbMigrationTool: Flyway,
 	}
@@ -107,6 +108,13 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 				huh.NewOption(Maven.String(), Maven).Selected(true),
 				huh.NewOption(Gradle.String(), Gradle),
 			).Value(&answers.BuildTool),
+
+		huh.NewSelect[PersistenceType]().
+			Title("Persistence:").
+			Options(
+				huh.NewOption(SpringDataJPA.String(), SpringDataJPA).Selected(true),
+				huh.NewOption(SpringJdbcClient.String(), SpringJdbcClient),
+			).Value(&answers.PersistenceType),
 
 		huh.NewSelect[DatabaseType]().
 			Title("Database:").

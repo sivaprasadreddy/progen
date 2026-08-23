@@ -30,6 +30,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 	var options = []struct {
 		appType               sb.AppType
 		buildTool             sb.BuildTool
+		persistenceType       sb.PersistenceType
 		dbType                sb.DatabaseType
 		migrationTool         sb.DbMigrationTool
 		SpringCloudAWSSupport bool
@@ -37,14 +38,14 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		HTMXSupport           bool
 		EmailSupport          bool
 	}{
-		{sb.WebApp, sb.Maven, sb.MySQL, sb.Flyway, true, true, true, true},
-		{sb.WebApp, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, true, true, false},
-		{sb.RestApi, sb.Maven, sb.MariaDB, sb.Flyway, true, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.PostgreSQL, sb.Liquibase, true, false, false, true},
+		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true},
+		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false},
+		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true},
 	}
 
 	for _, tt := range options {
-		t.Run(tt.appType.String()+"-"+tt.buildTool.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
+		t.Run(tt.appType.String()+"-"+tt.buildTool.String()+"-"+tt.persistenceType.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
 			t.Log("Generating App with Options: ", tt)
 			appName := "springboot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 
@@ -56,6 +57,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				AppVersion:            "1.0",
 				BasePackage:           "com.sivalabs.myapp",
 				BuildTool:             tt.buildTool,
+				PersistenceType:       tt.persistenceType,
 				DbType:                tt.dbType,
 				DbMigrationTool:       tt.migrationTool,
 				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
@@ -87,16 +89,21 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 		t.Skip("skipping all combination tests in short mode")
 	}
 	var options = []struct {
-		dbType        sb.DatabaseType
-		migrationTool sb.DbMigrationTool
+		persistenceType sb.PersistenceType
+		dbType          sb.DatabaseType
+		migrationTool   sb.DbMigrationTool
 	}{
-		{sb.MySQL, sb.Flyway},
-		{sb.PostgreSQL, sb.Flyway},
-		{sb.MariaDB, sb.Flyway},
+		{sb.SpringDataJPA, sb.MySQL, sb.Flyway},
+		{sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway},
+		{sb.SpringDataJPA, sb.MariaDB, sb.Flyway},
 
-		{sb.MySQL, sb.Liquibase},
-		{sb.PostgreSQL, sb.Liquibase},
-		{sb.MariaDB, sb.Liquibase},
+		{sb.SpringJdbcClient, sb.MySQL, sb.Flyway},
+		{sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway},
+		{sb.SpringJdbcClient, sb.MariaDB, sb.Flyway},
+
+		{sb.SpringDataJPA, sb.MySQL, sb.Liquibase},
+		{sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase},
+		{sb.SpringJdbcClient, sb.MariaDB, sb.Liquibase},
 	}
 
 	for _, tt := range options {
@@ -112,6 +119,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 				AppVersion:      "1.0",
 				BasePackage:     "com.sivalabs.myapp",
 				BuildTool:       sb.Maven,
+				PersistenceType: tt.persistenceType,
 				DbType:          tt.dbType,
 				DbMigrationTool: tt.migrationTool,
 				EmailSupport:    true,
@@ -122,8 +130,11 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 			assert.Nil(t, err)
 
 			//cleanup
-			err = deleteDir(appName)
-			assert.Nil(t, err)
+			//err = deleteDir(appName)
+			//assert.Nil(t, err)
+			if err == nil {
+				err = deleteDir(appName)
+			}
 		})
 	}
 }

@@ -55,6 +55,19 @@ func (s BuildTool) IsValid() bool {
 
 type DatabaseType string
 
+type PersistenceType string
+
+const (
+	SpringDataJPA    PersistenceType = "Spring Data JPA"
+	SpringJdbcClient PersistenceType = "Spring JdbcClient"
+)
+
+func (p PersistenceType) String() string { return string(p) }
+
+func (p PersistenceType) IsValid() bool {
+	return p == SpringDataJPA || p == SpringJdbcClient
+}
+
 const (
 	PostgreSQL DatabaseType = "PostgreSQL"
 	MySQL      DatabaseType = "MySQL"

@@ -1,0 +1,47 @@
+package {{ .BasePackage }}.users;
+
+import java.util.Optional;
+import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.stereotype.Repository;
+
+@Repository
+class UserRepository {
+    private final JdbcClient jdbcClient;
+
+    UserRepository(JdbcClient jdbcClient) {
+        this.jdbcClient = jdbcClient;
+    }
+
+    Optional<UserEntity> findByEmailIgnoreCase(String email) {
+        return jdbcClient.sql("""
+                        select id, name, email, password, role, created_at, updated_at, version
+                        from users where lower(email) = lower(:email)
+                        """)
+                .param("email", email)
+                .query((rs, rowNum) -> {
+                    var user = new UserEntity();
+                    user.setId(rs.getLong("id"));
+                    user.setName(rs.getString("name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPassword(rs.getString("password"));
+                    user.setRole(Role.valueOf(rs.getString("role")));
+                    user.setCreatedAt(rs.getTimestamp("created_at").toInstant());
+                    var updatedAt = rs.getTimestamp("updated_at");
+                    user.setUpdatedAt(updatedAt == null ? null : updatedAt.toInstant());
+                    return user;
+                })
+                .optional();
+    }
+
+    void save(UserEntity user) {
+        jdbcClient.sql("""
+                        insert into users (name, email, password, role, created_at, version)
+                        values (:name, :email, :password, :role, current_timestamp, 0)
+                        """)
+                .param("name", user.getName())
+                .param("email", user.getEmail())
+                .param("password", user.getPassword())
+                .param("role", user.getRole().name())
+                .update();
+    }
+}

@@ -11,6 +11,9 @@ func NewSpringCloudAwsConfig(pg projectGenerator) *SpringCloudAwsConfig {
 }
 
 func (b SpringCloudAwsConfig) generate(pc ProjectConfig) error {
+	if !pc.SpringCloudAWSSupport {
+		return nil
+	}
 	if err := b.createSrcTestJava(pc); err != nil {
 		return err
 	}

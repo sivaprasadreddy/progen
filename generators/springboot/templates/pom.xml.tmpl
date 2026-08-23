@@ -87,10 +87,18 @@
         </dependency>
         {{ end }}
         {{ end }}
+        {{- if eq .PersistenceType "Spring Data JPA" }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        {{- end }}
+        {{- if eq .PersistenceType "Spring JdbcClient" }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        {{- end }}
         {{- if eq .DbType "PostgreSQL" }}
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -257,11 +265,20 @@
               <artifactId>spring-boot-starter-actuator-test</artifactId>
               <scope>test</scope>
         </dependency>
+        {{- if eq .PersistenceType "Spring Data JPA" }}
         <dependency>
               <groupId>org.springframework.boot</groupId>
               <artifactId>spring-boot-starter-data-jpa-test</artifactId>
               <scope>test</scope>
         </dependency>
+        {{- end }}
+        {{- if eq .PersistenceType "Spring JdbcClient" }}
+        <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-jdbc-test</artifactId>
+              <scope>test</scope>
+        </dependency>
+        {{- end }}
         <dependency>
               <groupId>org.springframework.boot</groupId>
               <artifactId>spring-boot-starter-security-test</artifactId>

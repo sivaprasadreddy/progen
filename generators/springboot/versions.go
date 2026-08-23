@@ -2,7 +2,7 @@ package springboot
 
 const (
 	javaVersion                    = 25
-	springBootVersion              = "4.1.0"
+	springBootVersion              = "4.1.1"
 	gradleDependencyMgmtVersion    = "1.1.7"
 	gradleGitPropertiesVersion     = "4.0.1"
 	spotlessGradlePluginVersion    = "8.9.0"

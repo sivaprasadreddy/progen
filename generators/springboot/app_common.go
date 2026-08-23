@@ -33,11 +33,16 @@ func (a AppCommonConfig) createSrcMainJava(pc ProjectConfig) error {
 		"Application.java.tmpl":                      "Application.java",
 		"ApplicationProperties.java.tmpl":            "ApplicationProperties.java",
 		"config/WebMvcConfig.java.tmpl":              "config/WebMvcConfig.java",
-		"config/PersistenceConfig.java.tmpl":         "config/PersistenceConfig.java",
-		"shared/BaseEntity.java.tmpl":                "shared/BaseEntity.java",
 		"shared/PagedResult.java.tmpl":               "shared/PagedResult.java",
 		"shared/BadRequestException.java.tmpl":       "shared/BadRequestException.java",
 		"shared/ResourceNotFoundException.java.tmpl": "shared/ResourceNotFoundException.java",
+	}
+	if pc.PersistenceType == SpringDataJPA {
+		templateMap["config/PersistenceConfig.java.tmpl"] = "config/PersistenceConfig.java"
+		templateMap["shared/JpaBaseEntity.java.tmpl"] = "shared/BaseEntity.java"
+	}
+	if pc.PersistenceType == SpringJdbcClient {
+		templateMap["shared/JdbcClientBaseEntity.java.tmpl"] = "shared/BaseEntity.java"
 	}
 
 	for tmpl, filePath := range templateMap {

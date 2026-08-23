@@ -36,13 +36,13 @@ tasks:
     desc: Run tests in short mode (skips permutation tests)
     deps: [ fmt ]
     cmds:
-      - echo "Testing..."
+      - echo "Run tests in short mode..."
       - go test -v -p 1 -short ./...
 
   all_tests:
     desc: Run all tests including slow integration tests
     cmds:
-      - echo "Testing..."
+      - echo "Run all tests..."
       - go test -v -p 1 ./...
 
   clean:

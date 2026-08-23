@@ -27,6 +27,7 @@ type ProjectConfig struct {
 	AppVersion            string
 	BasePackage           string
 	BuildTool             BuildTool
+	PersistenceType       PersistenceType
 	DbType                DatabaseType
 	DbMigrationTool       DbMigrationTool
 	SpringCloudAWSSupport bool
@@ -43,6 +44,7 @@ var defaultProjectConfig = ProjectConfig{
 	AppVersion:            "1.0.0",
 	BasePackage:           "com.mycompany.myapp",
 	BuildTool:             Maven,
+	PersistenceType:       SpringDataJPA,
 	DbType:                PostgreSQL,
 	DbMigrationTool:       Flyway,
 	SpringCloudAWSSupport: false,
@@ -123,6 +125,11 @@ func validateAndSanitize(pc ProjectConfig) ProjectConfig {
 	}
 
 	// Validate DatabaseType
+	if !pc.PersistenceType.IsValid() {
+		fmt.Printf("WARNING: PersistenceType '%s' is invalid. Using default: %s\n", pc.PersistenceType, defaultProjectConfig.PersistenceType)
+		pc.PersistenceType = defaultProjectConfig.PersistenceType
+	}
+
 	if !pc.DbType.IsValid() {
 		fmt.Printf("WARNING: DbType '%s' is invalid. Using default: %s\n", pc.DbType, defaultProjectConfig.DbType)
 		pc.DbType = defaultProjectConfig.DbType
