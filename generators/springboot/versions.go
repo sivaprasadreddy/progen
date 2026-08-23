@@ -20,6 +20,11 @@ const (
 	archunitVersion                = "1.5.0"
 	taikaiVersion                  = "1.66.0"
 	palantirJavaFormatVersion      = "2.96.0"
+	postgresImage                  = "postgres:18-alpine"
+	mysqlImage                     = "mysql:9"
+	mariadbImage                   = "mariadb:12"
+	flociImage                     = "floci/floci:latest-compat"
+	mailpitImage                   = "axllent/mailpit:v1.31"
 )
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.
@@ -43,6 +48,11 @@ type Versions struct {
 	ArchunitVersion                string
 	TaikaiVersion                  string
 	PalantirJavaFormatVersion      string
+	PostgresImage                  string
+	MysqlImage                     string
+	MariadbImage                   string
+	FlociImage                     string
+	MailpitImage                   string
 }
 
 func defaultVersions() Versions {
@@ -66,5 +76,10 @@ func defaultVersions() Versions {
 		ArchunitVersion:                archunitVersion,
 		TaikaiVersion:                  taikaiVersion,
 		PalantirJavaFormatVersion:      palantirJavaFormatVersion,
+		PostgresImage:                  postgresImage,
+		MysqlImage:                     mysqlImage,
+		MariadbImage:                   mariadbImage,
+		FlociImage:                     flociImage,
+		MailpitImage:                   mailpitImage,
 	}
 }

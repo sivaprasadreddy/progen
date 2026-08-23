@@ -29,28 +29,28 @@ public class TestcontainersConfig {
     @Bean
     @ServiceConnection
     PostgreSQLContainer postgres() {
-        return new PostgreSQLContainer(parse("postgres:18-alpine"));
+        return new PostgreSQLContainer(parse("{{ .PostgresImage }}"));
     }
 {{- end }}
 {{- if eq .DbType "MySQL" }}
     @Bean
     @ServiceConnection
     MySQLContainer mysql() {
-        return new MySQLContainer(parse("mysql:8.1.0"));
+        return new MySQLContainer(parse("{{ .MysqlImage }}"));
     }
 {{- end }}
 {{- if eq .DbType "MariaDB" }}
     @Bean
     @ServiceConnection
     MariaDBContainer mariadb() {
-        return new MariaDBContainer(parse("mariadb:12"));
+        return new MariaDBContainer(parse("{{ .MariadbImage }}"));
     }
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
     @Bean
     @ServiceConnection
     FlociContainer flociContainer() {
-        return new FlociContainer("floci/floci:latest-compat")
+        return new FlociContainer("{{ .FlociImage }}")
                .withClasspathResourceMapping("/floci-init/ready.d/", "/etc/floci/init/ready.d/", BindMode.READ_ONLY);
     }
 {{ end }}
@@ -58,7 +58,7 @@ public class TestcontainersConfig {
     @Bean
     @ServiceConnection
     MailpitContainer mailpit() {
-        return new MailpitContainer("axllent/mailpit:v1.30");
+        return new MailpitContainer("{{ .MailpitImage }}");
     }
 {{ end }}
 }
