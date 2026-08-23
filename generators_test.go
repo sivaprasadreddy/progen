@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 	"strconv"
@@ -131,11 +132,9 @@ func testGeneratedProject(dirName, executable, testCmd string) error {
 		appTestCmd = fmt.Sprintf("cd %s && %s %s", dirName, executable, testCmd)
 		cmd = exec.Command("cmd", "/C", appTestCmd)
 	}
-	//fmt.Println("appTestCmd: ", appTestCmd)
-	out, err := cmd.CombinedOutput()
-	fmt.Println("Error:", err)
-	fmt.Println("Output:", string(out))
-	return err
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 func deleteDir(dirName string) error {
@@ -143,8 +142,7 @@ func deleteDir(dirName string) error {
 	if hostOS == "windows" {
 		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
 	}
-	_, err := cmd.CombinedOutput()
-	//fmt.Println("Error:", err)
-	//fmt.Println("Output:", string(out))
-	return err
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }

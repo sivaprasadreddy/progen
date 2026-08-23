@@ -27,12 +27,12 @@ run:
 # Run basic tests only
 test:
 	@echo "Testing..."
-	@go test -v -short ./...
+	go test -v -p 1 -short ./...
 
 # Run all tests
 all_tests:
 	@echo "Testing..."
-	@go test -v ./...
+	go test -v -p 1 ./...
 
 # Clean the binary
 clean:

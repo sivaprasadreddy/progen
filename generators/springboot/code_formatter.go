@@ -2,6 +2,7 @@ package springboot
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 )
@@ -10,9 +11,11 @@ func (pg projectGenerator) formatCode(pc ProjectConfig) error {
 	executable, formatCmd := pg.getCodeFormatCommand(pc.BuildTool)
 	appFormatCmd := pg.buildCommandString(pc.AppName, executable, formatCmd)
 	cmd := pg.createOSCommand(appFormatCmd)
-	output, err := cmd.CombinedOutput()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
 	if err != nil {
-		fmt.Println("failed to format project code\n%w", output)
+		fmt.Printf("failed to format project code: %v\n", err)
 	}
 	return err
 }
