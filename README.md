@@ -28,6 +28,7 @@ The progen generates a Spring Boot application with the following features confi
 * [Spring Modulith](https://spring.io/projects/spring-modulith) configuration
 * [Spring Cloud AWS](https://awspring.io/) support with [Floci](https://floci.io/floci/) configuration
 * [Spring RabbitMQ](https://spring.io/projects/spring-amqp) configuration
+* [Redis Caching](https://docs.spring.io/spring-boot/reference/io/caching.html#io.caching.provider.redis) configuration
 * Email support with [MailPit](https://mailpit.axllent.org/) and [Testcontainers Mailpit](https://github.com/martinellich/testcontainers-mailpit)
 * Swagger UI Integration using [springdoc-openapi](https://springdoc.org/)
 * [Testcontainers](https://java.testcontainers.org/) based Testing and Local Development Setup
