@@ -1,6 +1,9 @@
 # Project Generator CLI
 A CLI tool for generating Spring Boot projects.
 
+[![Build](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml)
+[![GoReleaser](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml)
+
 ## Motivation
 There are a few good project generator tools exist, such as [JHipster](https://www.jhipster.tech/), [Bootify](https://bootify.io/), [generator-springboot](https://github.com/sivaprasadreddy/generator-springboot).
 
