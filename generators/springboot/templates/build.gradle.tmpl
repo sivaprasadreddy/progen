@@ -115,6 +115,10 @@ dependencies {
     {{- if .RabbitMQSupport }}
     implementation "org.springframework.boot:spring-boot-starter-amqp"
     {{- end }}
+    {{- if .RedisCachingSupport }}
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    {{- end }}
     {{- if .ThymeleafSupport }}
     implementation "org.webjars:webjars-locator-lite"
     implementation "org.webjars:font-awesome:${fontawesomeVersion}"

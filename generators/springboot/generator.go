@@ -35,6 +35,7 @@ type ProjectConfig struct {
 	HTMXSupport           bool
 	EmailSupport          bool
 	RabbitMQSupport       bool
+	RedisCachingSupport   bool
 }
 
 // RestApiEnabled reports whether REST API-specific project features should be generated.
@@ -58,6 +59,7 @@ var defaultProjectConfig = ProjectConfig{
 	HTMXSupport:           false,
 	EmailSupport:          false,
 	RabbitMQSupport:       false,
+	RedisCachingSupport:   false,
 }
 
 func GenerateProjectFromConfigFile(configFile string) error {
@@ -187,6 +189,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewSpringCloudAwsConfig(pg),
 		NewEmailConfig(pg),
 		NewRabbitMQConfig(pg),
+		NewRedisCachingConfig(pg),
 		NewDockerComposeConfig(pg),
 		NewGhActionsConfig(pg),
 		NewReadMeConfig(pg),

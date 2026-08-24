@@ -62,6 +62,13 @@ services:
       - "15672:15672"
   {{- end }}
 
+  {{- if .RedisCachingSupport }}
+  redis:
+    image: {{ .RedisImage }}
+    ports:
+      - "6379:6379"
+  {{- end }}
+
   {{ .ArtifactID }}:
     image: your_dockerhub_username/{{ .ArtifactID }}
     container_name: {{ .ArtifactID }}
@@ -96,6 +103,10 @@ services:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       {{- end }}
+      {{- if .RedisCachingSupport }}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      {{- end }}
     ports:
       - "8080:8080"
     depends_on:
@@ -116,6 +127,9 @@ services:
       {{- end }}
       {{- if .RabbitMQSupport }}
       - rabbitmq
+      {{- end }}
+      {{- if .RedisCachingSupport }}
+      - redis
       {{- end }}
     restart: unless-stopped
     profiles:

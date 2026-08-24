@@ -38,13 +38,14 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		HTMXSupport           bool
 		EmailSupport          bool
 		RabbitMQSupport       bool
+		RedisCachingSupport   bool
 	}{
-		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true},
-		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false},
-		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, true},
-		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false},
-		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false},
+		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true},
+		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false},
+		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false, false},
+		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false},
 	}
 
 	for _, tt := range options {
@@ -68,6 +69,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				HTMXSupport:           tt.HTMXSupport,
 				EmailSupport:          tt.EmailSupport,
 				RabbitMQSupport:       tt.RabbitMQSupport,
+				RedisCachingSupport:   tt.RedisCachingSupport,
 			}
 			err := sb.GenerateProject(pc)
 			assert.Nil(t, err)

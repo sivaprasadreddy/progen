@@ -100,6 +100,13 @@ spring.rabbitmq.username=${SPRING_RABBITMQ_USERNAME:guest}
 spring.rabbitmq.password=${SPRING_RABBITMQ_PASSWORD:guest}
 {{ end }}
 
+{{ if .RedisCachingSupport }}
+#### Redis Caching ####
+spring.data.redis.host=${SPRING_DATA_REDIS_HOST:127.0.0.1}
+spring.data.redis.port=${SPRING_DATA_REDIS_PORT:6379}
+spring.cache.type=redis
+{{ end }}
+
 #### BootUI ####
 bootui.enabled=off
 bootui.mcp.enabled=off

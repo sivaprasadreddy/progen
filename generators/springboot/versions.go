@@ -26,6 +26,7 @@ const (
 	flociImage                     = "floci/floci:latest-compat"
 	mailpitImage                   = "axllent/mailpit:v1.31"
 	rabbitmqImage                  = "rabbitmq:4-management"
+	redisImage                     = "redis:8-alpine"
 )
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.
@@ -55,6 +56,7 @@ type Versions struct {
 	FlociImage                     string
 	MailpitImage                   string
 	RabbitMQImage                  string
+	RedisImage                     string
 }
 
 func defaultVersions() Versions {
@@ -84,5 +86,6 @@ func defaultVersions() Versions {
 		FlociImage:                     flociImage,
 		MailpitImage:                   mailpitImage,
 		RabbitMQImage:                  rabbitmqImage,
+		RedisImage:                     redisImage,
 	}
 }

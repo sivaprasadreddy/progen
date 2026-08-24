@@ -24,6 +24,9 @@ import ch.martinelli.oss.testcontainers.mailpit.MailpitContainer;
 {{- if .RabbitMQSupport }}
 import org.testcontainers.rabbitmq.RabbitMQContainer;
 {{ end }}
+{{- if .RedisCachingSupport }}
+import org.testcontainers.containers.GenericContainer;
+{{ end }}
 
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfig {
@@ -69,6 +72,13 @@ public class TestcontainersConfig {
     @ServiceConnection
     RabbitMQContainer rabbitmq() {
         return new RabbitMQContainer(parse("{{ .RabbitMQImage }}"));
+    }
+{{ end }}
+{{- if .RedisCachingSupport }}
+    @Bean
+    @ServiceConnection(name = "redis")
+    GenericContainer<?> redis() {
+        return new GenericContainer<>(parse("{{ .RedisImage }}")).withExposedPorts(6379);
     }
 {{ end }}
 }

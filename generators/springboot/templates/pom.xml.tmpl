@@ -194,6 +194,16 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
         {{ end }}
+        {{- if .RedisCachingSupport }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        {{ end }}
         {{- if .ThymeleafSupport }}
         <dependency>
             <groupId>org.webjars</groupId>
