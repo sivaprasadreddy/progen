@@ -188,6 +188,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         {{ end }}
+        {{- if .RabbitMQSupport }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        {{ end }}
         {{- if .ThymeleafSupport }}
         <dependency>
             <groupId>org.webjars</groupId>
@@ -355,6 +361,18 @@
             <groupId>ch.martinelli.oss</groupId>
             <artifactId>testcontainers-mailpit</artifactId>
             <version>${tc-mailpit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        {{- end }}
+        {{- if .RabbitMQSupport }}
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-amqp-test</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-rabbitmq</artifactId>
             <scope>test</scope>
         </dependency>
         {{- end }}

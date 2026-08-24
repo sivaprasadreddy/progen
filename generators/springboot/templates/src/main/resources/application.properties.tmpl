@@ -92,6 +92,14 @@ spring.mail.properties.mail.smtp.timeout=3000
 spring.mail.properties.mail.smtp.writetimeout=5000
 {{ end }}
 
+{{ if .RabbitMQSupport }}
+#### RabbitMQ ####
+spring.rabbitmq.host=${SPRING_RABBITMQ_HOST:127.0.0.1}
+spring.rabbitmq.port=${SPRING_RABBITMQ_PORT:5672}
+spring.rabbitmq.username=${SPRING_RABBITMQ_USERNAME:guest}
+spring.rabbitmq.password=${SPRING_RABBITMQ_PASSWORD:guest}
+{{ end }}
+
 #### BootUI ####
 bootui.enabled=off
 bootui.mcp.enabled=off

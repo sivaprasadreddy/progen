@@ -113,3 +113,4 @@ func (s DbMigrationTool) IsValid() bool {
 const FeatureSpringCloudAWSSupport = "Spring Cloud AWS"
 const FeatureHTMXSupport = "HTMX"
 const FeatureEmailSupport = "Email"
+const FeatureRabbitMQSupport = "RabbitMQ"

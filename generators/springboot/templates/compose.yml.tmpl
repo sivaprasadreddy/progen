@@ -51,6 +51,17 @@ services:
       - "8025:8025"
   {{- end }}
 
+  {{- if .RabbitMQSupport }}
+  rabbitmq:
+    image: {{ .RabbitMQImage }}
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  {{- end }}
+
   {{ .ArtifactID }}:
     image: your_dockerhub_username/{{ .ArtifactID }}
     container_name: {{ .ArtifactID }}
@@ -81,6 +92,10 @@ services:
       SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY: test
       SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY: test
       {{- end }}
+      {{- if .RabbitMQSupport }}
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      {{- end }}
     ports:
       - "8080:8080"
     depends_on:
@@ -98,6 +113,9 @@ services:
       {{- end }}
       {{- if .SpringCloudAWSSupport }}
       - floci
+      {{- end }}
+      {{- if .RabbitMQSupport }}
+      - rabbitmq
       {{- end }}
     restart: unless-stopped
     profiles:

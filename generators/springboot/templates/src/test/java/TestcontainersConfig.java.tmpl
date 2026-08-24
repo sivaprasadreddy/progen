@@ -21,6 +21,9 @@ import org.testcontainers.containers.BindMode;
 {{- if .EmailSupport }}
 import ch.martinelli.oss.testcontainers.mailpit.MailpitContainer;
 {{ end }}
+{{- if .RabbitMQSupport }}
+import org.testcontainers.rabbitmq.RabbitMQContainer;
+{{ end }}
 
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfig {
@@ -59,6 +62,13 @@ public class TestcontainersConfig {
     @ServiceConnection
     MailpitContainer mailpit() {
         return new MailpitContainer("{{ .MailpitImage }}");
+    }
+{{ end }}
+{{- if .RabbitMQSupport }}
+    @Bean
+    @ServiceConnection
+    RabbitMQContainer rabbitmq() {
+        return new RabbitMQContainer(parse("{{ .RabbitMQImage }}"));
     }
 {{ end }}
 }

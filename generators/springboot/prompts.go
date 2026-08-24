@@ -136,6 +136,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	otherFeatureOptions := []huh.Option[string]{
 		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 		huh.NewOption(FeatureEmailSupport, FeatureEmailSupport),
+		huh.NewOption(FeatureRabbitMQSupport, FeatureRabbitMQSupport),
 	}
 
 	if answers.AppType == WebApp {
@@ -183,6 +184,7 @@ func updateFeatureFlags(pc *ProjectConfig, features []string) {
 	pc.ThymeleafSupport = pc.AppType == WebApp
 	pc.HTMXSupport = isEnabled(features, FeatureHTMXSupport)
 	pc.EmailSupport = isEnabled(features, FeatureEmailSupport)
+	pc.RabbitMQSupport = isEnabled(features, FeatureRabbitMQSupport)
 }
 
 func isEnabled(features []string, feature string) bool {

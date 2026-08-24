@@ -112,6 +112,9 @@ dependencies {
     {{- if .EmailSupport }}
     implementation "org.springframework.boot:spring-boot-starter-mail"
     {{- end }}
+    {{- if .RabbitMQSupport }}
+    implementation "org.springframework.boot:spring-boot-starter-amqp"
+    {{- end }}
     {{- if .ThymeleafSupport }}
     implementation "org.webjars:webjars-locator-lite"
     implementation "org.webjars:font-awesome:${fontawesomeVersion}"
@@ -168,6 +171,10 @@ dependencies {
     {{- end }}
     {{- if .EmailSupport }}
     testImplementation "ch.martinelli.oss:testcontainers-mailpit:${tcMailpitVersion}"
+    {{- end }}
+    {{- if .RabbitMQSupport }}
+    testImplementation "org.springframework.boot:spring-boot-starter-amqp-test"
+    testImplementation "org.testcontainers:testcontainers-rabbitmq"
     {{- end }}
     testImplementation "org.awaitility:awaitility"
     testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"

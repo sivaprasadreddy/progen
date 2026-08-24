@@ -25,6 +25,7 @@ const (
 	mariadbImage                   = "mariadb:12"
 	flociImage                     = "floci/floci:latest-compat"
 	mailpitImage                   = "axllent/mailpit:v1.31"
+	rabbitmqImage                  = "rabbitmq:4-management"
 )
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.
@@ -53,6 +54,7 @@ type Versions struct {
 	MariadbImage                   string
 	FlociImage                     string
 	MailpitImage                   string
+	RabbitMQImage                  string
 }
 
 func defaultVersions() Versions {
@@ -81,5 +83,6 @@ func defaultVersions() Versions {
 		MariadbImage:                   mariadbImage,
 		FlociImage:                     flociImage,
 		MailpitImage:                   mailpitImage,
+		RabbitMQImage:                  rabbitmqImage,
 	}
 }

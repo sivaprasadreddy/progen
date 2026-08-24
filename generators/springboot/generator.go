@@ -34,6 +34,7 @@ type ProjectConfig struct {
 	ThymeleafSupport      bool
 	HTMXSupport           bool
 	EmailSupport          bool
+	RabbitMQSupport       bool
 }
 
 // RestApiEnabled reports whether REST API-specific project features should be generated.
@@ -56,6 +57,7 @@ var defaultProjectConfig = ProjectConfig{
 	ThymeleafSupport:      false,
 	HTMXSupport:           false,
 	EmailSupport:          false,
+	RabbitMQSupport:       false,
 }
 
 func GenerateProjectFromConfigFile(configFile string) error {
@@ -184,6 +186,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewSecurityConfig(pg),
 		NewSpringCloudAwsConfig(pg),
 		NewEmailConfig(pg),
+		NewRabbitMQConfig(pg),
 		NewDockerComposeConfig(pg),
 		NewGhActionsConfig(pg),
 		NewReadMeConfig(pg),
