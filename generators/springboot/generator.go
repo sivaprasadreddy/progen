@@ -191,6 +191,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewTaskfileConfig(pg),
 		NewRenovateConfig(pg),
 		NewAngularConfig(pg),
+		NewAIConfig(pg),
 	}
 
 	for _, gen := range generators {

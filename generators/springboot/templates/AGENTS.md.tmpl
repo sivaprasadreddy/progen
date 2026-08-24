@@ -1,0 +1,36 @@
+# AGENTS.md
+
+This file provides guidance to AI Agents when working with code in this repository.
+
+## Build Commands
+{{- if eq .BuildTool "Gradle" }}
+- **Full build with tests**: `./gradlew clean build`
+- **Single test class**: `./gradlew test --tests "com.example.MyTestClass"`
+- **Run application**: `./gradlew bootRun`
+- **Code formatting**: `./gradlew spotlessApply`
+- **Docker image build**: `./gradlew bootBuildImage -DskipTests`
+{{- end }}
+{{- if eq .BuildTool "Maven" }}
+- **Full build with tests**: `./mvnw clean verify`
+- **Single test class**: `./mvnw test -Dtest=com.example.MyTestClass`
+- **Run application**: `./mvnw spring-boot:run`
+- **Code formatting**: `./mvnw spotless:apply`
+- **Docker image build**: `./mvnw clean compile spring-boot:build-image -DskipTests`
+{{- end }}
+
+## Commit and Pull Request Guidelines
+
+### Commit Messages
+- **Format**: `type(scope): description`
+- **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- **Examples**:
+  - `feat(auth): add JWT token refresh functionality`
+  - `fix(api): handle null pointer in message service`
+  - `test(ui): add component tests for login form`
+
+### Pull Requests
+- **Branch naming**: `feature/description`, `fix/issue-number-description`
+- **Title**: Clear, concise description of changes
+- **Description**: Include what was changed and why
+- **Testing**: Ensure all tests pass, coverage meets requirements
+- **Code review**: Address all reviewer feedback
