@@ -1,0 +1,75 @@
+package {{ .BasePackage }}.users;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import {{ .BasePackage }}.BaseIT;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+
+class AuthControllerTests extends BaseIT {
+
+    @Test
+    void shouldLoginSuccessfullyWithValidCredentials() {
+        LoginResponse response = restTestClient
+                    .post()
+                    .uri("/api/auth/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("""
+                            {
+                              "email": "admin@gmail.com",
+                              "password": "admin"
+                            }
+                            """)
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .returnResult(LoginResponse.class)
+                    .getResponseBody();
+
+        assertThat(response).isNotNull();
+        assertThat(response.accessToken()).isNotBlank();
+        assertThat(response.email()).isEqualTo("admin@gmail.com");
+        assertThat(response.name()).isEqualTo("Administrator");
+    }
+
+    @Test
+    void shouldRefreshTokensSuccessfullyGivenValidRefreshToken() {
+        String token = getAuthToken("admin@gmail.com", "admin");
+        RefreshTokenResponse response = restTestClient
+                .post()
+                .uri("/api/auth/refresh")
+                .cookie("refresh_token", token)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(RefreshTokenResponse.class)
+                .getResponseBody();
+
+        assertThat(response).isNotNull();
+        assertThat(response.accessToken()).isNotBlank();
+    }
+
+    @Test
+    void shouldGetCurrentUserSuccessfully() {
+        String token = getAuthToken("admin@gmail.com", "admin");
+
+        UserDto user = restTestClient
+                .get()
+                .uri("/api/auth/me")
+                .header("Authorization", "Bearer " + token)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(UserDto.class)
+                .getResponseBody();
+
+        assertThat(user).isNotNull();
+        assertThat(user.email()).isEqualTo("admin@gmail.com");
+        assertThat(user.name()).isEqualTo("Administrator");
+    }
+
+    @Test
+    void shouldNotGetCurrentUserWithoutAuthentication() {
+        restTestClient.get().uri("/api/auth/me").exchange().expectStatus().isUnauthorized();
+    }
+}

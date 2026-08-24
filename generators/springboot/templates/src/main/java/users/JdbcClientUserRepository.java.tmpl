@@ -1,6 +1,9 @@
 package {{ .BasePackage }}.users;
 
+import org.springframework.jdbc.core.RowMapper;
 import java.util.Optional;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -18,18 +21,17 @@ class UserRepository {
                         from users where lower(email) = lower(:email)
                         """)
                 .param("email", email)
-                .query((rs, rowNum) -> {
-                    var user = new UserEntity();
-                    user.setId(rs.getLong("id"));
-                    user.setName(rs.getString("name"));
-                    user.setEmail(rs.getString("email"));
-                    user.setPassword(rs.getString("password"));
-                    user.setRole(Role.valueOf(rs.getString("role")));
-                    user.setCreatedAt(rs.getTimestamp("created_at").toInstant());
-                    var updatedAt = rs.getTimestamp("updated_at");
-                    user.setUpdatedAt(updatedAt == null ? null : updatedAt.toInstant());
-                    return user;
-                })
+                .query(new UserEntityRowMapper())
+                .optional();
+    }
+
+    Optional<UserEntity> findById(Long id) {
+        return jdbcClient.sql("""
+                        select id, name, email, password, role, created_at, updated_at, version
+                        from users where id = :id
+                        """)
+                .param("id", id)
+                .query(new UserEntityRowMapper())
                 .optional();
     }
 
@@ -43,5 +45,21 @@ class UserRepository {
                 .param("password", user.getPassword())
                 .param("role", user.getRole().name())
                 .update();
+    }
+
+    static class UserEntityRowMapper implements RowMapper<UserEntity> {
+        @Override
+        public UserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+            var user = new UserEntity();
+            user.setId(rs.getLong("id"));
+            user.setName(rs.getString("name"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            user.setRole(Role.valueOf(rs.getString("role")));
+            user.setCreatedAt(rs.getTimestamp("created_at").toInstant());
+            var updatedAt = rs.getTimestamp("updated_at");
+            user.setUpdatedAt(updatedAt == null ? null : updatedAt.toInstant());
+            return user;
+        }
     }
 }

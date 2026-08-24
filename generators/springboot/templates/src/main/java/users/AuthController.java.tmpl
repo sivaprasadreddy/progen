@@ -1,0 +1,84 @@
+package {{ .BasePackage }}.users;
+
+import jakarta.validation.Valid;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import java.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+class AuthController {
+    private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
+
+    private final AuthenticationManager authManager;
+    private final UserService userService;
+    private final TokenHelper tokenHelper;
+
+    AuthController(AuthenticationManager authManager,
+                    UserService userService,
+                    TokenHelper tokenHelper) {
+        this.authManager = authManager;
+        this.userService = userService;
+        this.tokenHelper = tokenHelper;
+    }
+
+    @PostMapping("/login")
+    LoginResponse login(@RequestBody @Valid LoginRequest req,
+                        HttpServletResponse response) {
+        LOG.info("Login request for email: {}", req.email());
+        var authentication = new UsernamePasswordAuthenticationToken(req.email(), req.password());
+        authManager.authenticate(authentication);
+        var authToken = tokenHelper.generateToken(req.email());
+        var user = userService
+                .findByEmail(req.email())
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+        setRefreshTokenCookie(response, authToken.refreshToken());
+        return new LoginResponse(
+                authToken.accessToken(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole().name());
+    }
+
+    @PostMapping("/refresh")
+    RefreshTokenResponse refreshToken(@CookieValue("refresh_token") String refreshToken,
+                                      HttpServletResponse response) {
+        String email = tokenHelper.getUsernameFromToken(refreshToken);
+        if (email == null) {
+            throw new AccessDeniedException("Invalid refresh token");
+        }
+        var authToken = tokenHelper.generateToken(email);
+        setRefreshTokenCookie(response, authToken.refreshToken());
+        return new RefreshTokenResponse(authToken.accessToken(), authToken.refreshToken());
+    }
+
+    @GetMapping("/me")
+    ResponseEntity<UserDto> findCurrentUser() {
+        var currentUserId = AuthUtils.getCurrentUserId();
+        if(currentUserId == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        var user = userService.findById(currentUserId)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + currentUserId + " not found"));
+        return ResponseEntity.ok(user);
+    }
+
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refresh_token", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(30 * 24 * 60 * 60);
+
+        response.addCookie(cookie);
+    }
+}

@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.time.temporal.ChronoUnit;
 import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,24 +56,27 @@ public class TokenHelper {
     public AuthToken generateToken(String username) {
         SecretKey key = Keys.hmacShaKeyFor(props.jwt().secret().getBytes(UTF_8));
         Date issuedAt = new Date();
-        Date expiration = generateExpirationDate(issuedAt);
-        String token = Jwts.builder()
+        Date accessTokenExpiresAt = new Date(issuedAt.getTime() + props.jwt().expiresIn() * 1000);
+        Date refreshTokenExpiresAt = Date.from(issuedAt.toInstant().plus(7, ChronoUnit.DAYS));
+        String accessToken = generateToken(username,issuedAt, accessTokenExpiresAt);
+        String refreshToken = generateToken(username,issuedAt, refreshTokenExpiresAt);
+        return new AuthToken(accessToken, refreshToken);
+    }
+
+    public String generateToken(String username, Date issuedAt, Date expiresAt) {
+        SecretKey key = Keys.hmacShaKeyFor(props.jwt().secret().getBytes(UTF_8));
+        return Jwts.builder()
                 .issuer(props.jwt().issuer())
                 .subject(username)
                 .issuedAt(issuedAt)
-                .expiration(expiration)
+                .expiration(expiresAt)
                 .signWith(key)
                 .compact();
-        return new AuthToken(token, expiration.toInstant());
     }
 
     private Claims parseToken(String token) {
         String secretString = props.jwt().secret();
         SecretKey key = Keys.hmacShaKeyFor(secretString.getBytes(UTF_8));
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
-    }
-
-    private Date generateExpirationDate(Date date) {
-        return new Date(date.getTime() + props.jwt().expiresIn() * 1000);
     }
 }

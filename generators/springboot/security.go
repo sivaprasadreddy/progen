@@ -30,10 +30,14 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 		"users/SecurityUser.java.tmpl":               "users/SecurityUser.java",
 		"config/SecurityConfig.java.tmpl":            "config/SecurityConfig.java",
 		"users/SecurityUserDetailsService.java.tmpl": "users/SecurityUserDetailsService.java",
-		"users/UserContextUtils.java.tmpl":           "users/UserContextUtils.java",
 		"users/CreateUserCmd.java.tmpl":              "users/CreateUserCmd.java",
 		"users/AuthUtils.java.tmpl":                  "users/AuthUtils.java",
+		"users/UserNotFoundException.java.tmpl":      "users/UserNotFoundException.java",
+		"users/LoginRequest.java.tmpl":               "users/LoginRequest.java",
+		"users/LoginResponse.java.tmpl":              "users/LoginResponse.java",
+		"users/RefreshTokenResponse.java.tmpl":       "users/RefreshTokenResponse.java",
 	}
+
 	if pc.PersistenceType == SpringDataJPA {
 		templateMap["users/JpaUserEntity.java.tmpl"] = "users/UserEntity.java"
 		templateMap["users/JpaUserRepository.java.tmpl"] = "users/UserRepository.java"
@@ -55,7 +59,7 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 		templateMap["users/TokenHelper.java.tmpl"] = "users/TokenHelper.java"
 		templateMap["users/JwtFilter.java.tmpl"] = "users/JwtFilter.java"
 		templateMap["config/RestApiExceptionHandler.java.tmpl"] = "config/GlobalExceptionHandler.java"
-		templateMap["users/LoginRestController.java.tmpl"] = "users/LoginRestController.java"
+		templateMap["users/AuthController.java.tmpl"] = "users/AuthController.java"
 		templateMap["users/UserRestController.java.tmpl"] = "users/UserRestController.java"
 	}
 
@@ -78,7 +82,7 @@ func (s SecurityConfig) createSrcTestJava(pc ProjectConfig) error {
 	}
 
 	if pc.AppType == RestApi {
-		templateMap["users/LoginRestControllerTests.java.tmpl"] = "users/LoginRestControllerTests.java"
+		templateMap["users/AuthControllerTests.java.tmpl"] = "users/AuthControllerTests.java"
 		templateMap["users/UserRestControllerTests.java.tmpl"] = "users/UserRestControllerTests.java"
 	}
 

@@ -2,4 +2,4 @@ package {{ .BasePackage }}.users;
 
 import java.time.Instant;
 
-public record AuthToken(String accessToken, Instant expiresAt) {}
+public record AuthToken(String accessToken, String refreshToken) {}

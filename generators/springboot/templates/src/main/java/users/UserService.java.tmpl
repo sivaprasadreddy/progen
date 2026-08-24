@@ -21,6 +21,11 @@ class UserService {
         return userRepository.findByEmailIgnoreCase(email);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UserDto> findById(Long id) {
+        return userRepository.findById(id).map(this::toUserDto);
+    }
+
     @Transactional
     public void createUser(CreateUserCmd cmd) {
         var user = new UserEntity();
@@ -30,4 +35,9 @@ class UserService {
         user.setRole(cmd.role());
         userRepository.save(user);
     }
+
+    private UserDto toUserDto(UserEntity user) {
+        return new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole());
+    }
+
 }
