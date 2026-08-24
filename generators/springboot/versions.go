@@ -5,7 +5,7 @@ const (
 	springBootVersion              = "4.1.1"
 	gradleDependencyMgmtVersion    = "1.1.7"
 	gradleGitPropertiesVersion     = "4.0.1"
-	spotlessGradlePluginVersion    = "8.9.0"
+	spotlessGradlePluginVersion    = "8.10.0"
 	spotlessMavenPluginVersion     = "3.10.0"
 	springModulithVersion          = "2.1.0"
 	springCloudAWSVersion          = "4.1.0"

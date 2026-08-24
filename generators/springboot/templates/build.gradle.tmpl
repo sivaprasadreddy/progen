@@ -5,6 +5,9 @@ plugins {
     id "io.spring.dependency-management" version "{{ .GradleDependencyMgmtVersion }}"
     id "com.gorylenko.gradle-git-properties" version "{{ .GradleGitPropertiesVersion }}"
     id "com.diffplug.spotless" version "{{ .SpotlessGradlePluginVersion }}"
+    {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+    id "com.github.node-gradle.node" version "7.1.0"
+    {{ end }}
 }
 
 group = "{{ .GroupID }}"
@@ -28,32 +31,32 @@ repositories {
 
 ext {
 {{- if .RestApiEnabled }}
-  set('springdocOpenapiVersion', "{{ .SpringdocOpenapiVersion }}")
+  set("springdocOpenapiVersion", "{{ .SpringdocOpenapiVersion }}")
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
-  set('awspringVersion', "{{ .SpringCloudAWSVersion }}")
-  set('bootTcFlociVersion', "{{ .SpringBootFlociTcVersion }}")
+  set("awspringVersion", "{{ .SpringCloudAWSVersion }}")
+  set("bootTcFlociVersion", "{{ .SpringBootFlociTcVersion }}")
 {{- end }}
-  set('springModulithVersion', "{{ .SpringModulithVersion }}")
+  set("springModulithVersion", "{{ .SpringModulithVersion }}")
 {{- if .ThymeleafSupport }}
-  set('fontawesomeVersion', "{{ .FontAwesomeVersion }}")
+  set("fontawesomeVersion", "{{ .FontAwesomeVersion }}")
 {{- end }}
 {{- if .HTMXSupport }}
-  set('htmxVersion', "{{ .HtmxVersion }}")
+  set("htmxVersion", "{{ .HtmxVersion }}")
 {{- end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
-  set('htmxSpringBootThymeleafVersion', "{{ .HtmxSpringBootThymeleafVersion }}")
+  set("htmxSpringBootThymeleafVersion", "{{ .HtmxSpringBootThymeleafVersion }}")
 {{- end }}
 {{- if .RestApiEnabled }}
-  set('jjwtVersion', "{{ .JjwtVersion }}")
+  set("jjwtVersion", "{{ .JjwtVersion }}")
 {{- end }}
 {{- if .EmailSupport }}
-  set('tcMailpitVersion', "{{ .TcMailpitVersion }}")
+  set("tcMailpitVersion", "{{ .TcMailpitVersion }}")
 {{- end }}
-  set('bootUIVersion', "{{ .BootUIVersion }}")
-  set('palantirJavaFormatVersion', "{{ .PalantirJavaFormatVersion }}")
-  set('archunitVersion', "{{ .ArchunitVersion }}")
-  set('taikaiVersion', "{{ .TaikaiVersion }}")
+  set("bootUIVersion", "{{ .BootUIVersion }}")
+  set("palantirJavaFormatVersion", "{{ .PalantirJavaFormatVersion }}")
+  set("archunitVersion", "{{ .ArchunitVersion }}")
+  set("taikaiVersion", "{{ .TaikaiVersion }}")
 }
 
 dependencies {
@@ -101,7 +104,7 @@ dependencies {
     {{- end }}
     implementation "org.springframework.modulith:spring-modulith-starter-core"
     implementation "org.springframework.modulith:spring-modulith-docs"
-    runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
+    runtimeOnly "org.springframework.modulith:spring-modulith-actuator"
     {{- if .SpringCloudAWSSupport }}
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3"
@@ -127,26 +130,26 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     developmentOnly "org.springframework.boot:spring-boot-docker-compose"
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-validation-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-actuator-test"
     {{- if eq .PersistenceType "Spring Data JPA" }}
-    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation "org.springframework.boot:spring-boot-starter-data-jpa-test"
     {{- end }}
     {{- if eq .PersistenceType "Spring JdbcClient" }}
-    testImplementation 'org.springframework.boot:spring-boot-starter-jdbc-test'
+    testImplementation "org.springframework.boot:spring-boot-starter-jdbc-test"
     {{- end }}
 
     {{- if eq .DbMigrationTool "Flyway"}}
-    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+    testImplementation "org.springframework.boot:spring-boot-starter-flyway-test"
     {{- end }}
     {{- if eq .DbMigrationTool "Liquibase"}}
-    testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
+    testImplementation "org.springframework.boot:spring-boot-starter-liquibase-test"
     {{- end }}
-    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    testImplementation "org.springframework.boot:spring-boot-starter-security-test"
     {{- if .ThymeleafSupport }}
-    testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
+    testImplementation "org.springframework.boot:spring-boot-starter-thymeleaf-test"
     {{- end }}
     testImplementation "org.springframework.modulith:spring-modulith-starter-test"
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
@@ -180,6 +183,40 @@ dependencyManagement {
     }
 }
 
+{{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+node {
+    version = "24.15.0"
+    npmVersion = "11.6.2"
+
+    // Download Node.js instead of requiring it to be installed globally
+    download = true
+
+    // frontend/package.json
+    nodeProjectDir = file("frontend")
+
+    // Equivalent to frontend-maven-plugin's installDirectory=target
+    workDir = file("${buildDir}/nodejs")
+    npmWorkDir = file("${buildDir}/npm")
+
+    // Use npm install, matching your Maven configuration
+    npmInstallCommand = "install"
+}
+
+tasks.register("npmBuild", com.github.gradle.node.npm.task.NpmTask) {
+    dependsOn tasks.npmInstall
+
+    npmCommand = ["run", "build"]
+}
+
+tasks.named("processResources") {
+    dependsOn "npmBuild"
+
+    from("frontend/dist/frontend/browser") {
+        into "build/classes/public"
+    }
+}
+{{ end }}
+
 tasks.named("bootBuildImage") {
 	imageName = "your_dockerhub_username/{{ .ArtifactID }}"
 }
@@ -194,28 +231,28 @@ tasks.named("test") {
 	}
 }
 
-tasks.named('jacocoTestReport') {
-    dependsOn tasks.named('test')
+tasks.named("jacocoTestReport") {
+    dependsOn tasks.named("test")
     reports {
         xml.required = true
     }
 }
 
-tasks.named('jacocoTestCoverageVerification') {
-    dependsOn tasks.named('test')
+tasks.named("jacocoTestCoverageVerification") {
+    dependsOn tasks.named("test")
     violationRules {
         rule {
             limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
+                counter = "LINE"
+                value = "COVEREDRATIO"
                 minimum = 0.40
             }
         }
     }
 }
 
-tasks.named('check') {
-    dependsOn tasks.named('jacocoTestCoverageVerification')
+tasks.named("check") {
+    dependsOn tasks.named("jacocoTestCoverageVerification")
 }
 
 gitProperties {
@@ -236,7 +273,7 @@ spotless {
         palantirJavaFormat("${palantirJavaFormatVersion}")
     }
     groovyGradle {
-        target '*.gradle'
+        target "*.gradle"
         greclipse()
     }
 }
