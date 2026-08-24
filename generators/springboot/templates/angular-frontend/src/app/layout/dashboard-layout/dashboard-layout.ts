@@ -24,7 +24,7 @@ export class DashboardLayout {
 
   protected readonly navItems: NavItem[] = [
     { label: 'Dashboard', icon: 'fa-home', path: '/dashboard' },
-    { label: 'Profile', icon: 'fa-user', path: '/dashboard/profile' }
+    { label: 'My Profile', icon: 'fa-user', path: '/dashboard/profile' }
   ];
 
   protected readonly isUserMenuOpen = signal(false);

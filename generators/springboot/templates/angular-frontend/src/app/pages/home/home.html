@@ -1,33 +1,10 @@
 <div class="w-full max-w-7xl mx-auto px-4 py-8">
   <!-- Hero Section -->
   <div class="mb-12 text-center">
-    @if (isAuthenticated()) {
-      <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
-        Welcome back, {{ user()?.name }}!
-      </h1>
-    } @else {
-      <h1 class="text-4xl md:text-6xl font-bold mb-4 text-gray-900">
-        Welcome to SivaLabs
-      </h1>
-      <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-        Learn, Experiment, Teach
-      </p>
 
-      <!-- Call to Action for Non-Authenticated Users -->
-      <div class="flex flex-wrap justify-center gap-4">
-        <a
-          routerLink="/register"
-          class="px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg text-lg"
-        >
-          Get Started Free
-        </a>
-        <a
-          routerLink="/login"
-          class="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-colors shadow-lg text-lg"
-        >
-          Login
-        </a>
-      </div>
-    }
+      <h1 class="text-4xl md:text-6xl font-bold mb-4 text-gray-900">
+        Welcome Guest!!
+      </h1>
+
   </div>
 </div>
