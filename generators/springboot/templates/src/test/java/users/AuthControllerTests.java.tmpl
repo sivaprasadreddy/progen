@@ -5,12 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import {{ .BasePackage }}.BaseIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("/test-data.sql")
 class AuthControllerTests extends BaseIT {
 
     @Test
     void shouldLoginSuccessfullyWithValidCredentials() {
-        LoginResponse response = restTestClient
+        AuthController.LoginResponse response = restTestClient
                     .post()
                     .uri("/api/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -23,7 +25,7 @@ class AuthControllerTests extends BaseIT {
                     .exchange()
                     .expectStatus()
                     .isOk()
-                    .returnResult(LoginResponse.class)
+                    .returnResult(AuthController.LoginResponse.class)
                     .getResponseBody();
 
         assertThat(response).isNotNull();
@@ -35,14 +37,14 @@ class AuthControllerTests extends BaseIT {
     @Test
     void shouldRefreshTokensSuccessfullyGivenValidRefreshToken() {
         String token = getAuthToken("admin@gmail.com", "admin");
-        RefreshTokenResponse response = restTestClient
+        AuthController.RefreshTokenResponse response = restTestClient
                 .post()
                 .uri("/api/auth/refresh")
                 .cookie("refresh_token", token)
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .returnResult(RefreshTokenResponse.class)
+                .returnResult(AuthController.RefreshTokenResponse.class)
                 .getResponseBody();
 
         assertThat(response).isNotNull();

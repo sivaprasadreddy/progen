@@ -36,8 +36,14 @@ class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void updateUser(Long userId, UpdateUserCmd cmd) {
+        var user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        userRepository.updateUser(user.getId(), cmd.name());
+    }
+
     private UserDto toUserDto(UserEntity user) {
-        return new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole());
+        return new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getCreatedAt());
     }
 
 }

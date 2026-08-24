@@ -47,6 +47,16 @@ class UserRepository {
                 .update();
     }
 
+    void updateUser(Long id, String name) {
+        jdbcClient.sql("""
+                    update users set name = :name
+                    where id = :id
+                    """)
+            .param("id", id)
+            .param("name", name)
+            .update();
+    }
+
     static class UserEntityRowMapper implements RowMapper<UserEntity> {
         @Override
         public UserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {

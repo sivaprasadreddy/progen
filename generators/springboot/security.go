@@ -17,6 +17,9 @@ func (s SecurityConfig) generate(pc ProjectConfig) error {
 	if err := s.createSrcTestJava(pc); err != nil {
 		return err
 	}
+	if err := s.createSrcTestResources(pc); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -31,11 +34,9 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 		"config/SecurityConfig.java.tmpl":            "config/SecurityConfig.java",
 		"users/SecurityUserDetailsService.java.tmpl": "users/SecurityUserDetailsService.java",
 		"users/CreateUserCmd.java.tmpl":              "users/CreateUserCmd.java",
+		"users/UpdateUserCmd.java.tmpl":              "users/UpdateUserCmd.java",
 		"users/AuthUtils.java.tmpl":                  "users/AuthUtils.java",
 		"users/UserNotFoundException.java.tmpl":      "users/UserNotFoundException.java",
-		"users/LoginRequest.java.tmpl":               "users/LoginRequest.java",
-		"users/LoginResponse.java.tmpl":              "users/LoginResponse.java",
-		"users/RefreshTokenResponse.java.tmpl":       "users/RefreshTokenResponse.java",
 	}
 
 	if pc.PersistenceType == SpringDataJPA {
@@ -88,6 +89,20 @@ func (s SecurityConfig) createSrcTestJava(pc ProjectConfig) error {
 
 	for tmpl, filePath := range templateMap {
 		err := s.pg.executeTemplate(pc, srcTestJavaPath+tmpl, srcTestJavaPath+basePackagePath+"/"+filePath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s SecurityConfig) createSrcTestResources(pc ProjectConfig) error {
+	templateMap := map[string]string{
+		"test-data.sql.tmpl": "test-data.sql",
+	}
+
+	for tmpl, filePath := range templateMap {
+		err := s.pg.executeTemplate(pc, srcTestResourcesPath+tmpl, srcTestResourcesPath+filePath)
 		if err != nil {
 			return err
 		}

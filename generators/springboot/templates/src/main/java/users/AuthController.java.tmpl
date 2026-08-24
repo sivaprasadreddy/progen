@@ -1,6 +1,8 @@
 package {{ .BasePackage }}.users;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.Instant;
@@ -81,4 +83,13 @@ class AuthController {
 
         response.addCookie(cookie);
     }
+
+    public record LoginRequest(
+                @NotEmpty(message = "Email is required")
+                @Email(message = "Invalid email address") String email,
+                @NotEmpty(message = "Password is required") String password) {}
+
+    public record LoginResponse(String accessToken, String name, String email, String role) {}
+
+    public record RefreshTokenResponse(String accessToken, String refreshToken) {}
 }

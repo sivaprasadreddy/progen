@@ -9,7 +9,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.http.MediaType;
-import {{ .BasePackage }}.users.LoginResponse;
 {{ end }}
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +36,8 @@ public abstract class BaseIT {
     protected RestTestClient restTestClient;
 
     protected String getAuthToken(String email, String password) {
+        record LoginResponse(String accessToken, String name, String email, String role) {}
+
         LoginResponse response = restTestClient
                             .post()
                             .uri("/api/auth/login")
