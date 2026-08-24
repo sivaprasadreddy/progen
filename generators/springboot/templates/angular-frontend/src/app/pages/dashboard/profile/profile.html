@@ -1,0 +1,156 @@
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    @if (isLoading()) {
+      <div class="flex justify-center items-center py-20" role="status">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-500" aria-label="Loading profile"></div>
+        <span class="sr-only">Loading profile...</span>
+      </div>
+    }
+
+    @if (!isLoading() && errorMessage() && !userProfile()) {
+      <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 text-center max-w-2xl mx-auto" role="alert">
+        <i class="fas fa-exclamation-circle text-red-500 text-3xl mb-4" aria-hidden="true"></i>
+        <p class="text-red-800 text-lg font-medium m-0">{{ errorMessage() }}</p>
+      </div>
+    }
+
+    @if (!isLoading() && userProfile()) {
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <!-- Header Section -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-12 text-center relative">
+          <div class="relative inline-block">
+            <app-user-avatar
+              [fullName]="userProfile()!.name"
+              [size]="'2xl'"
+              [colorVariant]="'white'"
+              [ariaLabel]="'Profile avatar'"
+            />
+          </div>
+          <h1 class="text-3xl font-bold text-white mt-4 mb-2">{{ userProfile()!.name }}</h1>
+          <p class="text-indigo-100 text-lg">&#64;{{ userProfile()!.email }}</p>
+          <div class="mt-4">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white backdrop-blur-sm">
+              <i class="fas fa-shield-alt mr-2" aria-hidden="true"></i>
+              {{ userProfile()!.role }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        @if (successMessage()) {
+          <div class="mx-8 mt-6 bg-green-50 border-2 border-green-200 rounded-lg p-4" role="alert" aria-live="polite">
+            <div class="flex items-center">
+              <i class="fas fa-check-circle text-green-500 mr-3" aria-hidden="true"></i>
+              <p class="text-sm text-green-800 m-0">{{ successMessage() }}</p>
+            </div>
+          </div>
+        }
+
+        @if (errorMessage() && userProfile()) {
+          <div class="mx-8 mt-6 bg-red-50 border-2 border-red-200 rounded-lg p-4" role="alert" aria-live="polite">
+            <div class="flex items-center">
+              <i class="fas fa-exclamation-circle text-red-500 mr-3" aria-hidden="true"></i>
+              <p class="text-sm text-red-800 m-0">{{ errorMessage() }}</p>
+            </div>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="px-8 py-6 border-b border-gray-200">
+          @if (!isEditMode()) {
+            <button
+              type="button"
+              (click)="enableEditMode()"
+              class="bg-indigo-600 text-white font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md hover:shadow-lg"
+            >
+              <i class="fas fa-edit mr-2" aria-hidden="true"></i>
+              Edit Profile
+            </button>
+          }
+
+          @if (isEditMode()) {
+            <div class="flex gap-3">
+              <button
+                type="button"
+                (click)="onSubmit()"
+                [disabled]="isSaving()"
+                class="bg-indigo-600 text-white font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+              >
+                @if (isSaving()) {
+                  <span class="flex items-center">
+                    <i class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
+                    Saving...
+                  </span>
+                } @else {
+                  <span>
+                    <i class="fas fa-save mr-2" aria-hidden="true"></i>
+                    Save Changes
+                  </span>
+                }
+              </button>
+              <button
+                type="button"
+                (click)="cancelEdit()"
+                [disabled]="isSaving()"
+                class="bg-gray-200 text-gray-700 font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Profile Content -->
+        <form [formGroup]="profileForm" class="px-8 py-6">
+          <div class="space-y-6">
+            <!-- Basic Information -->
+            <div>
+              <h2 class="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  @if (isEditMode()) {
+                    <input
+                      id="name"
+                      type="text"
+                      formControlName="name"
+                      class="block w-full px-4 py-2.5 border-2 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                      [class.border-red-300]="getFieldError('name')"
+                      [class.border-gray-300]="!getFieldError('name')"
+                    />
+                    @if (getFieldError('name')) {
+                      <p class="mt-1 text-sm text-red-600">{{ getFieldError('name') }}</p>
+                    }
+                  } @else {
+                    <p class="text-gray-900 py-2.5">{{ userProfile()!.name }}</p>
+                  }
+                </div>
+
+                <div>
+                  <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <p class="text-gray-900 py-2.5">{{ userProfile()!.email }}</p>
+                  <p class="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="pt-6 border-t border-gray-200">
+              <h2 class="text-xl font-semibold text-gray-900 mb-4">Account Information</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-gray-600">Member Since:</span>
+                  <span class="ml-2 font-medium text-gray-900">{{ formatDate(userProfile()!.createdAt) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
+</div>

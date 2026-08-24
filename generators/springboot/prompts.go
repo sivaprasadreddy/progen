@@ -28,6 +28,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 				Options(
 					huh.NewOption(RestApi.String(), RestApi).Selected(true),
 					huh.NewOption(WebApp.String(), WebApp),
+					huh.NewOption(SpringBootAngularFullStack.String(), SpringBootAngularFullStack),
 				).Value(&appType),
 		),
 	)

@@ -1,0 +1,142 @@
+<div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-10">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+        <p class="text-gray-600">Sign in to your GeeksClub account</p>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="mb-6">
+          <app-alert [type]="'error'" [message]="errorMessage()!" />
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="mb-6">
+          <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+            Email Address
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-envelope text-gray-400" aria-hidden="true"></i>
+            </div>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="you@example.com"
+              class="block w-full pl-10 pr-3 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              [class.border-red-300]="getFieldError('email')"
+              [class.border-gray-300]="!getFieldError('email')"
+              aria-required="true"
+              [attr.aria-invalid]="getFieldError('email') ? 'true' : 'false'"
+              [attr.aria-describedby]="getFieldError('email') ? 'email-error' : null"
+            />
+          </div>
+          @if (getFieldError('email')) {
+            <p id="email-error" class="mt-2 text-sm text-red-600" role="alert">
+              {{ getFieldError('email') }}
+            </p>
+          }
+        </div>
+
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+            Password
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400" aria-hidden="true"></i>
+            </div>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Enter your password"
+              class="block w-full pl-10 pr-12 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              [class.border-red-300]="getFieldError('password')"
+              [class.border-gray-300]="!getFieldError('password')"
+              aria-required="true"
+              [attr.aria-invalid]="getFieldError('password') ? 'true' : 'false'"
+              [attr.aria-describedby]="getFieldError('password') ? 'password-error' : null"
+            />
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            >
+              <i
+                [class]="showPassword() ? 'fas fa-eye-slash' : 'fas fa-eye'"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </div>
+          @if (getFieldError('password')) {
+            <p id="password-error" class="mt-2 text-sm text-red-600" role="alert">
+              {{ getFieldError('password') }}
+            </p>
+          }
+        </div>
+
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center">
+            <input
+              id="remember-me"
+              type="checkbox"
+              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
+            />
+            <label for="remember-me" class="ml-2 block text-sm text-gray-700 cursor-pointer">
+              Remember me
+            </label>
+          </div>
+          <a
+            href="#"
+            class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors no-underline"
+          >
+            Forgot password?
+          </a>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="isLoading()"
+          class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          [attr.aria-busy]="isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="flex items-center justify-center">
+              <i class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
+              Signing in...
+            </span>
+          } @else {
+            <span>Sign In</span>
+          }
+        </button>
+      </form>
+
+      <div class="mt-8 text-center">
+        <p class="text-sm text-gray-600">
+          Don't have an account?
+          <a
+            routerLink="/register"
+            class="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors no-underline ml-1"
+          >
+            Sign up now
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-6 text-center">
+      <a
+        routerLink="/"
+        class="text-white hover:text-gray-200 transition-colors no-underline flex items-center justify-center gap-2"
+      >
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+        Back to Home
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+package {{ .BasePackage }}.ui;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+/**
+ * Serve Angular's index.html for all requests that are not relevant for the backend.
+ */
+@Controller
+class AngularForwardController {
+
+    @GetMapping("/{path:^(?!API|public|static|assets|media|swagger|.*\\..*$).*$}/**")
+    String redirect() {
+        return "forward:/index.html";
+    }
+}

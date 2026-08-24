@@ -9,8 +9,9 @@ const ProjectConfigFile = ".progen.json"
 type AppType string
 
 const (
-	RestApi AppType = "REST API"
-	WebApp  AppType = "Web App"
+	RestApi                    AppType = "REST API"
+	WebApp                     AppType = "Web App"
+	SpringBootAngularFullStack AppType = "Spring Boot + Angular Full Stack"
 )
 
 func (a AppType) String() string {
@@ -19,6 +20,8 @@ func (a AppType) String() string {
 		return "REST API"
 	case WebApp:
 		return "Web App"
+	case SpringBootAngularFullStack:
+		return "Spring Boot + Angular Full Stack"
 	default:
 		return "Unknown"
 	}
@@ -26,7 +29,7 @@ func (a AppType) String() string {
 
 func (a AppType) IsValid() bool {
 	switch a {
-	case RestApi, WebApp:
+	case RestApi, WebApp, SpringBootAngularFullStack:
 		return true
 	default:
 		return false

@@ -1,0 +1,108 @@
+<!-- Fixed Top Navbar -->
+<header
+  class="shrink-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 z-50"
+  role="banner"
+>
+  <!-- Left: App Title -->
+  <div class="flex items-center gap-3">
+    <i class="fas fa-cube text-purple-600 text-xl" aria-hidden="true"></i>
+    <span class="text-xl font-semibold text-gray-900">Spring Angular Template</span>
+  </div>
+
+  <!-- Right: User Dropdown -->
+  <div class="relative">
+    <button
+      type="button"
+      (click)="toggleUserMenu()"
+      [attr.aria-expanded]="isUserMenuOpen()"
+      aria-haspopup="true"
+      aria-label="User menu"
+      class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-purple-600 focus-visible:outline-offset-2"
+    >
+      <app-user-avatar
+        [fullName]="authService.user()?.name || null"
+        [size]="'sm'"
+        [ariaLabel]="'User avatar'"
+      />
+      <span class="text-sm font-medium hidden sm:block">{{ authService.user()?.name }}</span>
+      <i
+        class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-200"
+        [class.rotate-180]="isUserMenuOpen()"
+        aria-hidden="true"
+      ></i>
+    </button>
+
+    @if (isUserMenuOpen()) {
+      <!-- Backdrop -->
+      <div
+        class="fixed inset-0 z-10"
+        (click)="closeUserMenu()"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Dropdown -->
+      <div
+        role="menu"
+        class="absolute right-0 top-full mt-1 w-52 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1"
+      >
+        <div class="px-4 py-2 border-b border-gray-100">
+          <p class="text-sm font-semibold text-gray-900 m-0 truncate">{{ authService.user()?.name }}</p>
+          <p class="text-xs text-gray-500 m-0 truncate">{{ authService.user()?.email }}</p>
+        </div>
+
+        <a
+          routerLink="/dashboard/profile"
+          (click)="closeUserMenu()"
+          role="menuitem"
+          class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 no-underline focus-visible:outline-2 focus-visible:outline-purple-600 focus-visible:outline-offset-2"
+        >
+          <i class="fas fa-user w-4 text-center text-gray-400" aria-hidden="true"></i>
+          <span>Profile</span>
+        </a>
+
+        <button
+          type="button"
+          (click)="logout()"
+          role="menuitem"
+          class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 border-0 bg-transparent cursor-pointer focus-visible:outline-2 focus-visible:outline-red-500 focus-visible:outline-offset-2"
+        >
+          <i class="fas fa-sign-out-alt w-4 text-center" aria-hidden="true"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    }
+  </div>
+</header>
+
+<!-- Sidebar + Main Content -->
+<div class="flex flex-1 overflow-hidden">
+  <!-- Sidebar -->
+  <aside
+    class="w-64 shrink-0 bg-white border-r border-gray-200 overflow-y-auto"
+    role="navigation"
+    aria-label="Dashboard navigation"
+  >
+    <nav class="py-4" aria-label="Main menu">
+      <ul class="space-y-1 px-3 list-none m-0 p-0">
+        @for (item of navItems; track item.path) {
+          <li>
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="bg-purple-50 text-purple-600"
+              [routerLinkActiveOptions]="{ exact: item.path === '/dashboard' }"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200 no-underline focus-visible:outline-2 focus-visible:outline-purple-600 focus-visible:outline-offset-2"
+            >
+              <i [class]="'fas ' + item.icon + ' w-5 text-center'" aria-hidden="true"></i>
+              <span class="font-medium">{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto bg-gray-50">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,122 @@
+<nav
+  class="bg-gray-900 text-white shadow-md sticky top-0 z-50"
+  role="navigation"
+  aria-label="Main navigation"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0"
+  >
+    <div class="flex items-center">
+      <a
+        routerLink="/"
+        class="text-2xl font-bold text-white hover:text-blue-400 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-blue-400 focus-visible:outline-offset-4 rounded no-underline"
+        aria-label="Home"
+      >
+        <span class="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          Angular Demo
+        </span>
+      </a>
+    </div>
+
+    <ul
+      class="flex flex-wrap justify-center items-center gap-4 md:gap-8 list-none m-0 p-0"
+      role="menubar"
+    >
+      <li role="none">
+        <a
+          routerLink="/"
+          routerLinkActive="bg-blue-400/20 text-white"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="text-gray-300 no-underline font-medium px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-400 focus-visible:outline-offset-2"
+          role="menuitem"
+        >
+          Home
+        </a>
+      </li>
+
+      @if (authService.isAuthenticated()) {
+        <li role="none">
+          <a
+            routerLink="/dashboard"
+            routerLinkActive="bg-blue-400/20 text-white"
+            class="text-gray-300 no-underline font-medium px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-400 focus-visible:outline-offset-2"
+            role="menuitem"
+          >
+            Dashboard
+          </a>
+        </li>
+      }
+
+      @if (!authService.isAuthenticated()) {
+        <li role="none">
+          <a
+            routerLink="/login"
+            routerLinkActive="bg-blue-400/20 text-white"
+            class="text-gray-300 no-underline font-medium px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-400 focus-visible:outline-offset-2"
+            role="menuitem"
+          >
+            Login
+          </a>
+        </li>
+        <li role="none">
+          <a
+            routerLink="/register"
+            routerLinkActive="bg-blue-400/20 text-white"
+            class="text-gray-300 no-underline font-medium px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-400 focus-visible:outline-offset-2"
+            role="menuitem"
+          >
+            Register
+          </a>
+        </li>
+      }
+
+      @if (authService.isAuthenticated()) {
+        <li role="none" class="relative">
+          <button
+            type="button"
+            (click)="toggleDropdown()"
+            class="flex items-center gap-2 text-gray-300 font-medium px-2 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-400 focus-visible:outline-offset-2"
+            [attr.aria-expanded]="isDropdownOpen()"
+            aria-haspopup="true"
+            aria-label="User menu"
+          >
+            <app-user-avatar
+              [fullName]="authService.user()?.name || null"
+              [size]="'sm'"
+              [ariaLabel]="'User menu avatar'"
+            />
+            <i class="fas fa-chevron-down text-xs" [attr.aria-hidden]="true"></i>
+          </button>
+
+          @if (isDropdownOpen()) {
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+              <div class="px-4 py-2 border-b border-gray-200">
+                <p class="text-sm font-semibold text-gray-900 m-0">
+                  {{ authService.user()?.name }}
+                </p>
+                <p class="text-xs text-gray-500 m-0">{{ authService.user()?.email }}</p>
+              </div>
+
+              <a
+                routerLink="/dashboard/profile"
+                (click)="closeDropdown()"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 no-underline transition-colors duration-200"
+              >
+                <i class="fas fa-user mr-2" [attr.aria-hidden]="true"></i>
+                My Profile
+              </a>
+              <button
+                type="button"
+                (click)="logout()"
+                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors duration-200 border-0 bg-transparent cursor-pointer"
+              >
+                <i class="fas fa-sign-out-alt mr-2" [attr.aria-hidden]="true"></i>
+                Logout
+              </button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</nav>

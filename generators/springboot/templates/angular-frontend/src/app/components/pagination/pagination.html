@@ -1,0 +1,58 @@
+@if (totalPages() > 1) {
+  <div
+    [class.bg-white]="variant() === 'card'"
+    [class.rounded-lg]="variant() === 'card'"
+    [class.shadow-md]="variant() === 'card'"
+    [class.p-4]="variant() === 'card'"
+  >
+    <div class="flex justify-center items-center gap-2">
+      <!-- Previous Button -->
+      <button
+        (click)="handlePreviousPage()"
+        [disabled]="isPreviousDisabled()"
+        class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        aria-label="Previous page"
+      >
+        Previous
+      </button>
+
+      <!-- Page Numbers -->
+      <div class="flex gap-1">
+        @for (pageNum of pageNumbers(); track pageNum) {
+          @if (pageNum === -1) {
+            <span class="px-3 py-2 text-gray-500">...</span>
+          } @else {
+            <button
+              (click)="handleGoToPage(pageNum)"
+              [class.bg-blue-600]="pageNum === currentPage()"
+              [class.text-white]="pageNum === currentPage()"
+              [class.hover:bg-gray-50]="pageNum !== currentPage()"
+              class="px-4 py-2 border border-gray-300 rounded-lg transition-colors"
+              [attr.aria-label]="'Go to page ' + pageNum"
+              [attr.aria-current]="pageNum === currentPage() ? 'page' : null"
+            >
+              {{ pageNum }}
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Next Button -->
+      <button
+        (click)="handleNextPage()"
+        [disabled]="isNextDisabled()"
+        class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        aria-label="Next page"
+      >
+        Next
+      </button>
+    </div>
+
+    <!-- Page Info -->
+    @if (showPageInfo()) {
+      <div class="text-center mt-4 text-sm text-gray-600">
+        Page {{ currentPage() }} of {{ totalPages() }}
+      </div>
+    }
+  </div>
+}

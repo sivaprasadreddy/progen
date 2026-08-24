@@ -1,0 +1,18 @@
+<div [class]="getAlertClasses()" role="alert">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center flex-1">
+      <i [class]="getIconClass()" [attr.aria-hidden]="true"></i>
+      <p [class]="getTextClass()" class="ml-3">{{ message() }}</p>
+    </div>
+    @if (dismissible()) {
+      <button
+        type="button"
+        (click)="onDismiss()"
+        class="ml-4 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 rounded"
+        aria-label="Dismiss alert"
+      >
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    }
+  </div>
+</div>

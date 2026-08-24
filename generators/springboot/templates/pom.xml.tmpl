@@ -46,6 +46,14 @@
         <spotless.version>{{ .SpotlessMavenPluginVersion }}</spotless.version>
         <archunit.version>{{ .ArchunitVersion }}</archunit.version>
         <taikai.version>{{ .TaikaiVersion }}</taikai.version>
+        {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+        <frontend-maven-plugin.version>2.0.1</frontend-maven-plugin.version>
+        <frontend-maven-plugin.nodeVersion>v24.15.0</frontend-maven-plugin.nodeVersion>
+        <frontend-maven-plugin.npmVersion>11.6.2</frontend-maven-plugin.npmVersion>
+        <frontend-directory>frontend</frontend-directory>
+        <frontend-directory-path>./${frontend-directory}</frontend-directory-path>
+        <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+        {{ end }}
         <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
 	</properties>
 
@@ -499,6 +507,63 @@
                     </execution>
                 </executions>
             </plugin>
+            {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+                <configuration>
+                    <workingDirectory>${frontend-directory-path}</workingDirectory>
+                    <installDirectory>target</installDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-frontend-tooling</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>${frontend-maven-plugin.nodeVersion}</nodeVersion>
+                            <npmVersion>${frontend-maven-plugin.npmVersion}</npmVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>run-npm-install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>run-npm-build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/classes/public">
+                                    <fileset dir="${frontend-directory-path}/dist/${frontend-directory}/browser"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            {{ end }}
         </plugins>
     </build>
 
