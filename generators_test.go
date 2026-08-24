@@ -42,6 +42,8 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false},
 		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false},
 		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true},
+		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false},
 	}
 
 	for _, tt := range options {
