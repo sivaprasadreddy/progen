@@ -36,6 +36,11 @@ type ProjectConfig struct {
 	EmailSupport          bool
 }
 
+// RestApiEnabled reports whether REST API-specific project features should be generated.
+func (pc ProjectConfig) RestApiEnabled() bool {
+	return pc.AppType == RestApi || pc.AppType == SpringBootAngularFullStack
+}
+
 var defaultProjectConfig = ProjectConfig{
 	AppType:               RestApi,
 	AppName:               "myapp",

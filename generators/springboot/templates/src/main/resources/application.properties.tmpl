@@ -2,7 +2,7 @@ spring.application.name={{ .ArtifactID }}
 spring.docker.compose.lifecycle-management=start_only
 
 #### App ####
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 app.cors.path-pattern=/api/**
 app.cors.allowed-origins=*
 app.cors.allowed-methods=*
@@ -22,14 +22,14 @@ server.compression.enabled=true
 server.http2.enabled=true
 spring.threads.virtual.enabled=true
 
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 #### API Versioning ####
 spring.mvc.apiversion.default=1.0
 spring.mvc.apiversion.use.header=API_VERSION
 spring.mvc.apiversion.supported=1.0
 {{- end }}
 
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 #### Springdoc ####
 springdoc.swagger-ui.enabled=false
 springdoc.paths-to-match=/api/**

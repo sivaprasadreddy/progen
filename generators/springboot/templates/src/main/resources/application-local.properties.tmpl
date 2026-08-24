@@ -11,7 +11,7 @@ spring.jpa.properties.hibernate.log_slow_query=1000
 bootui.enabled=on
 bootui.mcp.enabled=on
 
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 springdoc.swagger-ui.enabled=true
 {{- end }}
 

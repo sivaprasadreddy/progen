@@ -5,7 +5,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 {{ end }}
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 {{- if eq .AppType "Web App" }}
 @AutoConfigureMockMvc
 {{ end }}
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 @AutoConfigureRestTestClient
 {{ end }}
 public abstract class BaseIT {
@@ -32,7 +32,7 @@ public abstract class BaseIT {
     protected MockMvcTester mvc;
 {{ end }}
 
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
     @Autowired
     protected RestTestClient restTestClient;
 

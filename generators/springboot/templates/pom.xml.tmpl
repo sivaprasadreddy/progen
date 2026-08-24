@@ -35,7 +35,7 @@
 {{- if and .ThymeleafSupport .HTMXSupport }}
         <htmx-spring-boot-thymeleaf.version>{{ .HtmxSpringBootThymeleafVersion }}</htmx-spring-boot-thymeleaf.version>
 {{ end }}
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
         <jjwt.version>{{ .JjwtVersion }}</jjwt.version>
         <springdoc-openapi.version>{{ .SpringdocOpenapiVersion }}</springdoc-openapi.version>
 {{ end }}
@@ -152,7 +152,7 @@
             <artifactId>spring-boot-starter-liquibase</artifactId>
         </dependency>
         {{- end }}
-        {{- if eq .AppType "REST API" }}
+        {{- if .RestApiEnabled }}
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -206,7 +206,7 @@
             <version>${htmx.org.version}</version>
         </dependency>
         {{ end }}
-        {{- if eq .AppType "REST API" }}
+        {{- if .RestApiEnabled }}
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>

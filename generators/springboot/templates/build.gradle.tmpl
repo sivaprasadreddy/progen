@@ -27,7 +27,7 @@ repositories {
 }
 
 ext {
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
   set('springdocOpenapiVersion', "{{ .SpringdocOpenapiVersion }}")
 {{- end }}
 {{- if .SpringCloudAWSSupport }}
@@ -44,7 +44,7 @@ ext {
 {{- if and .ThymeleafSupport .HTMXSupport }}
   set('htmxSpringBootThymeleafVersion', "{{ .HtmxSpringBootThymeleafVersion }}")
 {{- end }}
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
   set('jjwtVersion', "{{ .JjwtVersion }}")
 {{- end }}
 {{- if .EmailSupport }}
@@ -69,7 +69,7 @@ dependencies {
     implementation "io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:${htmxSpringBootThymeleafVersion}"
     {{- end }}
     {{- end }}
-    {{- if eq .AppType "REST API" }}
+    {{- if .RestApiEnabled }}
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
     {{- end }}
     {{- if eq .PersistenceType "Spring Data JPA" }}
@@ -116,7 +116,7 @@ dependencies {
     {{- if .HTMXSupport }}
     implementation "org.webjars.npm:htmx.org:${htmxVersion}"
     {{- end }}
-    {{- if eq .AppType "REST API" }}
+    {{- if .RestApiEnabled }}
     implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
     implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"

@@ -2,7 +2,7 @@ package {{ .BasePackage }}.config;
 
 import {{ .BasePackage }}.ApplicationProperties;
 import org.springframework.context.annotation.Configuration;
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 {{ end }}
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,7 +15,7 @@ class WebMvcConfig implements WebMvcConfigurer {
         this.props = props;
     }
 
-    {{- if eq .AppType "REST API" }}
+    {{- if .RestApiEnabled }}
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping(props.cors().pathPattern())

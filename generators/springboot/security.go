@@ -53,7 +53,7 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 		templateMap["users/UserController.java.tmpl"] = "users/UserController.java"
 	}
 
-	if pc.AppType == RestApi {
+	if pc.RestApiEnabled() {
 		templateMap["config/JwtWebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
 		templateMap["users/AuthToken.java.tmpl"] = "users/AuthToken.java"
 		templateMap["users/TokenHelper.java.tmpl"] = "users/TokenHelper.java"
@@ -81,7 +81,7 @@ func (s SecurityConfig) createSrcTestJava(pc ProjectConfig) error {
 		templateMap["users/UserControllerTests.java.tmpl"] = "users/UserControllerTests.java"
 	}
 
-	if pc.AppType == RestApi {
+	if pc.RestApiEnabled() {
 		templateMap["users/AuthControllerTests.java.tmpl"] = "users/AuthControllerTests.java"
 		templateMap["users/UserRestControllerTests.java.tmpl"] = "users/UserRestControllerTests.java"
 	}

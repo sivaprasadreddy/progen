@@ -9,14 +9,14 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app")
 @Validated
 public record ApplicationProperties(
-        {{- if eq .AppType "REST API" }}
+        {{- if .RestApiEnabled }}
         @Valid CorsProperties cors,
         @Valid OpenApiProperties openApi,
         @Valid JwtProperties jwt
         {{ end }}
         ) {
 
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
     public record CorsProperties(
         @DefaultValue("/**") String pathPattern,
         @DefaultValue("*") String allowedOrigins,

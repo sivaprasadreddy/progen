@@ -1,6 +1,6 @@
 package {{ .BasePackage }}.config;
 
-{{- if eq .AppType "REST API" }}
+{{- if .RestApiEnabled }}
 import {{ .BasePackage }}.users.JwtFilter;
 import {{ .BasePackage }}.users.TokenHelper;
 {{ end }}
@@ -29,7 +29,7 @@ class SecurityConfig {
 
         return new ProviderManager(authProvider);
     }
-    {{- if eq .AppType "REST API" }}
+    {{- if .RestApiEnabled }}
     @Bean
     public JwtFilter jwtFilter(TokenHelper tokenHelper, UserDetailsService uds) {
         return new JwtFilter(tokenHelper, uds);
