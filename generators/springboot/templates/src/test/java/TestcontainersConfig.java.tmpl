@@ -5,6 +5,8 @@ import static org.testcontainers.utility.DockerImageName.parse;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 {{- if eq .DbType "PostgreSQL" }}
 import org.testcontainers.postgresql.PostgreSQLContainer;
 {{- end }}
@@ -27,10 +29,35 @@ import org.testcontainers.rabbitmq.RabbitMQContainer;
 {{- if .RedisCachingSupport }}
 import org.testcontainers.containers.GenericContainer;
 {{ end }}
+{{- if .OpenTelemetrySupport }}
+import org.testcontainers.grafana.LgtmStackContainer;
+{{ end }}
 
 @TestConfiguration(proxyBeanMethods = false)
+@Testcontainers
 public class TestcontainersConfig {
 
+{{- if .SpringCloudAWSSupport }}
+    @Container
+    FlociContainer floci = new FlociContainer("{{ .FlociImage }}")
+               .withClasspathResourceMapping("/floci-init/ready.d/", "/etc/floci/init/ready.d/", BindMode.READ_ONLY);
+{{ end }}
+{{- if .EmailSupport }}
+    @Container
+    MailpitContainer mailpit = new MailpitContainer("{{ .MailpitImage }}");
+{{ end }}
+{{- if .RabbitMQSupport }}
+    @Container
+    static RabbitMQContainer rabbitmq = new RabbitMQContainer(parse("{{ .RabbitMQImage }}"));
+{{ end }}
+{{- if .RedisCachingSupport }}
+    @Container
+    static GenericContainer<?> redis = new GenericContainer<>(parse("{{ .RedisImage }}")).withExposedPorts(6379);
+{{ end }}
+{{- if .OpenTelemetrySupport }}
+   @Container
+   static LgtmStackContainer lgtm = new LgtmStackContainer(parse("{{ .GrafanaLgtmImage }}"));
+{{ end }}
 {{- if eq .DbType "PostgreSQL" }}
     @Bean
     @ServiceConnection
@@ -55,30 +82,36 @@ public class TestcontainersConfig {
 {{- if .SpringCloudAWSSupport }}
     @Bean
     @ServiceConnection
-    FlociContainer flociContainer() {
-        return new FlociContainer("{{ .FlociImage }}")
-               .withClasspathResourceMapping("/floci-init/ready.d/", "/etc/floci/init/ready.d/", BindMode.READ_ONLY);
+    FlociContainer floci() {
+        return floci;
     }
 {{ end }}
 {{- if .EmailSupport }}
     @Bean
     @ServiceConnection
     MailpitContainer mailpit() {
-        return new MailpitContainer("{{ .MailpitImage }}");
+        return mailpit;
     }
 {{ end }}
 {{- if .RabbitMQSupport }}
     @Bean
     @ServiceConnection
     RabbitMQContainer rabbitmq() {
-        return new RabbitMQContainer(parse("{{ .RabbitMQImage }}"));
+        return rabbitmq;
     }
 {{ end }}
 {{- if .RedisCachingSupport }}
     @Bean
     @ServiceConnection(name = "redis")
     GenericContainer<?> redis() {
-        return new GenericContainer<>(parse("{{ .RedisImage }}")).withExposedPorts(6379);
+        return redis;
     }
+{{ end }}
+{{- if .OpenTelemetrySupport }}
+   @Bean
+   @ServiceConnection
+   LgtmStackContainer lgtm() {
+       return lgtm;
+   }
 {{ end }}
 }

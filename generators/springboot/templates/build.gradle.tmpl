@@ -53,6 +53,9 @@ ext {
 {{- if .EmailSupport }}
   set("tcMailpitVersion", "{{ .TcMailpitVersion }}")
 {{- end }}
+{{- if .OpenTelemetrySupport }}
+  set("datasourceMicrometerSpringBootVersion", "{{ .DatasourceMicrometerSpringBootVersion }}")
+{{ end }}
   set("bootUIVersion", "{{ .BootUIVersion }}")
   set("palantirJavaFormatVersion", "{{ .PalantirJavaFormatVersion }}")
   set("archunitVersion", "{{ .ArchunitVersion }}")
@@ -63,6 +66,12 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webmvc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    {{- if .OpenTelemetrySupport }}
+    implementation "org.springframework.boot:spring-boot-starter-opentelemetry"
+    implementation "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.28.1-alpha"
+    implementation "io.opentelemetry:opentelemetry-api-incubator:1.62.0-alpha"
+    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:${datasourceMicrometerSpringBootVersion}"
+    {{ end }}
     implementation "org.springframework.boot:spring-boot-starter-security"
     {{- if .ThymeleafSupport }}
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
@@ -180,6 +189,9 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-amqp-test"
     testImplementation "org.testcontainers:testcontainers-rabbitmq"
     {{- end }}
+    {{- if .OpenTelemetrySupport }}
+    testImplementation "org.testcontainers:testcontainers-grafana"
+    {{ end }}
     testImplementation "org.awaitility:awaitility"
     testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"
     testImplementation "com.enofex:taikai:${taikaiVersion}"

@@ -69,6 +69,15 @@ services:
       - "6379:6379"
   {{- end }}
 
+  {{- if .OpenTelemetrySupport }}
+  grafana-lgtm:
+    image: {{ .GrafanaLgtmImage }}
+    ports:
+      - "3000:3000"
+      - "4317:4317"
+      - "4318:4318"
+  {{ end }}
+
   {{ .ArtifactID }}:
     image: your_dockerhub_username/{{ .ArtifactID }}
     container_name: {{ .ArtifactID }}
@@ -107,6 +116,12 @@ services:
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       {{- end }}
+      {{- if .OpenTelemetrySupport }}
+      TRACING_ENABLED: true
+      METRICS_EXPORT_URL: http://grafana-lgtm:4318/v1/metrics
+      TRACES_EXPORT_URL: http://grafana-lgtm:4318/v1/traces
+      LOGS_EXPORT_URL: http://grafana-lgtm:4318/v1/logs
+      {{- end }}
     ports:
       - "8080:8080"
     depends_on:
@@ -130,6 +145,9 @@ services:
       {{- end }}
       {{- if .RedisCachingSupport }}
       - redis
+      {{- end }}
+      {{- if .OpenTelemetrySupport }}
+      - grafana-lgtm
       {{- end }}
     restart: unless-stopped
     profiles:

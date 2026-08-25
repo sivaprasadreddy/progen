@@ -138,6 +138,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		huh.NewOption(FeatureEmailSupport, FeatureEmailSupport),
 		huh.NewOption(FeatureRabbitMQSupport, FeatureRabbitMQSupport),
 		huh.NewOption(FeatureRedisCachingSupport, FeatureRedisCachingSupport),
+		huh.NewOption(FeatureOpenTelemetrySupport, FeatureOpenTelemetrySupport),
 	}
 
 	if answers.AppType == WebApp {
@@ -147,7 +148,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	otherFeaturesSelect := huh.NewMultiSelect[string]().
 		Title("Select Features:").
 		Options(otherFeatureOptions...).
-		Height(len(otherFeatureOptions) + 2).
+		Height(len(otherFeatureOptions) + 3).
 		Value(&features)
 
 	inputs = append(inputs, otherFeaturesSelect)
@@ -187,6 +188,7 @@ func updateFeatureFlags(pc *ProjectConfig, features []string) {
 	pc.EmailSupport = isEnabled(features, FeatureEmailSupport)
 	pc.RabbitMQSupport = isEnabled(features, FeatureRabbitMQSupport)
 	pc.RedisCachingSupport = isEnabled(features, FeatureRedisCachingSupport)
+	pc.OpenTelemetrySupport = isEnabled(features, FeatureOpenTelemetrySupport)
 }
 
 func isEnabled(features []string, feature string) bool {

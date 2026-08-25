@@ -11,7 +11,7 @@ import (
 	"time"
 
 	sb "github.com/sivaprasadreddy/progen/generators/springboot"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var hostOS = runtime.GOOS
@@ -39,17 +39,18 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		EmailSupport          bool
 		RabbitMQSupport       bool
 		RedisCachingSupport   bool
+		OpenTelemetrySupport  bool
 	}{
-		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true},
-		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false},
-		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false, false},
-		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false},
+		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true, true},
+		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false, true},
+		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
 	}
 
 	for _, tt := range options {
-		t.Run(tt.appType.String()+"-"+tt.buildTool.String()+"-"+tt.persistenceType.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
+		passed := t.Run(tt.appType.String()+"-"+tt.buildTool.String()+"-"+tt.persistenceType.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
 			t.Log("Generating App with Options: ", tt)
 			appName := "springboot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 
@@ -70,15 +71,16 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				EmailSupport:          tt.EmailSupport,
 				RabbitMQSupport:       tt.RabbitMQSupport,
 				RedisCachingSupport:   tt.RedisCachingSupport,
+				OpenTelemetrySupport:  tt.OpenTelemetrySupport,
 			}
 			err := sb.GenerateProject(pc)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			if tt.buildTool == sb.Maven {
 				err = testGeneratedProject(appName, mvnExec, "test")
 			} else {
 				err = testGeneratedProject(appName, gradleExec, "build")
 			}
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			//cleanup
 			//err = deleteDir(appName)
@@ -87,6 +89,9 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				err = deleteDir(appName)
 			}
 		})
+		if !passed {
+			t.FailNow()
+		}
 	}
 }
 
@@ -113,7 +118,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 	}
 
 	for _, tt := range options {
-		t.Run(tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
+		passed := t.Run(tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
 			t.Log("Generating App with Options: ", tt)
 			appName := "my-springboot-mvn-api-" + strings.ToLower(tt.dbType.String()) + "-" + strings.ToLower(tt.migrationTool.String())
 
@@ -131,9 +136,9 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 				EmailSupport:    true,
 			}
 			err := sb.GenerateProject(pc)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			err = testGeneratedProject(appName, mvnExec, "test")
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			//cleanup
 			//err = deleteDir(appName)
@@ -142,6 +147,9 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 				err = deleteDir(appName)
 			}
 		})
+		if !passed {
+			t.FailNow()
+		}
 	}
 }
 

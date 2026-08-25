@@ -36,6 +36,7 @@ type ProjectConfig struct {
 	EmailSupport          bool
 	RabbitMQSupport       bool
 	RedisCachingSupport   bool
+	OpenTelemetrySupport  bool
 }
 
 // RestApiEnabled reports whether REST API-specific project features should be generated.
@@ -60,6 +61,7 @@ var defaultProjectConfig = ProjectConfig{
 	EmailSupport:          false,
 	RabbitMQSupport:       false,
 	RedisCachingSupport:   false,
+	OpenTelemetrySupport:  false,
 }
 
 func GenerateProjectFromConfigFile(configFile string) error {
@@ -191,6 +193,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewRabbitMQConfig(pg),
 		NewRedisCachingConfig(pg),
 		NewDockerComposeConfig(pg),
+		NewOpenTelemetryConfig(pg),
 		NewGhActionsConfig(pg),
 		NewReadMeConfig(pg),
 		NewSdkmanConfig(pg),

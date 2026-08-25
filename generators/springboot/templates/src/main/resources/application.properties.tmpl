@@ -41,11 +41,25 @@ logging.level.{{ .BasePackage }}=DEBUG
 logging.pattern.correlation=[${spring.application.name:},%X{traceId:-},%X{spanId:-}]
 logging.include-application-name=false
 #logging.level.org.springframework.security=DEBUG
-
+{{- if .OpenTelemetrySupport }}
+jdbc.datasource-proxy.query.enable-logging=true
+jdbc.datasource-proxy.query.logger-name={{ .ArtifactID }}.query-logger
+jdbc.datasource-proxy.query.log-level=DEBUG
+jdbc.datasource-proxy.multiline=false
+logging.level.{{ .ArtifactID }}.query-logger=DEBUG
+{{- end }}
 
 #### Actuator ####
 management.endpoints.web.exposure.include=configprops,env,health,info,logfile,loggers
 management.endpoint.health.show-details=when_authorized
+management.endpoint.health.probes.enabled=true
+{{- if .OpenTelemetrySupport }}
+management.tracing.export.enabled=${TRACING_ENABLED:false}
+management.tracing.sampling.probability=1.0
+management.otlp.metrics.export.url=${METRICS_EXPORT_URL:http://localhost:4318/v1/metrics}
+management.opentelemetry.tracing.export.otlp.endpoint=${TRACES_EXPORT_URL:http://localhost:4318/v1/traces}
+management.opentelemetry.logging.export.otlp.endpoint=${LOGS_EXPORT_URL:http://localhost:4318/v1/logs}
+{{- end }}
 
 #### Database ####
 spring.datasource.hikari.auto-commit=false

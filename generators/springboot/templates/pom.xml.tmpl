@@ -39,6 +39,9 @@
         <jjwt.version>{{ .JjwtVersion }}</jjwt.version>
         <springdoc-openapi.version>{{ .SpringdocOpenapiVersion }}</springdoc-openapi.version>
 {{ end }}
+{{- if .OpenTelemetrySupport }}
+        <datasource-micrometer-spring-boot.version>{{ .DatasourceMicrometerSpringBootVersion }}</datasource-micrometer-spring-boot.version>
+{{ end }}
         <bootui.version>{{ .BootUIVersion }}</bootui.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <jacoco.minimum.coverage>40%</jacoco.minimum.coverage>
@@ -70,6 +73,27 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        {{- if .OpenTelemetrySupport }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-logback-appender-1.0</artifactId>
+            <version>2.28.1-alpha</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api-incubator</artifactId>
+            <version>1.62.0-alpha</version>
+        </dependency>
+        <dependency>
+            <groupId>net.ttddyy.observation</groupId>
+            <artifactId>datasource-micrometer-spring-boot</artifactId>
+            <version>${datasource-micrometer-spring-boot.version}</version>
+        </dependency>
+        {{ end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -386,6 +410,13 @@
             <scope>test</scope>
         </dependency>
         {{- end }}
+        {{- if .OpenTelemetrySupport }}
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-grafana</artifactId>
+            <scope>test</scope>
+        </dependency>
+        {{ end }}
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
