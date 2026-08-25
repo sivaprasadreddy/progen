@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .ArtifactID }}-configmap
+data:
+{{- if eq .DbType "PostgreSQL" }}
+  db_jdbc_url: "jdbc:postgresql://{{ .ArtifactID }}-postgres-svc:5432/postgres"
+{{- end }}
+{{- if eq .DbType "MySQL" }}
+  db_jdbc_url: "jdbc:mysql://{{ .ArtifactID }}-mysql-svc:3306/test"
+{{- end }}
+{{- if eq .DbType "MariaDB" }}
+  db_jdbc_url: "jdbc:mariadb://{{ .ArtifactID }}-mariadb-svc:3306/test"
+{{- end }}
+{{- if .EmailSupport }}
+  email_host: "{{ .ArtifactID }}-mailpit-svc"
+  email_port: "1025"
+{{- end }}
+{{- if .RedisCachingSupport }}
+  redis_host: "{{ .ArtifactID }}-redis-svc"
+  redis_port: "6379"
+{{- end }}
+{{- if .RabbitMQSupport }}
+  rabbitmq_host: "{{ .ArtifactID }}-rabbitmq-svc"
+  rabbitmq_port: "5672"
+{{- end }}
+{{- if .OpenTelemetrySupport }}
+  metrics_export_url: "http://{{ .ArtifactID }}-otel-lgtm-svc:4318/v1/metrics"
+  traces_export_url: "http://{{ .ArtifactID }}-otel-lgtm-svc:4318/v1/traces"
+  logs_export_url: "http://{{ .ArtifactID }}-otel-lgtm-svc:4318/v1/logs"
+{{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .ArtifactID }}-secrets
+type: Opaque
+stringData:
+{{- if eq .DbType "PostgreSQL" }}
+  db_username: "postgres"
+  db_password: "postgres"
+{{- end }}
+{{- if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
+  db_username: "user"
+  db_password: "secret"
+{{- end }}

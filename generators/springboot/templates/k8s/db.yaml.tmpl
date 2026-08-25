@@ -1,0 +1,193 @@
+{{- if eq .DbType "PostgreSQL" }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .ArtifactID }}-postgres-pv
+spec:
+  storageClassName: 'standard'
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+  hostPath:
+    path: /data/{{ .ArtifactID }}-postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .ArtifactID }}-postgres-pv-claim
+spec:
+  storageClassName: 'standard'
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .ArtifactID }}-postgres-svc
+spec:
+  selector:
+    app: {{ .ArtifactID }}-postgres-pod
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .ArtifactID }}-postgres-deployment
+spec:
+  selector:
+    matchLabels:
+      app: {{ .ArtifactID }}-postgres-pod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .ArtifactID }}-postgres-pod
+    spec:
+      containers:
+        - name: postgres
+          image: "{{ .PostgresImage }}"
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .ArtifactID }}-secrets
+                  key: db_username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .ArtifactID }}-secrets
+                  key: db_password
+            - name: POSTGRES_DB
+              value: postgres
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 45
+            timeoutSeconds: 2
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: {{ .ArtifactID }}-postgres-pv-claim
+{{- end }}
+{{- if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .ArtifactID }}-db-pv
+spec:
+  storageClassName: 'standard'
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+  hostPath:
+    path: /data/{{ .ArtifactID }}-db
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .ArtifactID }}-db-pv-claim
+spec:
+  storageClassName: 'standard'
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- if eq .DbType "MySQL" }}
+  name: {{ .ArtifactID }}-mysql-svc
+{{- end }}
+{{- if eq .DbType "MariaDB" }}
+  name: {{ .ArtifactID }}-mariadb-svc
+{{- end }}
+spec:
+  selector:
+    app: {{ .ArtifactID }}-db-pod
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .ArtifactID }}-db-deployment
+spec:
+  selector:
+    matchLabels:
+      app: {{ .ArtifactID }}-db-pod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .ArtifactID }}-db-pod
+    spec:
+      containers:
+{{- if eq .DbType "MySQL" }}
+        - name: mysql
+          image: "{{ .MysqlImage }}"
+{{- end }}
+{{- if eq .DbType "MariaDB" }}
+        - name: mariadb
+          image: "{{ .MariadbImage }}"
+{{- end }}
+          ports:
+            - name: db
+              containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              value: test
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .ArtifactID }}-secrets
+                  key: db_username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .ArtifactID }}-secrets
+                  key: db_password
+            - name: MYSQL_ROOT_PASSWORD
+              value: admin
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 45
+            timeoutSeconds: 2
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: {{ .ArtifactID }}-db-pv-claim
+{{- end }}

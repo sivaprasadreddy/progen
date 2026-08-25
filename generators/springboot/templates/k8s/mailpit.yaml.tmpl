@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .ArtifactID }}-mailpit-svc
+spec:
+  selector:
+    app: {{ .ArtifactID }}-mailpit-pod
+  ports:
+    - name: smtp
+      port: 1025
+      targetPort: 1025
+    - name: http
+      port: 8025
+      targetPort: 8025
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .ArtifactID }}-mailpit-deployment
+spec:
+  selector:
+    matchLabels:
+      app: {{ .ArtifactID }}-mailpit-pod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .ArtifactID }}-mailpit-pod
+    spec:
+      containers:
+        - name: mailpit
+          image: "{{ .MailpitImage }}"
+          ports:
+            - name: smtp
+              containerPort: 1025
+            - name: http
+              containerPort: 8025

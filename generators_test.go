@@ -40,15 +40,16 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		RabbitMQSupport       bool
 		RedisCachingSupport   bool
 		OpenTelemetrySupport  bool
+		K8sSupport            bool
 	}{
-		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true, true},
-		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false, true},
-		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false},
+		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true, true, true},
+		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false, true, true},
+		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, false},
 	}
 
 	for _, tt := range options {
@@ -74,6 +75,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				RabbitMQSupport:       tt.RabbitMQSupport,
 				RedisCachingSupport:   tt.RedisCachingSupport,
 				OpenTelemetrySupport:  tt.OpenTelemetrySupport,
+				K8sSupport:            tt.K8sSupport,
 			}
 			err := sb.GenerateProject(pc)
 			require.NoError(t, err)
@@ -141,6 +143,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 				DbType:          tt.dbType,
 				DbMigrationTool: tt.migrationTool,
 				EmailSupport:    true,
+				K8sSupport:      true,
 			}
 			err := sb.GenerateProject(pc)
 			require.NoError(t, err)

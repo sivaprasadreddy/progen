@@ -33,6 +33,7 @@ The progen generates a Spring Boot application with the following features confi
 * Swagger UI Integration using [springdoc-openapi](https://springdoc.org/)
 * [Testcontainers](https://java.testcontainers.org/) based Testing and Local Development Setup
 * [Docker Compose](https://docs.docker.com/compose/) based Local Development Setup
+* [Kubernetes](https://kubernetes.io/) manifests generation based on the selected features and databases
 * [BootUI](https://www.julien-dubois.com/boot-ui/)
 * GitHub Actions configuration
 * Code formatting using [Spotless](https://github.com/diffplug/spotless)

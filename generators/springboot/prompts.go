@@ -140,6 +140,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		huh.NewOption(FeatureRabbitMQSupport, FeatureRabbitMQSupport),
 		huh.NewOption(FeatureRedisCachingSupport, FeatureRedisCachingSupport),
 		huh.NewOption(FeatureOpenTelemetrySupport, FeatureOpenTelemetrySupport),
+		huh.NewOption(FeatureK8sSupport, FeatureK8sSupport),
 	}
 
 	if answers.AppType == WebApp {
@@ -190,6 +191,7 @@ func updateFeatureFlags(pc *ProjectConfig, features []string) {
 	pc.RabbitMQSupport = isEnabled(features, FeatureRabbitMQSupport)
 	pc.RedisCachingSupport = isEnabled(features, FeatureRedisCachingSupport)
 	pc.OpenTelemetrySupport = isEnabled(features, FeatureOpenTelemetrySupport)
+	pc.K8sSupport = isEnabled(features, FeatureK8sSupport)
 }
 
 func isEnabled(features []string, feature string) bool {
