@@ -90,6 +90,9 @@ dependencies {
     {{- if eq .PersistenceType "Spring JdbcClient" }}
     implementation "org.springframework.boot:spring-boot-starter-jdbc"
     {{- end }}
+    {{- if eq .PersistenceType "jOOQ" }}
+    implementation "org.springframework.boot:spring-boot-starter-jooq"
+    {{- end }}
     {{- if eq .DbType "PostgreSQL" }}
     runtimeOnly "org.postgresql:postgresql"
     {{- end }}
@@ -155,6 +158,9 @@ dependencies {
     {{- end }}
     {{- if eq .PersistenceType "Spring JdbcClient" }}
     testImplementation "org.springframework.boot:spring-boot-starter-jdbc-test"
+    {{- end }}
+    {{- if eq .PersistenceType "jOOQ" }}
+    implementation "org.springframework.boot:spring-boot-starter-jooq-test"
     {{- end }}
 
     {{- if eq .DbMigrationTool "Flyway"}}

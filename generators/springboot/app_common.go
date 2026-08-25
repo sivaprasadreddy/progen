@@ -44,6 +44,10 @@ func (a AppCommonConfig) createSrcMainJava(pc ProjectConfig) error {
 	if pc.PersistenceType == SpringJdbcClient {
 		templateMap["shared/JdbcClientBaseEntity.java.tmpl"] = "shared/BaseEntity.java"
 	}
+	if pc.PersistenceType == SpringJOOQ {
+		templateMap["shared/JooqBaseEntity.java.tmpl"] = "shared/BaseEntity.java"
+		templateMap["jooq/package-info.java.tmpl"] = "jooq/package-info.java"
+	}
 
 	for tmpl, filePath := range templateMap {
 		err := a.pg.executeTemplate(pc, srcMainJavaPath+tmpl, srcMainJavaPath+basePackagePath+"/"+filePath)

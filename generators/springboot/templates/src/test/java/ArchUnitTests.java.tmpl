@@ -15,6 +15,9 @@ class ArchUnitTests {
     void shouldFulfillConstraints() {
         Taikai.builder()
                 .namespace(BASE_PACKAGE)
+                {{- if eq .PersistenceType "jOOQ" }}
+                .excludeClasses(BASE_PACKAGE + ".jooq.gen..")
+                {{ end }}
                 .java(java -> java.noUsageOfDeprecatedAPIs()
                         .methodsShouldNotDeclareGenericExceptions()
                         .utilityClassesShouldBeFinalAndHavePrivateConstructor()

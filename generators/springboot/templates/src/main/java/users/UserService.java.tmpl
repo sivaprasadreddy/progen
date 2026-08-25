@@ -1,5 +1,6 @@
 package {{ .BasePackage }}.users;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +34,7 @@ class UserService {
         user.setEmail(cmd.email());
         user.setPassword(passwordEncoder.encode(cmd.password()));
         user.setRole(cmd.role());
+        user.setCreatedAt(Instant.now());
         userRepository.save(user);
     }
 

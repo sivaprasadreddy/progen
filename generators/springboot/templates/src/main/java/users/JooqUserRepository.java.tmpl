@@ -1,0 +1,70 @@
+package {{ .BasePackage }}.users;
+
+import static {{ .BasePackage }}.jooq.gen.tables.Users.USERS;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
+
+@Repository
+class UserRepository {
+    private final DSLContext dsl;
+
+    UserRepository(DSLContext dsl) {
+        this.dsl = dsl;
+    }
+
+    Optional<UserEntity> findByEmailIgnoreCase(String email) {
+        return dsl.select(
+                        USERS.ID,
+                        USERS.NAME,
+                        USERS.EMAIL,
+                        USERS.PASSWORD,
+                        USERS.ROLE,
+                        USERS.CREATED_AT,
+                        USERS.UPDATED_AT,
+                        USERS.VERSION)
+                .from(USERS)
+                .where(USERS.EMAIL.equalIgnoreCase(email))
+                .fetchOptional()
+                .map(r -> r.into(UserEntity.class));
+    }
+
+    Optional<UserEntity> findById(Long id) {
+        return dsl.select(
+                        USERS.ID,
+                        USERS.NAME,
+                        USERS.EMAIL,
+                        USERS.PASSWORD,
+                        USERS.ROLE,
+                        USERS.CREATED_AT,
+                        USERS.UPDATED_AT,
+                        USERS.VERSION)
+                .from(USERS)
+                .where(USERS.ID.eq(id))
+                .fetchOptional()
+                .map(r -> r.into(UserEntity.class));
+    }
+
+    void save(UserEntity user) {
+        dsl.insertInto(USERS)
+                .set(USERS.NAME, user.getName())
+                .set(USERS.EMAIL, user.getEmail())
+                .set(USERS.PASSWORD, user.getPassword())
+                .set(USERS.ROLE, user.getRole().name())
+                .set(USERS.CREATED_AT, LocalDateTime.ofInstant(user.getCreatedAt(), ZoneId.systemDefault()))
+                .set(USERS.VERSION, 0L)
+                .execute();
+    }
+
+    void updateUser(Long id, String name) {
+        dsl.fetchOptional(USERS, USERS.ID.eq(id)).ifPresent(record -> {
+            record.setName(name);
+            record.setUpdatedAt(LocalDateTime.now());
+            record.setVersion(record.getVersion() + 1);
+            record.store();
+        });
+    }
+}

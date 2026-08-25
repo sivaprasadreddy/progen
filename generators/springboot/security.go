@@ -47,6 +47,10 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 		templateMap["users/JdbcClientUserEntity.java.tmpl"] = "users/UserEntity.java"
 		templateMap["users/JdbcClientUserRepository.java.tmpl"] = "users/UserRepository.java"
 	}
+	if pc.PersistenceType == SpringJOOQ {
+		templateMap["users/JooqUserEntity.java.tmpl"] = "users/UserEntity.java"
+		templateMap["users/JooqUserRepository.java.tmpl"] = "users/UserRepository.java"
+	}
 
 	if pc.AppType == WebApp {
 		templateMap["config/WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"

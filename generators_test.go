@@ -47,6 +47,8 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false, false, false},
 		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
 		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false},
 	}
 
 	for _, tt := range options {
@@ -115,6 +117,11 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 		{sb.SpringDataJPA, sb.MySQL, sb.Liquibase},
 		{sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase},
 		{sb.SpringJdbcClient, sb.MariaDB, sb.Liquibase},
+
+		{sb.SpringJOOQ, sb.MySQL, sb.Flyway},
+		{sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway},
+		{sb.SpringJOOQ, sb.MariaDB, sb.Flyway},
+		{sb.SpringJOOQ, sb.PostgreSQL, sb.Liquibase},
 	}
 
 	for _, tt := range options {

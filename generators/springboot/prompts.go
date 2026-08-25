@@ -115,6 +115,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 			Options(
 				huh.NewOption(SpringDataJPA.String(), SpringDataJPA).Selected(true),
 				huh.NewOption(SpringJdbcClient.String(), SpringJdbcClient),
+				huh.NewOption(SpringJOOQ.String(), SpringJOOQ),
 			).Value(&answers.PersistenceType),
 
 		huh.NewSelect[DatabaseType]().

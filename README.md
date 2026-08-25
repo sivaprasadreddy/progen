@@ -17,7 +17,7 @@ The reasons for creating this new **progen** CLI tool are:
 The progen generates a Spring Boot application with the following features configured:
 
 * [Spring Boot](https://spring.io/projects/spring-boot) project with **Maven** and **Gradle** support
-* Persistence Frameworks: **Spring Data JPA**, **Spring JdbcClient** 
+* Persistence Frameworks: **Spring Data JPA**, **Spring JdbcClient**, **jOOQ** 
 * Databases: **PostgreSQL**, **MySQL**, **MariaDB** databases
 * Database migration Tools: [Flyway](https://www.red-gate.com/products/flyway/community/) and [Liquibase](https://www.liquibase.com/) 
 * [Angular](https://angular.dev/) with [TailwindCSS](https://tailwindcss.com/) for Single Page Apps

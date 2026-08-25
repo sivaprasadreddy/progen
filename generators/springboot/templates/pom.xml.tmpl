@@ -42,6 +42,9 @@
 {{- if .OpenTelemetrySupport }}
         <datasource-micrometer-spring-boot.version>{{ .DatasourceMicrometerSpringBootVersion }}</datasource-micrometer-spring-boot.version>
 {{ end }}
+{{- if eq .PersistenceType "jOOQ" }}
+        <testcontainers-jooq-codegen-maven-plugin.version>1.0.0</testcontainers-jooq-codegen-maven-plugin.version>
+{{ end }}
         <bootui.version>{{ .BootUIVersion }}</bootui.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <jacoco.minimum.coverage>40%</jacoco.minimum.coverage>
@@ -129,6 +132,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        {{- end }}
+        {{- if eq .PersistenceType "jOOQ" }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
         </dependency>
         {{- end }}
         {{- if eq .DbType "PostgreSQL" }}
@@ -327,6 +336,12 @@
               <scope>test</scope>
         </dependency>
         {{- end }}
+        {{- if eq .PersistenceType "jOOQ" }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq-test</artifactId>
+        </dependency>
+        {{- end }}
         <dependency>
               <groupId>org.springframework.boot</groupId>
               <artifactId>spring-boot-starter-security-test</artifactId>
@@ -497,6 +512,104 @@
                     </includeOnlyProperties>
                 </configuration>
             </plugin>
+            {{- if eq .PersistenceType "jOOQ" }}
+            <plugin>
+                <groupId>dev.sivalabs</groupId>
+                <artifactId>testcontainers-jooq-codegen-maven-plugin</artifactId>
+                <version>${testcontainers-jooq-codegen-maven-plugin.version}</version>
+                <dependencies>
+                  {{- if eq .DbType "PostgreSQL" }}
+                  <dependency>
+                      <groupId>org.postgresql</groupId>
+                      <artifactId>postgresql</artifactId>
+                      <version>${postgresql.version}</version>
+                  </dependency>
+                  {{- end }}
+                  {{- if eq .DbType "MySQL" }}
+                  <dependency>
+                      <groupId>com.mysql</groupId>
+                      <artifactId>mysql-connector-j</artifactId>
+                      <version>${mysql.version}</version>
+                  </dependency>
+                  {{- end }}
+                  {{- if eq .DbType "MariaDB" }}
+                  <dependency>
+                      <groupId>org.mariadb.jdbc</groupId>
+                      <artifactId>mariadb-java-client</artifactId>
+                      <version>${mariadb.version}</version>
+                  </dependency>
+                  {{- end }}
+                </dependencies>
+                <executions>
+                  <execution>
+                    <id>generate-jooq-sources</id>
+                    <goals>
+                      <goal>generate</goal>
+                    </goals>
+                    <phase>generate-sources</phase>
+                    <configuration>
+                      <database>
+                        {{- if eq .DbType "PostgreSQL" }}
+                        <type>POSTGRES</type>
+                        {{- end }}
+                        {{- if eq .DbType "MySQL" }}
+                        <type>MYSQL</type>
+                        {{- end }}
+                        {{- if eq .DbType "MariaDB" }}
+                        <type>MARIADB</type>
+                        {{- end }}
+                      </database>
+                      {{- if eq .DbMigrationTool "Flyway"}}
+                      <flyway/>
+                      {{- end }}
+                      {{- if eq .DbMigrationTool "Liquibase"}}
+                      <liquibase>
+                          <changeLogPath>src/main/resources/db/migration/liquibase-changelog.xml</changeLogPath>
+                          {{- if eq .DbType "PostgreSQL" }}
+                          <liquibaseSchemaName>public</liquibaseSchemaName>
+                          <defaultSchemaName>public</defaultSchemaName>
+                          {{- end }}
+                          {{- if eq .DbType "MySQL" }}
+                          <liquibaseSchemaName>test</liquibaseSchemaName>
+                          <defaultSchemaName>test</defaultSchemaName>
+                          {{- end }}
+                          {{- if eq .DbType "MariaDB" }}
+                          <liquibaseSchemaName>test</liquibaseSchemaName>
+                          <defaultSchemaName>test</defaultSchemaName>
+                          {{- end }}
+                      </liquibase>
+                      {{- end }}
+                      <jooq>
+                        <generator>
+                          <database>
+                            <includes>.*</includes>
+                            {{- if eq .DbType "PostgreSQL" }}
+                            <inputSchema>public</inputSchema>
+                            {{- end }}
+                            {{- if eq .DbType "MySQL" }}
+                            <inputSchema>test</inputSchema>
+                            {{- end }}
+                            {{- if eq .DbType "MariaDB" }}
+                            <inputSchema>test</inputSchema>
+                            {{- end }}
+                            {{- if eq .DbMigrationTool "Flyway"}}
+                            <excludes>flyway_schema_history</excludes>
+                            {{- end }}
+                            {{- if eq .DbMigrationTool "Liquibase"}}
+                            <excludes>DATABASECHANGELOG|DATABASECHANGELOGLOCK</excludes>
+                            {{- end }}
+                          </database>
+                          <target>
+                            <packageName>{{ .BasePackage }}.jooq.gen</packageName>
+                            <directory>target/generated-sources/jooq</directory>
+                          </target>
+                        </generator>
+                      </jooq>
+                    </configuration>
+                  </execution>
+                </executions>
+            </plugin>
+            {{- end }}
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
