@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "npm@12.0.1",
+  "packageManager": "npm@12.0.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -26,7 +26,7 @@
     "@angular/cli": "^22.1.5",
     "@angular/compiler-cli": "^22.1.0",
     "@tailwindcss/postcss": "^4.1.12",
-    "jsdom": "^28.0.0",
+    "jsdom": "^30.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.12",
