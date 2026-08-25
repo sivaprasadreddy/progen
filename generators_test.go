@@ -18,6 +18,14 @@ var hostOS = runtime.GOOS
 var mvnExec = "./mvnw"
 var gradleExec = "./gradlew"
 
+// Running test/build command runs all tests by spinning up a lot of containers.
+// This consumes a lot of free GitHub Actions minutes.
+// For now, I am manually running all tests locally and only running compile commands in the CI pipeline.
+// var mvnTestCmd = "verify"
+// var gradleTestCmd = "build"
+var mvnTestCmd = "test-compile"
+var gradleTestCmd = "compileTestJava"
+
 func init() {
 	fmt.Println("Host OS:", hostOS)
 	if hostOS == "windows" {
@@ -80,15 +88,12 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 			err := sb.GenerateProject(pc)
 			require.NoError(t, err)
 			if tt.buildTool == sb.Maven {
-				err = testGeneratedProject(appName, mvnExec, "test")
+				err = testGeneratedProject(appName, mvnExec, mvnTestCmd)
 			} else {
-				err = testGeneratedProject(appName, gradleExec, "build")
+				err = testGeneratedProject(appName, gradleExec, gradleTestCmd)
 			}
 			require.NoError(t, err)
 
-			//cleanup
-			//err = deleteDir(appName)
-			//assert.Nil(t, err)
 			if err == nil {
 				err = deleteDir(appName)
 			}

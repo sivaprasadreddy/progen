@@ -20,7 +20,7 @@ const (
 	bootUIVersion                         = "1.14.1"
 	archunitVersion                       = "1.5.0"
 	taikaiVersion                         = "1.66.0"
-	palantirJavaFormatVersion             = "2.96.0"
+	palantirJavaFormatVersion             = "2.97.0"
 	postgresImage                         = "postgres:18-alpine"
 	mysqlImage                            = "mysql:9"
 	mariadbImage                          = "mariadb:12"
