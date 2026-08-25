@@ -5,7 +5,7 @@ create table users
     password   varchar(200) not null,
     name       varchar(200) not null,
     role       varchar(20)  not null,
-    created_at timestamp    not null,
+    created_at timestamp    not null default CURRENT_TIMESTAMP,
     updated_at timestamp,
     version    bigint       not null default 0,
     primary key (id),

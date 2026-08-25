@@ -25,7 +25,7 @@
             <column name="role" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_at" type="datetime">
+            <column name="created_at" type="datetime" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="updated_at" type="datetime"/>

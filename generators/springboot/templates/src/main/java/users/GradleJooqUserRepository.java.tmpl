@@ -1,0 +1,76 @@
+package {{ .BasePackage }}.users;
+
+import java.time.Instant;
+import java.util.Optional;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Table;
+import org.springframework.stereotype.Repository;
+
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.lower;
+import static org.jooq.impl.DSL.table;
+
+@Repository
+class UserRepository {
+    private static final Table<Record> USERS = table("users");
+    private static final Field<Long> ID = field("id", Long.class);
+    private static final Field<String> NAME = field("name", String.class);
+    private static final Field<String> EMAIL = field("email", String.class);
+    private static final Field<String> PASSWORD = field("password", String.class);
+    private static final Field<String> ROLE = field("role", String.class);
+    private static final Field<Instant> CREATED_AT = field("created_at", Instant.class);
+    private static final Field<Instant> UPDATED_AT = field("updated_at", Instant.class);
+    private static final Field<Long> VERSION = field("version", Long.class);
+
+    private final DSLContext dsl;
+
+    UserRepository(DSLContext dsl) {
+        this.dsl = dsl;
+    }
+
+    Optional<UserEntity> findByEmailIgnoreCase(String email) {
+        return dsl.select(ID, NAME, EMAIL, PASSWORD, ROLE, CREATED_AT, UPDATED_AT, VERSION)
+                .from(USERS)
+                .where(lower(EMAIL).eq(email.toLowerCase()))
+                .fetchOptional(this::mapRow);
+    }
+
+    Optional<UserEntity> findById(Long id) {
+        return dsl.select(ID, NAME, EMAIL, PASSWORD, ROLE, CREATED_AT, UPDATED_AT, VERSION)
+                .from(USERS)
+                .where(ID.eq(id))
+                .fetchOptional(this::mapRow);
+    }
+
+    void save(UserEntity user) {
+        dsl.insertInto(USERS)
+                .set(NAME, user.getName())
+                .set(EMAIL, user.getEmail())
+                .set(PASSWORD, user.getPassword())
+                .set(ROLE, user.getRole().name())
+                .set(CREATED_AT, Instant.now())
+                .set(VERSION, 0L)
+                .execute();
+    }
+
+    void updateUser(Long id, String name) {
+        dsl.update(USERS)
+                .set(NAME, name)
+                .where(ID.eq(id))
+                .execute();
+    }
+
+    private UserEntity mapRow(Record record) {
+        var user = new UserEntity();
+        user.setId(record.get(ID));
+        user.setName(record.get(NAME));
+        user.setEmail(record.get(EMAIL));
+        user.setPassword(record.get(PASSWORD));
+        user.setRole(Role.valueOf(record.get(ROLE)));
+        user.setCreatedAt(record.get(CREATED_AT));
+        user.setUpdatedAt(record.get(UPDATED_AT));
+        return user;
+    }
+}

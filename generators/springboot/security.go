@@ -49,7 +49,12 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 	}
 	if pc.PersistenceType == SpringJOOQ {
 		templateMap["users/JooqUserEntity.java.tmpl"] = "users/UserEntity.java"
-		templateMap["users/JooqUserRepository.java.tmpl"] = "users/UserRepository.java"
+		if pc.BuildTool == Maven {
+			templateMap["users/JooqUserRepository.java.tmpl"] = "users/UserRepository.java"
+		}
+		if pc.BuildTool == Gradle {
+			templateMap["users/GradleJooqUserRepository.java.tmpl"] = "users/UserRepository.java"
+		}
 	}
 
 	if pc.AppType == WebApp {

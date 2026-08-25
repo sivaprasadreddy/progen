@@ -7,7 +7,7 @@ create table users
     password   text      not null,
     name       text      not null,
     role       text      not null,
-    created_at timestamp not null,
+    created_at timestamp not null default CURRENT_TIMESTAMP,
     updated_at timestamp,
     version    bigint       not null default 0,
     primary key (id),
