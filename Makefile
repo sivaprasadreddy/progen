@@ -1,9 +1,7 @@
 MAIN_SRC_DIR=.
 DIST_DIR=dist
 BINARY_NAME=progen
-BINARY_LINUX=$(BINARY_NAME)_linux
-BINARY_WIN=$(BINARY_NAME)_win.exe
-GOARCH="amd64"
+GOARCHES=amd64 arm64
 
 # Build the application
 all: build
@@ -13,12 +11,14 @@ fmt:
 	go fmt ./...
 
 build:
-	@echo 'Building MacOS binary'
-	GOARCH=${GOARCH} GOOS=darwin go build -o ${DIST_DIR}/${BINARY_NAME}-darwin-${GOARCH} ${MAIN_SRC_DIR}
-	@echo 'Building Linux binary'
-	GOARCH=${GOARCH} GOOS=linux go build -o ${DIST_DIR}/${BINARY_NAME}-linux-${GOARCH} ${MAIN_SRC_DIR}
-	@echo 'Building Windows binary'
-	GOARCH=${GOARCH} GOOS=windows go build -o ${DIST_DIR}/${BINARY_NAME}-windows-${GOARCH}.exe ${MAIN_SRC_DIR}
+	@for arch in ${GOARCHES}; do \
+		echo "Building MacOS binary ($$arch)"; \
+		GOARCH=$$arch GOOS=darwin go build -o ${DIST_DIR}/${BINARY_NAME}-darwin-$$arch ${MAIN_SRC_DIR}; \
+		echo "Building Linux binary ($$arch)"; \
+		GOARCH=$$arch GOOS=linux go build -o ${DIST_DIR}/${BINARY_NAME}-linux-$$arch ${MAIN_SRC_DIR}; \
+		echo "Building Windows binary ($$arch)"; \
+		GOARCH=$$arch GOOS=windows go build -o ${DIST_DIR}/${BINARY_NAME}-windows-$$arch.exe ${MAIN_SRC_DIR}; \
+	done
 
 # Run the application
 run:

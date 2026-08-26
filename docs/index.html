@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progen — Spring Boot Project Generator CLI</title>
+    <meta name="description" content="Progen is an offline-first CLI tool that scaffolds production-ready Spring Boot projects in seconds." />
+    <style>
+        :root {
+            --bg: #f5f7f5;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --border: #dbe2db;
+            --text: #111111;
+            --text-dim: #2f2f2f;
+            --text-faint: #505050;
+            --accent: #6db33f;
+            --accent-dark: #4b7a1f;
+            --accent-2: #59a5d8;
+            --accent-3: #6db33f;
+            --code-bg: #1b2a1f;
+            --code-text: #dce8dc;
+            --radius: 10px;
+            --max-width: 1080px;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 17px;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: var(--accent-dark); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code, pre, .mono { font-family: "SF Mono", ui-monospace, "Cascadia Code", Menlo, Consolas, monospace; }
+        code {
+            background: #eef2ec;
+            padding: 0.15em 0.45em;
+            border-radius: 6px;
+            font-size: 0.9em;
+            border: 1px solid var(--border);
+            color: var(--accent-dark);
+        }
+        pre {
+            background: var(--code-bg);
+            border: 1px solid #0f1a12;
+            border-radius: var(--radius);
+            padding: 1.1rem 1.25rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            position: relative;
+        }
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+        }
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Top nav */
+        header.topnav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        .topnav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+        }
+        .brand .logo {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            color: #ffffff; font-weight: 800; font-size: 0.85rem;
+        }
+        nav.links { display: flex; gap: 1.5rem; font-size: 1rem; }
+        nav.links a { color: var(--text-dim); }
+        nav.links a:hover { color: var(--text); text-decoration: none; }
+        .gh-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.85rem;
+            border-radius: 8px;
+            color: var(--text) !important;
+            font-size: 0.85rem;
+        }
+        .gh-btn:hover { border-color: var(--accent); color: var(--accent-dark) !important; text-decoration: none; }
+
+        /* Hero */
+        .hero {
+            padding: 5.5rem 0 4rem;
+            text-align: center;
+        }
+        .badge-row {
+            display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+        }
+        .pill {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            background: var(--bg-elevated);
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            margin: 0 0 1rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+        .hero h1 em {
+            font-style: normal;
+            color: var(--accent-dark);
+        }
+        .hero p.lead {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 640px;
+            margin: 0 auto 2.2rem;
+        }
+        .hero-actions {
+            display: flex; justify-content: center; gap: 0.9rem; flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+        .btn {
+            padding: 0.75rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+        .btn-primary {
+            background: var(--accent-dark);
+            color: #ffffff;
+        }
+        .btn-primary:hover { text-decoration: none; background: #3d6519; }
+        .btn-secondary {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text) !important;
+        }
+        .btn-secondary:hover { text-decoration: none; border-color: var(--accent); color: var(--accent-dark) !important; }
+        .hero-code {
+            max-width: 560px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        /* sections */
+        section { padding: 3.2rem 0; border-top: 1px solid var(--border); }
+        section > .container > h2 {
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem;
+            letter-spacing: -0.01em;
+        }
+        section > .container > p.section-sub {
+            color: var(--text-dim);
+            margin: 0 0 2.2rem;
+            max-width: 640px;
+            font-size: 1.05rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.1rem;
+        }
+        .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 800px) {
+            .grid.cols-3, .grid.cols-2 { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.4rem 1.5rem;
+            box-shadow: 0 1px 2px rgba(31, 41, 33, 0.04);
+        }
+        .card h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.02rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card p { margin: 0; color: var(--text-dim); font-size: 1rem; }
+        .icon-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        /* install tabs */
+        .tabs {
+            display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .tab-btn.active {
+            color: #ffffff;
+            background: var(--accent-dark);
+            border-color: var(--accent-dark);
+        }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .callout {
+            border-left: 3px solid var(--accent);
+            background: #eef4ea;
+            padding: 0.9rem 1.1rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            margin-top: 1rem;
+        }
+        .callout strong { color: var(--text); }
+
+        /* usage steps */
+        .step {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 1rem;
+            margin-bottom: 1.6rem;
+        }
+        .step-num {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: #eef4ea;
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            color: var(--accent-dark);
+            flex-shrink: 0;
+        }
+        .step h4 { margin: 0.3rem 0 0.4rem; font-size: 1.1rem; }
+        .step p { color: var(--text-dim); margin: 0 0 0.7rem; font-size: 1rem; }
+
+        /* options table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+        table th {
+            color: var(--text-dim);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+        }
+        table td { color: var(--text-dim); }
+        table td:first-child { color: var(--text); font-weight: 500; white-space: nowrap; }
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-card);
+        }
+        .table-wrap table { min-width: 520px; }
+        .table-wrap + .table-wrap { margin-top: 1.4rem; }
+        h3.subhead {
+            font-size: 1rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin: 2rem 0 0.8rem;
+        }
+        h3.subhead:first-of-type { margin-top: 0; }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 0;
+            text-align: center;
+            color: var(--text-faint);
+            font-size: 0.85rem;
+        }
+        footer a { color: var(--text-dim); }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.6rem; right: 0.6rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-faint);
+            font-size: 0.72rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .copy-btn:hover { color: var(--text); border-color: var(--accent-2); }
+        .code-block { position: relative; }
+    </style>
+</head>
+<body>
+
+<header class="topnav">
+    <div class="container">
+        <div class="brand"><span class="logo">P</span> progen</div>
+        <nav class="links">
+            <a href="#what-is">What is it</a>
+            <a href="#install">Install</a>
+            <a href="#usage">Usage</a>
+            <a href="#features">Features</a>
+        </nav>
+        <a class="gh-btn" href="https://github.com/sivaprasadreddy/progen" target="_blank" rel="noopener">★ GitHub</a>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="container">
+        <div class="badge-row">
+            <span class="pill">Offline-first</span>
+            <span class="pill">Single Go binary</span>
+            <span class="pill">Apache 2.0</span>
+        </div>
+        <h1>Scaffold production-ready<br/>Spring Boot projects, instantly.</h1>
+        <p class="lead">
+            Progen is a CLI tool that generates complete Spring Boot applications — build files, Java
+            source, tests, Docker Compose, CI, database migrations, security setup and more — via a
+            quick interactive prompt or a single JSON config file.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="#install">Get Started</a>
+            <a class="btn btn-secondary" href="https://github.com/sivaprasadreddy/progen" target="_blank" rel="noopener">View on GitHub</a>
+        </div>
+        <div class="hero-code">
+            <div class="code-block">
+        <pre><code>$ go install github.com/sivaprasadreddy/progen@latest
+$ progen
+✔ App Type: REST API
+✔ Build Tool: Maven
+✔ Persistence: Spring Data JPA
+✔ Database: PostgreSQL
+Generated project "myapp" successfully 🎉</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="what-is">
+    <div class="container">
+        <h2>What is Progen?</h2>
+        <p class="section-sub">
+            A no-nonsense alternative to heavier scaffolding tools, built around three principles.
+        </p>
+        <div class="grid cols-3">
+            <div class="card">
+                <h3><span class="icon-dot"></span>Minimal &amp; focused</h3>
+                <p>Generates apps with only the most commonly used features and configurations — no bloated boilerplate to strip out afterwards.</p>
+            </div>
+            <div class="card">
+                <h3><span class="icon-dot"></span>Works fully offline</h3>
+                <p>No network calls at generation time. Create projects on a plane, in an air-gapped environment, or behind a strict firewall.</p>
+            </div>
+            <div class="card">
+                <h3><span class="icon-dot"></span>Zero extra SDKs</h3>
+                <p>Ships as a single Go binary. Generating a Java project doesn't require installing Node.js, Python, or any other runtime.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="install">
+    <div class="container">
+        <h2>Installation</h2>
+        <p class="section-sub">Two ways to get the <code>progen</code> binary onto your machine.</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="go">Go Install</button>
+            <button class="tab-btn" data-tab="binary">OS Binary</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-go">
+            <div class="code-block">
+        <pre><code>go install github.com/sivaprasadreddy/progen@latest
+progen --help</code></pre>
+            </div>
+            <div class="callout">
+                <strong>Requires Go</strong> to be installed on your machine. This is the fastest way to
+                always get the latest release.
+            </div>
+        </div>
+
+        <div class="tab-panel" id="tab-binary">
+            <p style="color: var(--text-dim); font-size: 1rem; margin-top:0;">
+                Download the prebuilt binary for your OS and architecture (<code>arm64</code> or
+                <code>x86_64</code>) from the
+                <a href="https://github.com/sivaprasadreddy/progen/releases" target="_blank" rel="noopener">GitHub Releases page</a>,
+                then move it onto your <code>PATH</code>.
+            </p>
+        </div>
+
+        <div class="callout">
+            <strong>macOS Gatekeeper note:</strong> if you see “progen cannot be opened because the
+            developer cannot be verified”, locate the binary in Finder, hold <code>control</code> and
+            click it, choose <em>Open</em>, then confirm. After that, <code>progen</code> runs normally
+            from the terminal.
+        </div>
+    </div>
+</section>
+
+<section id="usage">
+    <div class="container">
+        <h2>How to Use It?</h2>
+        <p class="section-sub">Three workflows: fully interactive, config-file driven for repeatable / scripted generation, or through an AI coding agent.</p>
+
+        <div class="step">
+            <div class="step-num">1</div>
+            <div>
+                <h4>Run interactively</h4>
+                <p>Launch progen with no arguments to walk through an interactive prompt covering app type, build tool, persistence, database, and optional features.</p>
+                <div class="code-block"><pre><code>progen</code></pre></div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">2</div>
+            <div>
+                <h4>Generate a reusable config file</h4>
+                <p>Create a <code>.progen.json</code> file pre-filled with default values, then edit it to your liking.</p>
+                <div class="code-block"><pre><code>progen init
+# → Generated .progen.json successfully</code></pre></div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">3</div>
+            <div>
+                <h4>Generate a project from config</h4>
+                <p>Feed the config file back in with <code>-c</code> / <code>--config</code> to generate the project non-interactively — ideal for CI, templates, or sharing team defaults.</p>
+                <div class="code-block"><pre><code>progen -c .progen.json</code></pre></div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">4</div>
+            <div>
+                <h4>Use it via an AI coding agent</h4>
+                <p>Install the progen agent skill into your AI coding agent, then generate a project by describing it in plain English.</p>
+                <div class="code-block"><pre><code>npx skills add https://github.com/sivaprasadreddy/sivalabs-agent-skills --skill progen</code></pre></div>
+                <p>Then, inside your agent's chat, invoke the skill with a description of the project you want:</p>
+                <div class="code-block"><pre><code>/progen a REST API for a bookstore using PostgreSQL and Flyway</code></pre></div>
+            </div>
+        </div>
+
+        <h3 class="subhead">Sample .progen.json</h3>
+        <div class="code-block">
+      <pre><code>{
+  "AppType": "REST API",
+  "AppName": "myapp",
+  "GroupID": "com.mycompany",
+  "ArtifactID": "myapp",
+  "AppVersion": "1.0.0",
+  "BasePackage": "com.mycompany.myapp",
+  "BuildTool": "Maven",
+  "PersistenceType": "Spring Data JPA",
+  "DbType": "PostgreSQL",
+  "DbMigrationTool": "Flyway",
+  "SpringCloudAWSSupport": false,
+  "ThymeleafSupport": false,
+  "HTMXSupport": false,
+  "EmailSupport": false,
+  "RabbitMQSupport": false,
+  "RedisCachingSupport": false,
+  "OpenTelemetrySupport": false,
+  "K8sSupport": false
+}</code></pre>
+        </div>
+    </div>
+</section>
+
+<section id="features">
+    <div class="container">
+        <h2>Options &amp; Features</h2>
+        <p class="section-sub">Every generated project is assembled from these configurable building blocks.</p>
+
+        <h3 class="subhead">Core project options</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Option</th><th>Choices</th></tr></thead>
+                <tbody>
+                <tr><td>App Type</td><td>REST API · Web App · Spring Boot + Angular Full Stack</td></tr>
+                <tr><td>Build Tool</td><td>Maven · Gradle</td></tr>
+                <tr><td>Persistence</td><td>Spring Data JPA · Spring JdbcClient · jOOQ</td></tr>
+                <tr><td>Database</td><td>PostgreSQL · MySQL · MariaDB</td></tr>
+                <tr><td>DB Migration Tool</td><td>Flyway · Liquibase</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="subhead">Optional feature toggles</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Feature</th><th>What it adds</th></tr></thead>
+                <tbody>
+                <tr><td>Thymeleaf + TailwindCSS</td><td>Server-rendered views for Web Apps, styled with Tailwind</td></tr>
+                <tr><td>HTMX</td><td>htmx-spring-boot integration for dynamic server-driven UI</td></tr>
+                <tr><td>Spring Cloud AWS</td><td>AWS integration configured via Floci</td></tr>
+                <tr><td>Spring RabbitMQ</td><td>Messaging configuration using Spring AMQP</td></tr>
+                <tr><td>Redis Caching</td><td>Spring Boot caching backed by Redis</td></tr>
+                <tr><td>Email support</td><td>MailPit + Testcontainers Mailpit for local email testing</td></tr>
+                <tr><td>OpenTelemetry</td><td>Observability instrumentation out of the box with Grafana LGTM stack</td></tr>
+                <tr><td>Kubernetes manifests</td><td>Generated based on selected features</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="subhead">Always included</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Feature</th><th>What it adds</th></tr></thead>
+                <tbody>
+                <tr><td>Spring Modulith</td><td>Modular architecture enforcement</td></tr>
+                <tr><td>Spring Security</td><td>HTTP Session based for Web Apps, JWT for REST APIs</td></tr>
+                <tr><td>Swagger UI</td><td>API docs via springdoc-openapi</td></tr>
+                <tr><td>Testcontainers</td><td>Testing &amp; local development setup</td></tr>
+                <tr><td>Docker Compose</td><td>Local development environment</td></tr>
+                <tr><td>BootUI</td><td>Developer console for the running app</td></tr>
+                <tr><td>GitHub Actions</td><td>CI configuration</td></tr>
+                <tr><td>Spotless</td><td>Code formatting</td></tr>
+                <tr><td>SDKMAN</td><td>JDK/tooling version configuration</td></tr>
+                <tr><td>Taskfile</td><td>Task runner for common commands</td></tr>
+                <tr><td>Renovate</td><td>Automated dependency updates</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        Progen is open source, released under the
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.html" target="_blank" rel="noopener">Apache 2.0 License</a>.
+        ·
+        <a href="https://github.com/sivaprasadreddy/progen" target="_blank" rel="noopener">github.com/sivaprasadreddy/progen</a>
+    </div>
+</footer>
+
+<script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>
