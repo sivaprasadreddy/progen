@@ -77,5 +77,4 @@ $ progen -c .progen.json
 ```
 
 ## License
-The **progen** is an Open Source software
-released under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html).
+The **progen** is Open Source software released under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html).
