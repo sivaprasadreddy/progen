@@ -1,6 +1,13 @@
 package springboot
 
-import "strings"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+const angularAppTitle = "Spring Boot + Angular App"
 
 type AngularConfig struct {
 	pg projectGenerator
@@ -40,5 +47,30 @@ func (b AngularConfig) createSrcMainJava(pc ProjectConfig) error {
 }
 
 func (b AngularConfig) copyFrontend(pc ProjectConfig) error {
-	return b.pg.copyTemplateDir(pc, "angular-frontend", "frontend")
+	if err := b.pg.copyTemplateDir(pc, "angular-frontend", "frontend"); err != nil {
+		return err
+	}
+
+	titleFiles := []string{
+		filepath.Join(pc.AppName, "frontend", "src", "index.html"),
+		filepath.Join(pc.AppName, "frontend", "src", "app", "components", "navbar", "navbar.html"),
+	}
+	for _, filePath := range titleFiles {
+		if err := replaceAngularAppTitle(filePath, pc.ArtifactID); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func replaceAngularAppTitle(filePath, artifactID string) error {
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("read Angular frontend file %s: %w", filePath, err)
+	}
+	content = []byte(strings.ReplaceAll(string(content), angularAppTitle, artifactID))
+	if err := os.WriteFile(filePath, content, 0755); err != nil {
+		return fmt.Errorf("write Angular frontend file %s: %w", filePath, err)
+	}
+	return nil
 }
