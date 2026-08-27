@@ -6,7 +6,7 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "{{ .GradleGitPropertiesVersion }}"
     id "com.diffplug.spotless" version "{{ .SpotlessGradlePluginVersion }}"
     {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
-    id "com.github.node-gradle.node" version "7.1.0"
+    id "com.github.node-gradle.node" version "{{ .GradleNodePluginVersion }}"
     {{ end }}
 }
 
@@ -68,8 +68,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     {{- if .OpenTelemetrySupport }}
     implementation "org.springframework.boot:spring-boot-starter-opentelemetry"
-    implementation "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.28.1-alpha"
-    implementation "io.opentelemetry:opentelemetry-api-incubator:1.62.0-alpha"
+    implementation "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:{{ .OpenTelemetryLogbackAppenderVersion }}"
+    implementation "io.opentelemetry:opentelemetry-api-incubator:{{ .OpenTelemetryAPIIncubatorVersion }}"
     implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:${datasourceMicrometerSpringBootVersion}"
     {{ end }}
     implementation "org.springframework.boot:spring-boot-starter-security"
@@ -214,8 +214,8 @@ dependencyManagement {
 
 {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
 node {
-    version = "24.15.0"
-    npmVersion = "11.6.2"
+    version = "{{ .NodeVersion }}"
+    npmVersion = "{{ .NpmVersion }}"
 
     // Download Node.js instead of requiring it to be installed globally
     download = true

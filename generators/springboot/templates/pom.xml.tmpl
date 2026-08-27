@@ -43,22 +43,22 @@
         <datasource-micrometer-spring-boot.version>{{ .DatasourceMicrometerSpringBootVersion }}</datasource-micrometer-spring-boot.version>
 {{ end }}
 {{- if eq .PersistenceType "jOOQ" }}
-        <testcontainers-jooq-codegen-maven-plugin.version>1.0.0</testcontainers-jooq-codegen-maven-plugin.version>
+        <testcontainers-jooq-codegen-maven-plugin.version>{{ .TestcontainersJooqCodegenPluginVersion }}</testcontainers-jooq-codegen-maven-plugin.version>
 {{ end }}
         <bootui.version>{{ .BootUIVersion }}</bootui.version>
-        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>{{ .JacocoMavenPluginVersion }}</jacoco-maven-plugin.version>
         <jacoco.minimum.coverage>40%</jacoco.minimum.coverage>
         <palantir-java-format.version>{{ .PalantirJavaFormatVersion }}</palantir-java-format.version>
         <spotless.version>{{ .SpotlessMavenPluginVersion }}</spotless.version>
         <archunit.version>{{ .ArchunitVersion }}</archunit.version>
         <taikai.version>{{ .TaikaiVersion }}</taikai.version>
         {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
-        <frontend-maven-plugin.version>2.0.2</frontend-maven-plugin.version>
-        <frontend-maven-plugin.nodeVersion>v24.15.0</frontend-maven-plugin.nodeVersion>
-        <frontend-maven-plugin.npmVersion>11.6.2</frontend-maven-plugin.npmVersion>
+        <frontend-maven-plugin.version>{{ .FrontendMavenPluginVersion }}</frontend-maven-plugin.version>
+        <frontend-maven-plugin.nodeVersion>v{{ .NodeVersion }}</frontend-maven-plugin.nodeVersion>
+        <frontend-maven-plugin.npmVersion>{{ .NpmVersion }}</frontend-maven-plugin.npmVersion>
         <frontend-directory>frontend</frontend-directory>
         <frontend-directory-path>./${frontend-directory}</frontend-directory-path>
-        <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+        <maven-antrun-plugin.version>{{ .MavenAntrunPluginVersion }}</maven-antrun-plugin.version>
         {{ end }}
         <dockerImageName>your_dockerhub_username/{{ .ArtifactID }}</dockerImageName>
 	</properties>
@@ -84,12 +84,12 @@
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-appender-1.0</artifactId>
-            <version>2.28.1-alpha</version>
+            <version>{{ .OpenTelemetryLogbackAppenderVersion }}</version>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-api-incubator</artifactId>
-            <version>1.62.0-alpha</version>
+            <version>{{ .OpenTelemetryAPIIncubatorVersion }}</version>
         </dependency>
         <dependency>
             <groupId>net.ttddyy.observation</groupId>
