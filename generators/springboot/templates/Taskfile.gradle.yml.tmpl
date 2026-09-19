@@ -4,13 +4,16 @@ vars:
   GOOS: "{{default OS .GOOS}}"
   GRADLEW: '{{if eq .GOOS "windows"}}gradlew.bat{{else}}./gradlew{{end}}'
   SLEEP_CMD: '{{if eq .GOOS "windows"}}timeout{{else}}sleep{{end}}'
-  IMAGE_NAME: 'your_dockerhub_username/{{ .ArtifactID }}'
   DC_FILE: "compose.yml"
+  REGISTRY: 'docker.io'
+  IMAGE_NAME: 'your_dockerhub_username/{{ .ArtifactID }}'
+  DOCKER_IMAGE_NAME: '{{.REGISTRY}}/{{.IMAGE_NAME}}'
+  VERSION:
+    sh: "{{.GRADLEW}} properties | awk '/^version:/ {print $2}'"
 
 tasks:
   default:
     cmds:
-
       - task: test
 
   format:
@@ -24,10 +27,23 @@ tasks:
     cmds:
       - "{{.GRADLEW}} build"
 
+  verify:
+    desc: Run verification checks
+    cmds:
+      - "{{.GRADLEW}} build"
+
   build_image:
     desc: Build Docker Image using Buildpacks
     cmds:
-      - "{{.GRADLEW}} -x test bootBuildImage --imageName={{.IMAGE_NAME}}"
+      - "{{.GRADLEW}} -x test bootBuildImage --imageName={{.DOCKER_IMAGE_NAME}}:{{.VERSION}}"
+
+  push_image:
+    desc: Push Docker Image to Registry
+    cmds:
+      - task: build_image
+      - docker tag {{.DOCKER_IMAGE_NAME}}:{{.VERSION}} {{.DOCKER_IMAGE_NAME}}:latest
+      - docker push {{.DOCKER_IMAGE_NAME}}:{{.VERSION}}
+      - docker push {{.DOCKER_IMAGE_NAME}}:latest
 
   start:
     desc: Start the application

@@ -4,8 +4,12 @@ vars:
   GOOS: "{{default OS .GOOS}}"
   MVNW: '{{if eq .GOOS "windows"}}mvnw.cmd{{else}}./mvnw{{end}}'
   SLEEP_CMD: '{{if eq .GOOS "windows"}}timeout{{else}}sleep{{end}}'
-  IMAGE_NAME: 'your_dockerhub_username/{{ .ArtifactID }}'
   DC_FILE: "compose.yml"
+  REGISTRY: 'docker.io'
+  IMAGE_NAME: 'your_dockerhub_username/{{ .ArtifactID }}'
+  DOCKER_IMAGE_NAME: '{{.REGISTRY}}/{{.IMAGE_NAME}}'
+  VERSION:
+    sh: '{{.MVNW}} help:evaluate -Dexpression=project.version -q -DforceStdout'
 
 tasks:
   default:
@@ -23,10 +27,23 @@ tasks:
     cmds:
       - "{{.MVNW}} clean verify"
 
+  verify:
+    desc: Run verification checks
+    cmds:
+      - "{{.MVNW}} -ntp verify"
+
   build_image:
     desc: Build Docker Image using Buildpacks
     cmds:
-      - "{{.MVNW}} clean compile spring-boot:build-image -DskipTests -DdockerImageName={{.IMAGE_NAME}}"
+      - "{{.MVNW}} clean compile spring-boot:build-image -DskipTests -DdockerImageName={{.DOCKER_IMAGE_NAME}}:{{.VERSION}}"
+
+  push_image:
+    desc: Push Docker Image to Registry
+    cmds:
+      - task: build_image
+      - docker tag {{.DOCKER_IMAGE_NAME}}:{{.VERSION}} {{.DOCKER_IMAGE_NAME}}:latest
+      - docker push {{.DOCKER_IMAGE_NAME}}:{{.VERSION}}
+      - docker push {{.DOCKER_IMAGE_NAME}}:latest
 
   start:
     desc: Start the application
