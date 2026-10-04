@@ -63,6 +63,21 @@ management.opentelemetry.logging.export.otlp.endpoint=${LOGS_EXPORT_URL:http://l
 {{- end }}
 
 #### Database ####
+{{- if eq .DbType "PostgreSQL" }}
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/postgres}
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:postgres}
+{{- end }}
+{{- if eq .DbType "MySQL" }}
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/test}
+spring.datasource.username=${DB_USERNAME:user}
+spring.datasource.password=${DB_PASSWORD:secret}
+{{- end }}
+{{- if eq .DbType "MariaDB" }}
+spring.datasource.url=${DB_URL:jdbc:mariadb://localhost:3306/test}
+spring.datasource.username=${DB_USERNAME:user}
+spring.datasource.password=${DB_PASSWORD:secret}
+{{- end }}
 spring.datasource.hikari.auto-commit=false
 {{- if eq .PersistenceType "Spring Data JPA" }}
 spring.jpa.show-sql=true
