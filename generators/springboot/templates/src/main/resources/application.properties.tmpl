@@ -1,4 +1,5 @@
 spring.application.name={{ .ArtifactID }}
+spring.config.import=optional:file:.env.properties
 spring.docker.compose.lifecycle-management=start_only
 
 #### App ####
@@ -50,7 +51,7 @@ logging.level.{{ .ArtifactID }}.query-logger=DEBUG
 {{- end }}
 
 #### Actuator ####
-management.endpoints.web.exposure.include=configprops,env,health,info,logfile,loggers
+management.endpoints.web.exposure.include=health,info
 management.endpoint.health.show-details=when_authorized
 management.endpoint.health.probes.enabled=true
 {{- if .OpenTelemetrySupport }}
@@ -68,8 +69,8 @@ spring.jpa.show-sql=true
 spring.jpa.open-in-view=false
 spring.data.jpa.repositories.bootstrap-mode=deferred
 spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.properties.hibernate.jdbc.time_zone=UTC
+spring.jpa.properties.hibernate.format_sql=false
+#spring.jpa.properties.hibernate.jdbc.time_zone=UTC
 spring.jpa.properties.hibernate.id.new_generator_mappings=true
 spring.jpa.properties.hibernate.id.optimizer.pooled.preferred=pooled-lo
 spring.jpa.properties.hibernate.generate_statistics=false
@@ -122,5 +123,5 @@ spring.cache.type=redis
 {{ end }}
 
 #### BootUI ####
-bootui.enabled=off
-bootui.mcp.enabled=off
+bootui.enabled=${BOOTUI_ENABLED:off}
+bootui.mcp.enabled=${BOOTUI_MCP_ENABLED:off}

@@ -62,6 +62,7 @@ func (a AppCommonConfig) createSrcMainResources(pc ProjectConfig) error {
 	templateMap := map[string]string{
 		"application.properties.tmpl":       "application.properties",
 		"application-local.properties.tmpl": "application-local.properties",
+		"messages.properties.tmpl":          "messages.properties",
 	}
 
 	for tmpl, filePath := range templateMap {

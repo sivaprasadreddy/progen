@@ -3,9 +3,9 @@ services:
   postgres:
     image: {{ .PostgresImage }}
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
   {{- end }}
@@ -13,10 +13,10 @@ services:
   mysql:
     image: {{ .MysqlImage }}
     environment:
-      - MYSQL_DATABASE=test
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=secret
-      - MYSQL_ROOT_PASSWORD=admin
+      MYSQL_DATABASE: test
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: admin
     ports:
       - "3306:3306"
   {{- end }}
@@ -24,10 +24,10 @@ services:
   mariadb:
     image: {{ .MariadbImage }}
     environment:
-      - MYSQL_DATABASE=test
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=secret
-      - MYSQL_ROOT_PASSWORD=admin
+      MYSQL_DATABASE: test
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: admin
     ports:
       - "3306:3306"
   {{- end }}
@@ -55,8 +55,8 @@ services:
   rabbitmq:
     image: {{ .RabbitMQImage }}
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
       - "5672:5672"
       - "15672:15672"

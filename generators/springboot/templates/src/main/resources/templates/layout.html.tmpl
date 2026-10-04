@@ -8,7 +8,7 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
-    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="{{ .AppName }}">{{ .AppName }}</title>
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="#{app.name}">{{ .AppName }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="/webjars/font-awesome/css/all.css">
         <link rel="stylesheet" th:href="@{/css/styles.css}"/>
@@ -36,7 +36,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             <div class="flex items-center">
-                <a th:href="@{/}" class="text-white text-xl font-bold">{{ .AppName }}</a>
+                <a th:href="@{/}" class="text-white text-xl font-bold" th:text="#{app.name}">{{ .AppName }}</a>
             </div>
             <div class="hidden md:block">
                 <div class="ml-4 flex items-center md:ml-6 space-x-4">

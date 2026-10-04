@@ -1,20 +1,15 @@
 spring.main.lazy-initialization=true
-
 management.endpoints.web.exposure.include=*
 management.endpoint.health.show-details=always
-
 {{- if eq .PersistenceType "Spring Data JPA" }}
 spring.jpa.properties.hibernate.generate_statistics=true
 spring.jpa.properties.hibernate.log_slow_query=1000
 {{- end }}
-
 bootui.enabled=on
 bootui.mcp.enabled=on
-
 {{- if .RestApiEnabled }}
 springdoc.swagger-ui.enabled=true
 {{- end }}
-
 {{- if .SpringCloudAWSSupport }}
 spring.cloud.aws.endpoint=http://localhost:4566
 spring.cloud.aws.credentials.access-key=test
