@@ -14,7 +14,7 @@ const (
 	tcMailpitVersion                       = "1.3.1"
 	fontAwesomeVersion                     = "7.3.0"
 	htmxVersion                            = "4.0.0"
-	htmxSpringBootThymeleafVersion         = "5.2.0"
+	htmxSpringBootThymeleafVersion         = "6.0.1"
 	datasourceMicrometerSpringBootVersion  = "2.3.0"
 	jjwtVersion                            = "0.13.0"
 	bootUIVersion                          = "1.19.0"
