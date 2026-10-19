@@ -1,50 +1,75 @@
 package {{ .BasePackage }};
 
-import static com.tngtech.archunit.core.domain.JavaModifier.*;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
-import com.enofex.taikai.Taikai;
-import com.enofex.taikai.java.ImportsConfigurer;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
+import com.tngtech.archunit.core.domain.Dependency;
+import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchCondition;
+import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.SimpleConditionEvent;
+import org.junit.jupiter.api.Order;
+{{- if eq .PersistenceType "Spring Data JPA" }}
+import jakarta.persistence.Entity;
+import org.springframework.data.repository.Repository;
+{{- end }}
+import org.springframework.stereotype.Service;
 
+@Order(1)
+@AnalyzeClasses(packages = ArchUnitTests.BASE_PACKAGE)
 class ArchUnitTests {
-    private static final String BASE_PACKAGE = ArchUnitTests.class.getPackageName();
+    public static final String BASE_PACKAGE = "dev.sivalabs.feedbackhub";
 
-    @Test
-    void shouldFulfillConstraints() {
-        Taikai.builder()
-                .namespace(BASE_PACKAGE)
-                {{- if eq .PersistenceType "jOOQ" }}
-                .excludeClasses(BASE_PACKAGE + ".jooq.gen..")
-                {{ end }}
-                .java(java -> java.noUsageOfDeprecatedAPIs()
-                        .methodsShouldNotDeclareGenericExceptions()
-                        .utilityClassesShouldBeFinalAndHavePrivateConstructor()
-                        .imports(ImportsConfigurer::shouldHaveNoCycles)
-                        .naming(naming -> naming.fieldsShouldNotMatch(".*(List|Set|Map)$")
-                                .constantsShouldFollowConventions()
-                                .interfacesShouldNotHavePrefixI()))
-                .logging(logging ->
-                        logging.loggersShouldFollowConventions(Logger.class, "LOG", List.of(PRIVATE, STATIC, FINAL)))
-                .test(test -> test.junit(junit -> junit.classesShouldBePackagePrivate(".*Test(s)")
-                        .classesShouldNotBeAnnotatedWithDisabled()
-                        .methodsShouldNotBeAnnotatedWithDisabled()))
-                .spring(spring -> spring.noAutowiredFields()
-                        .boot(boot -> boot.applicationClassShouldResideInPackage(BASE_PACKAGE))
-                        .configurations(c -> c.namesShouldMatch(".+Config"))
-                        .controllers(controllers -> controllers
-                                //.shouldBeAnnotatedWithRestController()
-                                .namesShouldEndWithController()
-                                .shouldNotDependOnOtherControllers()
-                                .shouldBePackagePrivate())
-                        .services(services -> services
-                                // .shouldBeAnnotatedWithService()
-                                .shouldNotDependOnControllers()
-                                .namesShouldEndWithService())
-                        .repositories(repositories ->
-                                repositories.shouldNotDependOnServices().namesShouldEndWithRepository()))
-                .build()
-                .checkAll();
+    // Controllers must not be called by service or repository classes
+    @ArchTest
+    static final ArchRule controllers_should_not_be_accessed_by_domain = noClasses()
+            .that()
+            .resideInAPackage("..domain..")
+            .should()
+            .accessClassesThat()
+            .resideInAPackage("..web..");
+
+{{- if eq .PersistenceType "Spring Data JPA" }}
+    // Repositories must not be accessed from outside their own module
+    @ArchTest
+    static final ArchRule repositories_must_not_be_public =
+            noClasses().that().areAssignableTo(Repository.class).should().bePublic();
+
+    // Entities must not be public
+    @ArchTest
+    static final ArchRule entities_must_not_be_public =
+            classes().that().areAnnotatedWith(Entity.class).should().notBePublic();
+
+{{- end }}
+
+    // Services are public (accessible to inbound handlers in the same module),
+    // but must only be accessed from within their own module — other modules must go through *API facades.
+    @ArchTest
+    static final ArchRule services_must_not_be_used_from_other_modules = classes()
+            .that()
+            .areAnnotatedWith(Service.class)
+            .should(new ArchCondition<>("only be accessed from same module") {
+                @Override
+                public void check(JavaClass service, ConditionEvents events) {
+                    String serviceModule = moduleOf(service);
+                    for (Dependency dependency : service.getDirectDependenciesToSelf()) {
+                        JavaClass origin = dependency.getOriginClass();
+                        String originModule = moduleOf(origin);
+                        if (!serviceModule.equals(originModule)) {
+                            String message =
+                                    origin.getName() + " accesses " + service.getName() + " from another module";
+                            events.add(SimpleConditionEvent.violated(dependency, message));
+                        }
+                    }
+                }
+            });
+
+    private static String moduleOf(JavaClass clazz) {
+        String pkg = clazz.getPackageName();
+        String[] parts = pkg.split("\\.");
+        return parts[BASE_PACKAGE.split("\\.").length];
     }
 }

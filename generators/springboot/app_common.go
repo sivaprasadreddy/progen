@@ -82,6 +82,7 @@ func (a AppCommonConfig) createSrcTestJava(pc ProjectConfig) error {
 		"TestcontainersConfig.java.tmpl": "TestcontainersConfig.java",
 		"BaseIT.java.tmpl":               "BaseIT.java",
 		"ArchUnitTests.java.tmpl":        "ArchUnitTests.java",
+		"TaikaiTests.java.tmpl":          "TaikaiTests.java",
 		"TestApplication.java.tmpl":      "TestApplication.java",
 	}
 
