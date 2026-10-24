@@ -1,0 +1,77 @@
+[tools]
+java = "temurin-25"
+maven = "3.10.0"
+node = "24"
+
+[settings]
+lockfile = true
+
+[env]
+DC_FILE = "compose.yml"
+REGISTRY = "docker.io"
+IMAGE_NAME = "your_dockerhub_username/{{ .ArtifactID }}"
+DOCKER_IMAGE_NAME = "{{env.REGISTRY}}/{{env.IMAGE_NAME}}"
+
+[tasks.default]
+description = "Run all the tests"
+depends = ["test"]
+
+[tasks.help]
+description = "List available tasks"
+run = "mise tasks"
+quiet = true
+
+[tasks.format]
+description = "Formats code"
+run = "./mvnw spotless:apply"
+
+[tasks.test]
+description = "Run all the tests"
+depends = ["format"]
+run = "./mvnw clean verify"
+
+[tasks.verify]
+description = "Run verification checks"
+run = "./mvnw -ntp verify"
+
+[tasks.build_image]
+description = "Build Docker Image using Buildpacks"
+run = '''
+VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+./mvnw clean compile spring-boot:build-image -DskipTests -DdockerImageName=$DOCKER_IMAGE_NAME:$VERSION
+'''
+
+[tasks.push_image]
+description = "Push Docker Image to Registry"
+depends = ["build_image"]
+run = '''
+VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+docker tag $DOCKER_IMAGE_NAME:$VERSION $DOCKER_IMAGE_NAME:latest
+docker push $DOCKER_IMAGE_NAME:$VERSION
+docker push $DOCKER_IMAGE_NAME:latest
+'''
+
+[tasks.start]
+description = "Start the application"
+depends = ["build_image"]
+run = 'docker compose --profile app -f "$DC_FILE" up --force-recreate -d'
+
+[tasks.stop]
+description = "Stop the application"
+run = [
+  'docker compose --profile app -f "$DC_FILE" stop',
+  'docker compose --profile app -f "$DC_FILE" rm -f',
+]
+
+[tasks.restart]
+description = "Restarts the application"
+run = [
+  { task = "stop" },
+  { task = "sleep" },
+  { task = "start" },
+]
+
+[tasks.sleep]
+description = "Sleeps for the given number of seconds"
+usage = 'arg "[duration]" default="5"'
+run = 'sleep ${usage_duration}'

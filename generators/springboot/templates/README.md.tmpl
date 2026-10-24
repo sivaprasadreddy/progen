@@ -4,10 +4,57 @@
 * JDK 25
 * Docker and Docker Compose
 
+## Using Taskfile
 Install JDK, Maven, Gradle,  etc using [SDKMAN](https://sdkman.io/)
 
 ```shell
 $ curl -s "https://get.sdkman.io" | bash
 $ source "$HOME/.sdkman/bin/sdkman-init.sh"
 $ sdk env install
+```
+
+```shell
+# runs all tests
+$ task test
+
+# formats java code using spotless
+$ task format
+
+# builds docker image
+$ task build_image
+
+# starts app using docker compose
+$ task start
+$ task stop
+$ task restart
+```
+
+## Using mise
+
+[mise](https://mise.jdx.dev/) can install the required SDKs (Java, Maven) and run tasks defined in `mise.toml`.
+
+```shell
+# Trust the project's mise.toml (one-time)
+$ mise trust
+
+# Install the SDKs (Java 25 Temurin, Maven)
+$ mise install
+
+# List available tasks
+$ mise tasks
+
+# Format code and run tests
+$ mise run format
+$ mise run test
+
+# Run verification checks
+$ mise run verify
+
+# Build docker image
+$ mise run build_image
+
+# Run application in docker container
+$ mise run start
+$ mise run stop
+$ mise run restart
 ```

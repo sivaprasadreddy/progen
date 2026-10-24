@@ -2,12 +2,12 @@ package springboot
 
 const (
 	javaVersion                            = 25
-	springBootVersion                      = "4.1.1"
+	springBootVersion                      = "4.1.2"
 	gradleDependencyMgmtVersion            = "1.1.7"
 	gradleGitPropertiesVersion             = "4.0.1"
 	spotlessGradlePluginVersion            = "8.10.4"
 	spotlessMavenPluginVersion             = "3.10.4"
-	springModulithVersion                  = "2.1.1"
+	springModulithVersion                  = "2.1.2"
 	springCloudAWSVersion                  = "4.2.0"
 	springBootFlociTcVersion               = "2.16.1"
 	springdocOpenapiVersion                = "3.1.1"
@@ -17,9 +17,9 @@ const (
 	htmxSpringBootThymeleafVersion         = "6.0.1"
 	datasourceMicrometerSpringBootVersion  = "2.3.0"
 	jjwtVersion                            = "0.13.0"
-	bootUIVersion                          = "2.1.0"
+	bootUIVersion                          = "2.2.0"
 	archunitVersion                        = "1.5.1"
-	taikaiVersion                          = "2.0.0"
+	taikaiVersion                          = "2.3.0"
 	palantirJavaFormatVersion              = "2.102.0"
 	testcontainersJooqCodegenPluginVersion = "1.0.0"
 	jacocoMavenPluginVersion               = "0.8.15"
@@ -34,10 +34,10 @@ const (
 	mysqlImage                             = "mysql:9"
 	mariadbImage                           = "mariadb:12"
 	flociImage                             = "floci/floci:latest-compat"
-	mailpitImage                           = "axllent/mailpit:v1.31"
+	mailpitImage                           = "axllent/mailpit:v1.32"
 	rabbitmqImage                          = "rabbitmq:4-management"
 	redisImage                             = "redis:8-alpine"
-	grafanaLgtmImage                       = "grafana/otel-lgtm:0.37.0"
+	grafanaLgtmImage                       = "grafana/otel-lgtm:0.38.0"
 )
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.

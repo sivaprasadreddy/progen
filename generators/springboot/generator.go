@@ -201,6 +201,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewReadMeConfig(pg),
 		NewSdkmanConfig(pg),
 		NewTaskfileConfig(pg),
+		NewMiseConfig(pg),
 		NewRenovateConfig(pg),
 		NewAngularConfig(pg),
 		NewAIConfig(pg),
