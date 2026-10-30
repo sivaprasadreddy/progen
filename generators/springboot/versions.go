@@ -20,7 +20,7 @@ const (
 	bootUIVersion                          = "2.2.0"
 	archunitVersion                        = "1.5.1"
 	taikaiVersion                          = "2.7.0"
-	palantirJavaFormatVersion              = "2.102.0"
+	palantirJavaFormatVersion              = "2.103.0"
 	testcontainersJooqCodegenPluginVersion = "1.0.0"
 	jacocoMavenPluginVersion               = "0.8.16"
 	frontendMavenPluginVersion             = "2.0.2"
