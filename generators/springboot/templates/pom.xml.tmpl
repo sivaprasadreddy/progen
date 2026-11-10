@@ -660,6 +660,7 @@
                 <version>${spotless.version}</version>
                 <configuration>
                     <java>
+                        <shortenFullyQualifiedTypes/>
                         <importOrder />
                         <removeUnusedImports />
                         <formatAnnotations />
@@ -669,6 +670,7 @@
                     </java>
                     <pom>
                         <sortPom>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
                             <keepBlankLines>false</keepBlankLines>
                             <expandEmptyElements>false</expandEmptyElements>
                         </sortPom>
