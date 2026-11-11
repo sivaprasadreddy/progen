@@ -32,6 +32,7 @@ type ProjectConfig struct {
 	DbMigrationTool       DbMigrationTool
 	SpringCloudAWSSupport bool
 	ThymeleafSupport      bool
+	JTESupport            bool
 	HTMXSupport           bool
 	EmailSupport          bool
 	RabbitMQSupport       bool
@@ -50,7 +51,7 @@ var defaultProjectConfig = ProjectConfig{
 	AppName:               "myapp",
 	GroupID:               "com.mycompany",
 	ArtifactID:            "myapp",
-	AppVersion:            "1.0.0",
+	AppVersion:            "0.0.1",
 	BasePackage:           "com.mycompany.myapp",
 	BuildTool:             Maven,
 	PersistenceType:       SpringDataJPA,
@@ -58,6 +59,7 @@ var defaultProjectConfig = ProjectConfig{
 	DbMigrationTool:       Flyway,
 	SpringCloudAWSSupport: false,
 	ThymeleafSupport:      false,
+	JTESupport:            false,
 	HTMXSupport:           false,
 	EmailSupport:          false,
 	RabbitMQSupport:       false,
@@ -154,6 +156,25 @@ func validateAndSanitize(pc ProjectConfig) ProjectConfig {
 		pc.DbMigrationTool = defaultProjectConfig.DbMigrationTool
 	}
 
+	return sanitizeTemplateEngine(pc)
+}
+
+// sanitizeTemplateEngine ensures exactly one view template engine is enabled for Web Apps
+// and none for other app types.
+func sanitizeTemplateEngine(pc ProjectConfig) ProjectConfig {
+	if pc.AppType != WebApp {
+		pc.ThymeleafSupport = false
+		pc.JTESupport = false
+		return pc
+	}
+	if pc.ThymeleafSupport && pc.JTESupport {
+		fmt.Println("WARNING: Both ThymeleafSupport and JTESupport are enabled. Using Thymeleaf.")
+		pc.JTESupport = false
+	}
+	if !pc.ThymeleafSupport && !pc.JTESupport {
+		fmt.Println("WARNING: No view template engine is enabled for Web App. Using Thymeleaf.")
+		pc.ThymeleafSupport = true
+	}
 	return pc
 }
 
@@ -187,6 +208,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewBuildToolConfig(pg),
 		NewAppCommonConfig(pg),
 		NewThymeleafConfig(pg),
+		NewJteConfig(pg),
 		NewDbMigrationsConfig(pg),
 		NewSpringModulithConfig(pg),
 		NewSecurityConfig(pg),

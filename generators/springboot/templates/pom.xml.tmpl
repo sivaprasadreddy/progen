@@ -26,7 +26,7 @@
 {{- if .EmailSupport }}
         <tc-mailpit.version>{{ .TcMailpitVersion }}</tc-mailpit.version>
 {{- end }}
-{{- if .ThymeleafSupport }}
+{{- if or .ThymeleafSupport .JTESupport }}
         <font_awesome.version>{{ .FontAwesomeVersion }}</font_awesome.version>
 {{ end }}
 {{- if .HTMXSupport }}
@@ -34,6 +34,12 @@
 {{ end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
         <htmx-spring-boot-thymeleaf.version>{{ .HtmxSpringBootThymeleafVersion }}</htmx-spring-boot-thymeleaf.version>
+{{ end }}
+{{- if .JTESupport }}
+        <jte.version>{{ .JteVersion }}</jte.version>
+{{ end }}
+{{- if and .JTESupport .HTMXSupport }}
+        <htmx-spring-boot.version>{{ .HtmxSpringBootVersion }}</htmx-spring-boot.version>
 {{ end }}
 {{- if .RestApiEnabled }}
         <jjwt.version>{{ .JjwtVersion }}</jjwt.version>
@@ -119,6 +125,20 @@
             <groupId>io.github.wimdeblauwe</groupId>
             <artifactId>htmx-spring-boot-thymeleaf</artifactId>
             <version>${htmx-spring-boot-thymeleaf.version}</version>
+        </dependency>
+        {{ end }}
+        {{ end }}
+        {{- if .JTESupport }}
+        <dependency>
+            <groupId>gg.jte</groupId>
+            <artifactId>jte-spring-boot-starter-4</artifactId>
+            <version>${jte.version}</version>
+        </dependency>
+        {{- if .HTMXSupport }}
+        <dependency>
+            <groupId>io.github.wimdeblauwe</groupId>
+            <artifactId>htmx-spring-boot</artifactId>
+            <version>${htmx-spring-boot.version}</version>
         </dependency>
         {{ end }}
         {{ end }}
@@ -241,7 +261,7 @@
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
         {{ end }}
-        {{- if .ThymeleafSupport }}
+        {{- if or .ThymeleafSupport .JTESupport }}
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator-lite</artifactId>
@@ -611,6 +631,25 @@
                       </jooq>
                     </configuration>
                   </execution>
+                </executions>
+            </plugin>
+            {{- end }}
+            {{- if .JTESupport }}
+            <plugin>
+                <groupId>gg.jte</groupId>
+                <artifactId>jte-maven-plugin</artifactId>
+                <version>${jte.version}</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/jte</sourceDirectory>
+                    <contentType>Html</contentType>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
             {{- end }}

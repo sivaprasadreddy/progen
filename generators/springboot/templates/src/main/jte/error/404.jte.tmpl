@@ -1,0 +1,13 @@
+@template.layout(title = "Page Not Found", content = @`
+    <div class="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <div class="mb-8">
+            <i class="fas fa-exclamation-triangle text-yellow-500 text-6xl"></i>
+        </div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">404 - Page Not Found</h1>
+        <p class="text-lg text-gray-600 mb-8">The resource you are looking for could not be found.</p>
+        <a href="/" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            <i class="fas fa-home mr-2"></i>
+            Go to Homepage
+        </a>
+    </div>
+`)

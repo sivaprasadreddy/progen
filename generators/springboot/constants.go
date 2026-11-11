@@ -111,6 +111,17 @@ func (s DbMigrationTool) IsValid() bool {
 	}
 }
 
+type TemplateEngine string
+
+const (
+	Thymeleaf TemplateEngine = "Thymeleaf"
+	JTE       TemplateEngine = "JTE"
+)
+
+func (t TemplateEngine) String() string {
+	return string(t)
+}
+
 const FeatureSpringCloudAWSSupport = "Spring Cloud AWS"
 const FeatureHTMXSupport = "HTMX"
 const FeatureEmailSupport = "Email"

@@ -83,6 +83,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	answers.BasePackage = deriveBasePackage(answers.GroupID, answers.ArtifactID)
 
 	var features []string
+	var templateEngine = Thymeleaf
 
 	inputs := []huh.Field{
 		huh.NewInput().
@@ -134,6 +135,15 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 			).Value(&answers.DbMigrationTool),
 	}
 
+	if answers.AppType == WebApp {
+		inputs = append(inputs, huh.NewSelect[TemplateEngine]().
+			Title("View Template Engine:").
+			Options(
+				huh.NewOption(Thymeleaf.String(), Thymeleaf).Selected(true),
+				huh.NewOption(JTE.String(), JTE),
+			).Value(&templateEngine))
+	}
+
 	otherFeatureOptions := []huh.Option[string]{
 		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 		huh.NewOption(FeatureEmailSupport, FeatureEmailSupport),
@@ -160,6 +170,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		return &answers, err
 	}
 	updateFeatureFlags(&answers, features)
+	updateTemplateEngine(&answers, templateEngine)
 	return &answers, nil
 }
 
@@ -185,13 +196,17 @@ func deriveBasePackage(groupID, artifactID string) string {
 
 func updateFeatureFlags(pc *ProjectConfig, features []string) {
 	pc.SpringCloudAWSSupport = isEnabled(features, FeatureSpringCloudAWSSupport)
-	pc.ThymeleafSupport = pc.AppType == WebApp
 	pc.HTMXSupport = isEnabled(features, FeatureHTMXSupport)
 	pc.EmailSupport = isEnabled(features, FeatureEmailSupport)
 	pc.RabbitMQSupport = isEnabled(features, FeatureRabbitMQSupport)
 	pc.RedisCachingSupport = isEnabled(features, FeatureRedisCachingSupport)
 	pc.OpenTelemetrySupport = isEnabled(features, FeatureOpenTelemetrySupport)
 	pc.K8sSupport = isEnabled(features, FeatureK8sSupport)
+}
+
+func updateTemplateEngine(pc *ProjectConfig, engine TemplateEngine) {
+	pc.ThymeleafSupport = pc.AppType == WebApp && engine != JTE
+	pc.JTESupport = pc.AppType == WebApp && engine == JTE
 }
 
 func isEnabled(features []string, feature string) bool {

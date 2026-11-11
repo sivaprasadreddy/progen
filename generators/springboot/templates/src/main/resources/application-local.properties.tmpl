@@ -15,3 +15,9 @@ spring.cloud.aws.endpoint=http://localhost:4566
 spring.cloud.aws.credentials.access-key=test
 spring.cloud.aws.credentials.secret-key=test
 {{- end }}
+{{- if .JTESupport }}
+# Hot-reload jte templates from src/main/jte (requires a JDK)
+gg.jte.usePrecompiledTemplates=false
+gg.jte.developmentMode=true
+gg.jte.class-directory=jte-classes
+{{- end }}

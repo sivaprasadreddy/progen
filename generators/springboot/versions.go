@@ -15,6 +15,8 @@ const (
 	fontAwesomeVersion                     = "7.3.0"
 	htmxVersion                            = "4.0.1"
 	htmxSpringBootThymeleafVersion         = "6.0.1"
+	htmxSpringBootVersion                  = "6.0.1"
+	jteVersion                             = "3.2.5"
 	datasourceMicrometerSpringBootVersion  = "2.3.0"
 	jjwtVersion                            = "0.13.0"
 	bootUIVersion                          = "2.3.0"
@@ -56,6 +58,8 @@ type Versions struct {
 	FontAwesomeVersion                     string
 	HtmxVersion                            string
 	HtmxSpringBootThymeleafVersion         string
+	HtmxSpringBootVersion                  string
+	JteVersion                             string
 	DatasourceMicrometerSpringBootVersion  string
 	JjwtVersion                            string
 	BootUIVersion                          string
@@ -97,6 +101,8 @@ func defaultVersions() Versions {
 		FontAwesomeVersion:                     fontAwesomeVersion,
 		HtmxVersion:                            htmxVersion,
 		HtmxSpringBootThymeleafVersion:         htmxSpringBootThymeleafVersion,
+		HtmxSpringBootVersion:                  htmxSpringBootVersion,
+		JteVersion:                             jteVersion,
 		DatasourceMicrometerSpringBootVersion:  datasourceMicrometerSpringBootVersion,
 		BootUIVersion:                          bootUIVersion,
 		JjwtVersion:                            jjwtVersion,

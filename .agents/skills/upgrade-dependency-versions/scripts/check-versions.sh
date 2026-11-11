@@ -25,6 +25,8 @@ tcMailpitVersion|maven|ch.martinelli.oss:testcontainers-mailpit|
 fontAwesomeVersion|maven|org.webjars:font-awesome|
 htmxVersion|maven|org.webjars.npm:htmx.org|
 htmxSpringBootThymeleafVersion|maven|io.github.wimdeblauwe:htmx-spring-boot-thymeleaf|
+htmxSpringBootVersion|maven|io.github.wimdeblauwe:htmx-spring-boot|
+jteVersion|maven|gg.jte:jte-spring-boot-starter-4|
 datasourceMicrometerSpringBootVersion|maven|net.ttddyy.observation:datasource-micrometer-spring-boot|
 jjwtVersion|maven|io.jsonwebtoken:jjwt-api|
 bootUIVersion|maven|com.julien-dubois.bootui:bootui-spring-boot-starter|

@@ -36,6 +36,12 @@ springdoc.swagger-ui.enabled=false
 springdoc.paths-to-match=/api/**
 {{- end }}
 
+{{- if .JTESupport }}
+#### jte ####
+# Templates are compiled into Java classes at build time by the jte Maven/Gradle plugin.
+gg.jte.usePrecompiledTemplates=true
+{{- end }}
+
 ###### Logging ######
 logging.level.root=INFO
 logging.level.{{ .BasePackage }}=DEBUG

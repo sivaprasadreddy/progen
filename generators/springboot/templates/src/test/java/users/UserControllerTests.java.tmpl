@@ -24,4 +24,28 @@ class UserControllerTests extends BaseIT {
 
         assertThat(result).hasStatus(HttpStatus.FOUND);
     }
+
+    @Test
+    void shouldRenderLoginPage() {
+        var result = mvc.get().uri("/login");
+
+        assertThat(result).hasStatusOk();
+        assertThat(result).bodyText().contains("Sign in").contains("name=\"_csrf\"");
+    }
+
+    @Test
+    void shouldShowValidationErrorsOnInvalidRegistration() {
+        var result = mvc.post().uri("/registration")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", "")
+                .param("email", "invalid-email")
+                .param("password", "secret");
+
+        assertThat(result).hasStatusOk();
+        assertThat(result).bodyText()
+                .contains("Name is required")
+                .contains("Invalid email address")
+                .contains("invalid-email");
+    }
 }

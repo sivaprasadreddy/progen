@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Configuration;
 {{- if .RestApiEnabled }}
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 {{ end }}
+{{- if .JTESupport }}
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+{{- end }}
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -24,4 +27,11 @@ class WebMvcConfig implements WebMvcConfigurer {
                 .allowedHeaders(props.cors().allowedHeaders());
     }
     {{ end }}
+
+    {{- if .JTESupport }}
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("index");
+    }
+    {{- end }}
 }

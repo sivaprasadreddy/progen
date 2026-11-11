@@ -43,6 +43,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		migrationTool         sb.DbMigrationTool
 		SpringCloudAWSSupport bool
 		ThymeleafSupport      bool
+		JTESupport            bool
 		HTMXSupport           bool
 		EmailSupport          bool
 		RabbitMQSupport       bool
@@ -50,14 +51,16 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		OpenTelemetrySupport  bool
 		K8sSupport            bool
 	}{
-		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true, true, true},
-		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, true, false, false, false, true, true},
-		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, true, false, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, false},
+		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, false, true, true, true, true, true, true},
+		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, false, true, false, false, false, true, true},
+		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, true, true, false, false, false, false, false},
+		{sb.WebApp, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, true, false, false, false, false, false, false},
+		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, false, true, false, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false, false},
+		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false, false},
+		{sb.RestApi, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, false, false},
 	}
 
 	for _, tt := range options {
@@ -78,6 +81,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				DbMigrationTool:       tt.migrationTool,
 				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
 				ThymeleafSupport:      tt.ThymeleafSupport,
+				JTESupport:            tt.JTESupport,
 				HTMXSupport:           tt.HTMXSupport,
 				EmailSupport:          tt.EmailSupport,
 				RabbitMQSupport:       tt.RabbitMQSupport,

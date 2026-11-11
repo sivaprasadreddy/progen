@@ -5,6 +5,9 @@ plugins {
     id "io.spring.dependency-management" version "{{ .GradleDependencyMgmtVersion }}"
     id "com.gorylenko.gradle-git-properties" version "{{ .GradleGitPropertiesVersion }}"
     id "com.diffplug.spotless" version "{{ .SpotlessGradlePluginVersion }}"
+    {{- if .JTESupport }}
+    id "gg.jte.gradle" version "{{ .JteVersion }}"
+    {{- end }}
     {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
     id "com.github.node-gradle.node" version "{{ .GradleNodePluginVersion }}"
     {{ end }}
@@ -38,7 +41,7 @@ ext {
   set("bootTcFlociVersion", "{{ .SpringBootFlociTcVersion }}")
 {{- end }}
   set("springModulithVersion", "{{ .SpringModulithVersion }}")
-{{- if .ThymeleafSupport }}
+{{- if or .ThymeleafSupport .JTESupport }}
   set("fontawesomeVersion", "{{ .FontAwesomeVersion }}")
 {{- end }}
 {{- if .HTMXSupport }}
@@ -46,6 +49,12 @@ ext {
 {{- end }}
 {{- if and .ThymeleafSupport .HTMXSupport }}
   set("htmxSpringBootThymeleafVersion", "{{ .HtmxSpringBootThymeleafVersion }}")
+{{- end }}
+{{- if .JTESupport }}
+  set("jteVersion", "{{ .JteVersion }}")
+{{- end }}
+{{- if and .JTESupport .HTMXSupport }}
+  set("htmxSpringBootVersion", "{{ .HtmxSpringBootVersion }}")
 {{- end }}
 {{- if .RestApiEnabled }}
   set("jjwtVersion", "{{ .JjwtVersion }}")
@@ -79,6 +88,12 @@ dependencies {
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6"
     {{- if .HTMXSupport }}
     implementation "io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:${htmxSpringBootThymeleafVersion}"
+    {{- end }}
+    {{- end }}
+    {{- if .JTESupport }}
+    implementation "gg.jte:jte-spring-boot-starter-4:${jteVersion}"
+    {{- if .HTMXSupport }}
+    implementation "io.github.wimdeblauwe:htmx-spring-boot:${htmxSpringBootVersion}"
     {{- end }}
     {{- end }}
     {{- if .RestApiEnabled }}
@@ -132,7 +147,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
     implementation "org.springframework.boot:spring-boot-starter-cache"
     {{- end }}
-    {{- if .ThymeleafSupport }}
+    {{- if or .ThymeleafSupport .JTESupport }}
     implementation "org.webjars:webjars-locator-lite"
     implementation "org.webjars:font-awesome:${fontawesomeVersion}"
     {{- end }}
@@ -247,6 +262,13 @@ tasks.named("processResources") {
 }
 {{ end }}
 
+{{- if .JTESupport }}
+
+jte {
+    generate()
+}
+{{- end }}
+
 tasks.named("bootBuildImage") {
 	imageName = "your_dockerhub_username/{{ .ArtifactID }}"
 }
@@ -297,6 +319,9 @@ gitProperties {
 
 spotless {
     java {
+        {{- if .JTESupport }}
+        target "src/*/java/**/*.java"
+        {{- end }}
         shortenFullyQualifiedTypes()
         importOrder()
         removeUnusedImports()

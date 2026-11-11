@@ -1,0 +1,54 @@
+package {{ .BasePackage }}.shared.web;
+
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
+
+/**
+ * Static helpers used by the jte templates (see src/main/jte) to access
+ * the authentication state, CSRF token and flash messages of the current request.
+ */
+public final class ViewHelpers {
+    private ViewHelpers() {}
+
+    public static boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken);
+    }
+
+    public static CsrfToken csrfToken() {
+        HttpServletRequest request = currentRequest();
+        if (request == null) {
+            return null;
+        }
+        return (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+    }
+
+    public static String flashMessage(String name) {
+        HttpServletRequest request = currentRequest();
+        if (request == null) {
+            return null;
+        }
+        Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(request);
+        if (flashMap == null) {
+            return null;
+        }
+        Object value = flashMap.get(name);
+        return value == null ? null : value.toString();
+    }
+
+    private static HttpServletRequest currentRequest() {
+        if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
+            return attributes.getRequest();
+        }
+        return null;
+    }
+}

@@ -30,7 +30,7 @@ those constants. Only edit `versions.go` — never hardcode versions in template
 
 2. **Respect compatibility before applying.**
    - `springModulithVersion`, `springCloudAWSVersion`, `springdocOpenapiVersion`,
-     `htmxSpringBootThymeleafVersion`, `datasourceMicrometerSpringBootVersion`
+     `htmxSpringBootThymeleafVersion`, `htmxSpringBootVersion`, `datasourceMicrometerSpringBootVersion`
      and `springBootFlociTcVersion` track Spring Boot releases. If Spring Boot is
      not being bumped to a new minor, skip a minor bump of these unless their
      release notes say they support the current Boot version.
@@ -83,6 +83,8 @@ those constants. Only edit `versions.go` — never hardcode versions in template
 | fontAwesomeVersion | Maven Central | org.webjars:font-awesome |
 | htmxVersion | Maven Central | org.webjars.npm:htmx.org |
 | htmxSpringBootThymeleafVersion | Maven Central | io.github.wimdeblauwe:htmx-spring-boot-thymeleaf |
+| htmxSpringBootVersion | Maven Central | io.github.wimdeblauwe:htmx-spring-boot |
+| jteVersion | Maven Central | gg.jte:jte-spring-boot-starter-4 (also used for the jte Maven/Gradle plugins) |
 | datasourceMicrometerSpringBootVersion | Maven Central | net.ttddyy.observation:datasource-micrometer-spring-boot |
 | jjwtVersion | Maven Central | io.jsonwebtoken:jjwt-api |
 | bootUIVersion | Maven Central | com.julien-dubois.bootui:bootui-spring-boot-starter |
