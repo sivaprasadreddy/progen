@@ -1,0 +1,9 @@
+@import org.springframework.web.servlet.support.RequestContext
+
+@param RequestContext ctx
+@param String path
+
+!{var status = ctx.getBindStatus(path);}
+@if(status.isError())
+<div class="mt-1.5 text-sm font-medium text-rose-600">${String.join(", ", status.getErrorMessages())}</div>
+@endif

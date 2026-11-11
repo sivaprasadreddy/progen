@@ -1,5 +1,4 @@
-@param boolean loginError = false
-@param boolean loggedOut = false
+@import {{ .BasePackage }}.shared.web.ViewHelpers
 
 @template.layout(title = "Login", content = @`
     <div class="flex min-h-[calc(100dvh-8rem)] items-center justify-center py-6">
@@ -12,12 +11,12 @@
                 <p class="mt-1 text-sm text-slate-300">Sign in to your account.</p>
             </div>
             <div class="p-6 sm:p-8">
-                @if(loginError)
+                @if(ViewHelpers.hasRequestParam("error"))
                     <div class="mb-5 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" role="alert">
                         <i class="fa-solid fa-circle-exclamation mr-2" aria-hidden="true"></i>Invalid email or password.
                     </div>
                 @endif
-                @if(loggedOut)
+                @if(ViewHelpers.hasRequestParam("logout"))
                     <div class="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700" role="status">
                         <i class="fa-solid fa-circle-check mr-2" aria-hidden="true"></i>You have been logged out.
                     </div>

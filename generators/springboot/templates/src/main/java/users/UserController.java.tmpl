@@ -3,23 +3,12 @@ package {{ .BasePackage }}.users;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-{{- if .JTESupport }}
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-{{- end }}
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-{{- if .JTESupport }}
-import org.springframework.validation.FieldError;
-{{- end }}
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-{{- if .JTESupport }}
-import org.springframework.web.bind.annotation.RequestParam;
-{{- end }}
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -29,54 +18,6 @@ class UserController {
     UserController(UserService userService) {
         this.userService = userService;
     }
-{{- if .JTESupport }}
-
-    @GetMapping("/login")
-    String loginForm(
-            @RequestParam(required = false) String error,
-            @RequestParam(required = false) String logout,
-            Model model) {
-        model.addAttribute("loginError", error != null);
-        model.addAttribute("loggedOut", logout != null);
-        return "login";
-    }
-
-    @GetMapping("/registration")
-    String registrationForm(Model model) {
-        addRegistrationFormAttributes(model, new UserRegistrationForm("", "", ""), Map.of());
-        return "registration";
-    }
-
-    @PostMapping("/registration")
-    String registerUser(
-            @ModelAttribute("user") @Valid UserRegistrationForm userRegistrationForm,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            addRegistrationFormAttributes(model, userRegistrationForm, fieldErrors(bindingResult));
-            return "registration";
-        }
-        return createUser(userRegistrationForm, redirectAttributes);
-    }
-
-    private static void addRegistrationFormAttributes(
-            Model model, UserRegistrationForm form, Map<String, String> errors) {
-        model.addAttribute("name", Objects.requireNonNullElse(form.name(), ""));
-        model.addAttribute("email", Objects.requireNonNullElse(form.email(), ""));
-        model.addAttribute("errors", errors);
-    }
-
-    private static Map<String, String> fieldErrors(BindingResult bindingResult) {
-        Map<String, String> errors = new LinkedHashMap<>();
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            errors.putIfAbsent(
-                    fieldError.getField(),
-                    Objects.requireNonNullElse(fieldError.getDefaultMessage(), "Invalid value"));
-        }
-        return errors;
-    }
-{{- else }}
 
     @GetMapping("/login")
     String loginForm() {
@@ -97,11 +38,6 @@ class UserController {
         if (bindingResult.hasErrors()) {
             return "registration";
         }
-        return createUser(userRegistrationForm, redirectAttributes);
-    }
-{{- end }}
-
-    private String createUser(UserRegistrationForm userRegistrationForm, RedirectAttributes redirectAttributes) {
         try {
             var cmd = new CreateUserCmd(
                     userRegistrationForm.name(),

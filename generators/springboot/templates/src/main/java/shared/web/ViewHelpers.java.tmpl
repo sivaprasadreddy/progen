@@ -12,7 +12,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Static helpers used by the jte templates (see src/main/jte) to access
- * the authentication state, CSRF token and flash messages of the current request.
+ * the authentication state, CSRF token, request parameters and flash messages of the current request.
  */
 public final class ViewHelpers {
     private ViewHelpers() {}
@@ -30,6 +30,11 @@ public final class ViewHelpers {
             return null;
         }
         return (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+    }
+
+    public static boolean hasRequestParam(String name) {
+        HttpServletRequest request = currentRequest();
+        return request != null && request.getParameterMap().containsKey(name);
     }
 
     public static String flashMessage(String name) {

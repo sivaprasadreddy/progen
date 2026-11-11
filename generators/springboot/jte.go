@@ -45,14 +45,16 @@ func (j JteConfig) createSrcMainResources(pc ProjectConfig) error {
 
 func (j JteConfig) createSrcMainJte(pc ProjectConfig) error {
 	templateMap := map[string]string{
-		"layout.jte.tmpl":       "layout.jte",
-		"index.jte.tmpl":        "index.jte",
-		"login.jte.tmpl":        "login.jte",
-		"registration.jte.tmpl": "registration.jte",
-		"error/403.jte.tmpl":    "error/403.jte",
-		"error/404.jte.tmpl":    "error/404.jte",
-		"error/500.jte.tmpl":    "error/500.jte",
-		"tag/csrf.jte.tmpl":     "tag/csrf.jte",
+		".jteroot":                ".jteroot",
+		"layout.jte.tmpl":         "layout.jte",
+		"index.jte.tmpl":          "index.jte",
+		"login.jte.tmpl":          "login.jte",
+		"registration.jte.tmpl":   "registration.jte",
+		"error/403.jte.tmpl":      "error/403.jte",
+		"error/404.jte.tmpl":      "error/404.jte",
+		"error/500.jte.tmpl":      "error/500.jte",
+		"tag/csrf.jte.tmpl":       "tag/csrf.jte",
+		"tag/fieldError.jte.tmpl": "tag/fieldError.jte",
 	}
 	for tmpl, filePath := range templateMap {
 		err := j.pg.executeTemplate(pc, srcMainJtePath+tmpl, srcMainJtePath+filePath)

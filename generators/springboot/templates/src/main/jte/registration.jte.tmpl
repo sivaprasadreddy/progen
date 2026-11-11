@@ -1,11 +1,13 @@
-@import java.util.Map
+@import java.util.Objects
+@import org.springframework.web.servlet.support.RequestContext
 
-@param String name = ""
-@param String email = ""
-@param Map<String, String> errors = Map.of()
+@param RequestContext springMacroRequestContext
 
 !{var inputClass = "w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20";}
 !{var errorClass = " border-rose-500 ring-1 ring-rose-500";}
+!{var name = springMacroRequestContext.getBindStatus("user.name");}
+!{var email = springMacroRequestContext.getBindStatus("user.email");}
+!{var password = springMacroRequestContext.getBindStatus("user.password");}
 @template.layout(title = "Registration", content = @`
     <div class="flex min-h-[calc(100dvh-8rem)] items-center justify-center py-6">
         <div class="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60">
@@ -22,31 +24,25 @@
                     <div>
                         <label for="name" class="mb-2 block text-sm font-semibold text-slate-700">Name <span class="text-rose-600">*</span></label>
                         <input type="text" id="name" name="name" required autocomplete="name"
-                               value="${name}"
-                               class="${inputClass + (errors.containsKey("name") ? errorClass : "")}"
+                               value="${Objects.toString(name.getValue(), "")}"
+                               class="${inputClass + (name.isError() ? errorClass : "")}"
                                placeholder="Your name"/>
-                        @if(errors.containsKey("name"))
-                        <div class="mt-1.5 text-sm font-medium text-rose-600">${errors.get("name")}</div>
-                        @endif
+                        @template.tag.fieldError(ctx = springMacroRequestContext, path = "user.name")
                     </div>
                     <div>
                         <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">Email <span class="text-rose-600">*</span></label>
                         <input type="email" id="email" name="email" required autocomplete="email"
-                               value="${email}"
-                               class="${inputClass + (errors.containsKey("email") ? errorClass : "")}"
+                               value="${Objects.toString(email.getValue(), "")}"
+                               class="${inputClass + (email.isError() ? errorClass : "")}"
                                placeholder="you@example.com" />
-                        @if(errors.containsKey("email"))
-                        <div class="mt-1.5 text-sm font-medium text-rose-600">${errors.get("email")}</div>
-                        @endif
+                        @template.tag.fieldError(ctx = springMacroRequestContext, path = "user.email")
                     </div>
                     <div>
                         <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">Password <span class="text-rose-600">*</span></label>
                         <input type="password" id="password" name="password" required autocomplete="new-password"
-                               class="${inputClass + (errors.containsKey("password") ? errorClass : "")}"
+                               class="${inputClass + (password.isError() ? errorClass : "")}"
                                placeholder="At least 4 characters" />
-                        @if(errors.containsKey("password"))
-                        <div class="mt-1.5 text-sm font-medium text-rose-600">${errors.get("password")}</div>
-                        @endif
+                        @template.tag.fieldError(ctx = springMacroRequestContext, path = "user.password")
                     </div>
                     <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                         <i class="fa-solid fa-user-plus" aria-hidden="true"></i>Create account
