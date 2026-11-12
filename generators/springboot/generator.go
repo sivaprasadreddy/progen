@@ -20,7 +20,7 @@ const templatesRootDir = "templates"
 // ProjectConfig holds all configuration options for generating a Spring Boot project.
 type ProjectConfig struct {
 	Versions              `json:"-"`
-	AppType               AppType
+	Frontend              Frontend
 	AppName               string
 	GroupID               string
 	ArtifactID            string
@@ -31,8 +31,6 @@ type ProjectConfig struct {
 	DbType                DatabaseType
 	DbMigrationTool       DbMigrationTool
 	SpringCloudAWSSupport bool
-	ThymeleafSupport      bool
-	JTESupport            bool
 	HTMXSupport           bool
 	EmailSupport          bool
 	RabbitMQSupport       bool
@@ -43,11 +41,31 @@ type ProjectConfig struct {
 
 // RestApiEnabled reports whether REST API-specific project features should be generated.
 func (pc ProjectConfig) RestApiEnabled() bool {
-	return pc.AppType == RestApi || pc.AppType == SpringBootAngularFullStack
+	return pc.Frontend == FrontendNone || pc.Frontend == FrontendAngular
+}
+
+// ThymeleafSupport reports whether Thymeleaf server-rendered views should be generated.
+func (pc ProjectConfig) ThymeleafSupport() bool {
+	return pc.Frontend == FrontendThymeleaf
+}
+
+// JTESupport reports whether JTE server-rendered views should be generated.
+func (pc ProjectConfig) JTESupport() bool {
+	return pc.Frontend == FrontendJTE
+}
+
+// ServerRenderedViews reports whether the app uses a server-side view template engine.
+func (pc ProjectConfig) ServerRenderedViews() bool {
+	return pc.ThymeleafSupport() || pc.JTESupport()
+}
+
+// AngularSupport reports whether an Angular frontend should be generated.
+func (pc ProjectConfig) AngularSupport() bool {
+	return pc.Frontend == FrontendAngular
 }
 
 var defaultProjectConfig = ProjectConfig{
-	AppType:               RestApi,
+	Frontend:              FrontendNone,
 	AppName:               "myapp",
 	GroupID:               "com.mycompany",
 	ArtifactID:            "myapp",
@@ -58,8 +76,6 @@ var defaultProjectConfig = ProjectConfig{
 	DbType:                PostgreSQL,
 	DbMigrationTool:       Flyway,
 	SpringCloudAWSSupport: false,
-	ThymeleafSupport:      false,
-	JTESupport:            false,
 	HTMXSupport:           false,
 	EmailSupport:          false,
 	RabbitMQSupport:       false,
@@ -127,10 +143,10 @@ func validateAndSanitize(pc ProjectConfig) ProjectConfig {
 		fmt.Printf("WARNING: BasePackage '%s' is invalid. Using default: %s\n", pc.BasePackage, defaultProjectConfig.BasePackage)
 		pc.BasePackage = defaultProjectConfig.BasePackage
 	}
-	// Validate AppType
-	if !pc.AppType.IsValid() {
-		fmt.Printf("WARNING: AppType '%s' is invalid. Using default: %s\n", pc.AppType, defaultProjectConfig.AppType)
-		pc.AppType = defaultProjectConfig.AppType
+	// Validate Frontend
+	if !pc.Frontend.IsValid() {
+		fmt.Printf("WARNING: Frontend '%s' is invalid. Using default: %s\n", pc.Frontend, defaultProjectConfig.Frontend)
+		pc.Frontend = defaultProjectConfig.Frontend
 	}
 
 	// Validate BuildTool
@@ -156,25 +172,6 @@ func validateAndSanitize(pc ProjectConfig) ProjectConfig {
 		pc.DbMigrationTool = defaultProjectConfig.DbMigrationTool
 	}
 
-	return sanitizeTemplateEngine(pc)
-}
-
-// sanitizeTemplateEngine ensures exactly one view template engine is enabled for Web Apps
-// and none for other app types.
-func sanitizeTemplateEngine(pc ProjectConfig) ProjectConfig {
-	if pc.AppType != WebApp {
-		pc.ThymeleafSupport = false
-		pc.JTESupport = false
-		return pc
-	}
-	if pc.ThymeleafSupport && pc.JTESupport {
-		fmt.Println("WARNING: Both ThymeleafSupport and JTESupport are enabled. Using Thymeleaf.")
-		pc.JTESupport = false
-	}
-	if !pc.ThymeleafSupport && !pc.JTESupport {
-		fmt.Println("WARNING: No view template engine is enabled for Web App. Using Thymeleaf.")
-		pc.ThymeleafSupport = true
-	}
 	return pc
 }
 

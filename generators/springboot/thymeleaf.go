@@ -9,7 +9,7 @@ func NewThymeleafConfig(pg projectGenerator) *ThymeleafConfig {
 }
 
 func (t ThymeleafConfig) generate(pc ProjectConfig) error {
-	if !pc.ThymeleafSupport {
+	if !pc.ThymeleafSupport() {
 		return nil
 	}
 	if err := t.createSrcMainResources(pc); err != nil {

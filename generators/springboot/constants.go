@@ -6,30 +6,24 @@ const srcTestJavaPath = "src/test/java/"
 const srcTestResourcesPath = "src/test/resources/"
 const ProjectConfigFile = ".progen.json"
 
-type AppType string
+// Frontend determines the kind of UI generated alongside the Spring Boot backend.
+// FrontendNone generates a REST API only.
+type Frontend string
 
 const (
-	RestApi                    AppType = "REST API"
-	WebApp                     AppType = "Web App"
-	SpringBootAngularFullStack AppType = "Spring Boot + Angular Full Stack"
+	FrontendNone      Frontend = "None"
+	FrontendThymeleaf Frontend = "Thymeleaf"
+	FrontendJTE       Frontend = "JTE"
+	FrontendAngular   Frontend = "Angular"
 )
 
-func (a AppType) String() string {
-	switch a {
-	case RestApi:
-		return "REST API"
-	case WebApp:
-		return "Web App"
-	case SpringBootAngularFullStack:
-		return "Spring Boot + Angular Full Stack"
-	default:
-		return "Unknown"
-	}
+func (f Frontend) String() string {
+	return string(f)
 }
 
-func (a AppType) IsValid() bool {
-	switch a {
-	case RestApi, WebApp, SpringBootAngularFullStack:
+func (f Frontend) IsValid() bool {
+	switch f {
+	case FrontendNone, FrontendThymeleaf, FrontendJTE, FrontendAngular:
 		return true
 	default:
 		return false
@@ -109,17 +103,6 @@ func (s DbMigrationTool) IsValid() bool {
 	default:
 		return false
 	}
-}
-
-type TemplateEngine string
-
-const (
-	Thymeleaf TemplateEngine = "Thymeleaf"
-	JTE       TemplateEngine = "JTE"
-)
-
-func (t TemplateEngine) String() string {
-	return string(t)
 }
 
 const FeatureSpringCloudAWSSupport = "Spring Cloud AWS"

@@ -13,7 +13,7 @@ func NewJteConfig(pg projectGenerator) *JteConfig {
 }
 
 func (j JteConfig) generate(pc ProjectConfig) error {
-	if !pc.JTESupport {
+	if !pc.JTESupport() {
 		return nil
 	}
 	if err := j.createSrcMainJava(pc); err != nil {

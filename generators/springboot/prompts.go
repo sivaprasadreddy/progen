@@ -19,25 +19,26 @@ func GetAnswers() (ProjectConfig, error) {
 }
 
 func getProjectConfigAnswers() (*ProjectConfig, error) {
-	var appType = RestApi
+	var frontend = FrontendNone
 
-	appTypeForm := huh.NewForm(
+	frontendForm := huh.NewForm(
 		huh.NewGroup(
-			huh.NewSelect[AppType]().
-				Title("Select App Type:").
+			huh.NewSelect[Frontend]().
+				Title("Select Frontend:").
 				Options(
-					huh.NewOption(RestApi.String(), RestApi).Selected(true),
-					huh.NewOption(WebApp.String(), WebApp),
-					huh.NewOption(SpringBootAngularFullStack.String(), SpringBootAngularFullStack),
-				).Value(&appType),
+					huh.NewOption("None (REST API)", FrontendNone).Selected(true),
+					huh.NewOption(FrontendThymeleaf.String(), FrontendThymeleaf),
+					huh.NewOption(FrontendJTE.String(), FrontendJTE),
+					huh.NewOption(FrontendAngular.String(), FrontendAngular),
+				).Value(&frontend),
 		),
 	)
-	if err := runForm(appTypeForm); err != nil {
+	if err := runForm(frontendForm); err != nil {
 		return nil, err
 	}
 
 	answers := ProjectConfig{
-		AppType:         appType,
+		Frontend:        frontend,
 		AppName:         "myapp",
 		GroupID:         "com.mycompany",
 		ArtifactID:      "myapp",
@@ -83,7 +84,6 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	answers.BasePackage = deriveBasePackage(answers.GroupID, answers.ArtifactID)
 
 	var features []string
-	var templateEngine = Thymeleaf
 
 	inputs := []huh.Field{
 		huh.NewInput().
@@ -135,15 +135,6 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 			).Value(&answers.DbMigrationTool),
 	}
 
-	if answers.AppType == WebApp {
-		inputs = append(inputs, huh.NewSelect[TemplateEngine]().
-			Title("View Template Engine:").
-			Options(
-				huh.NewOption(Thymeleaf.String(), Thymeleaf).Selected(true),
-				huh.NewOption(JTE.String(), JTE),
-			).Value(&templateEngine))
-	}
-
 	otherFeatureOptions := []huh.Option[string]{
 		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 		huh.NewOption(FeatureEmailSupport, FeatureEmailSupport),
@@ -153,7 +144,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		huh.NewOption(FeatureK8sSupport, FeatureK8sSupport),
 	}
 
-	if answers.AppType == WebApp {
+	if answers.ServerRenderedViews() {
 		otherFeatureOptions = append(otherFeatureOptions, huh.NewOption(FeatureHTMXSupport, FeatureHTMXSupport))
 	}
 
@@ -170,7 +161,6 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		return &answers, err
 	}
 	updateFeatureFlags(&answers, features)
-	updateTemplateEngine(&answers, templateEngine)
 	return &answers, nil
 }
 
@@ -202,11 +192,6 @@ func updateFeatureFlags(pc *ProjectConfig, features []string) {
 	pc.RedisCachingSupport = isEnabled(features, FeatureRedisCachingSupport)
 	pc.OpenTelemetrySupport = isEnabled(features, FeatureOpenTelemetrySupport)
 	pc.K8sSupport = isEnabled(features, FeatureK8sSupport)
-}
-
-func updateTemplateEngine(pc *ProjectConfig, engine TemplateEngine) {
-	pc.ThymeleafSupport = pc.AppType == WebApp && engine != JTE
-	pc.JTESupport = pc.AppType == WebApp && engine == JTE
 }
 
 func isEnabled(features []string, feature string) bool {

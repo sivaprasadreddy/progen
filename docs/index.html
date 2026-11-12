@@ -366,7 +366,7 @@
             <div class="code-block">
         <pre><code>$ go install github.com/sivaprasadreddy/progen@latest
 $ progen
-✔ App Type: REST API
+✔ Frontend: None (REST API)
 ✔ Build Tool: Maven
 ✔ Persistence: Spring Data JPA
 ✔ Database: PostgreSQL
@@ -447,7 +447,7 @@ progen --help</code></pre>
             <div class="step-num">1</div>
             <div>
                 <h4>Run interactively</h4>
-                <p>Launch progen with no arguments to walk through an interactive prompt covering app type, build tool, persistence, database, and optional features.</p>
+                <p>Launch progen with no arguments to walk through an interactive prompt covering frontend, build tool, persistence, database, and optional features.</p>
                 <div class="code-block"><pre><code>progen</code></pre></div>
             </div>
         </div>
@@ -485,7 +485,7 @@ progen --help</code></pre>
         <h3 class="subhead">Sample .progen.json</h3>
         <div class="code-block">
       <pre><code>{
-  "AppType": "REST API",
+  "Frontend": "None",
   "AppName": "myapp",
   "GroupID": "com.mycompany",
   "ArtifactID": "myapp",
@@ -496,8 +496,6 @@ progen --help</code></pre>
   "DbType": "PostgreSQL",
   "DbMigrationTool": "Flyway",
   "SpringCloudAWSSupport": false,
-  "ThymeleafSupport": false,
-  "JTESupport": false,
   "HTMXSupport": false,
   "EmailSupport": false,
   "RabbitMQSupport": false,
@@ -519,12 +517,11 @@ progen --help</code></pre>
             <table>
                 <thead><tr><th>Option</th><th>Choices</th></tr></thead>
                 <tbody>
-                <tr><td>App Type</td><td>REST API · Web App · Spring Boot + Angular Full Stack</td></tr>
+                <tr><td>Frontend</td><td>None (REST API) · Thymeleaf · JTE · Angular</td></tr>
                 <tr><td>Build Tool</td><td>Maven · Gradle</td></tr>
                 <tr><td>Persistence</td><td>Spring Data JPA · Spring JdbcClient · jOOQ</td></tr>
                 <tr><td>Database</td><td>PostgreSQL · MySQL · MariaDB</td></tr>
                 <tr><td>DB Migration Tool</td><td>Flyway · Liquibase</td></tr>
-                <tr><td>View Template Engine (Web App)</td><td>Thymeleaf · JTE</td></tr>
                 </tbody>
             </table>
         </div>

@@ -57,7 +57,7 @@ func (s SecurityConfig) createSrcMainJava(pc ProjectConfig) error {
 		}
 	}
 
-	if pc.AppType == WebApp {
+	if pc.ServerRenderedViews() {
 		templateMap["config/WebSecurityConfig.java.tmpl"] = "config/WebSecurityConfig.java"
 		templateMap["config/WebAppExceptionHandler.java.tmpl"] = "config/GlobalExceptionHandler.java"
 		templateMap["users/UserController.java.tmpl"] = "users/UserController.java"
@@ -87,7 +87,7 @@ func (s SecurityConfig) createSrcTestJava(pc ProjectConfig) error {
 
 	templateMap := map[string]string{}
 
-	if pc.AppType == WebApp {
+	if pc.ServerRenderedViews() {
 		templateMap["users/UserControllerTests.java.tmpl"] = "users/UserControllerTests.java"
 	}
 

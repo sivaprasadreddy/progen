@@ -58,7 +58,7 @@
         <spotless.version>{{ .SpotlessMavenPluginVersion }}</spotless.version>
         <archunit.version>{{ .ArchunitVersion }}</archunit.version>
         <taikai.version>{{ .TaikaiVersion }}</taikai.version>
-        {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+        {{- if .AngularSupport }}
         <frontend-maven-plugin.version>{{ .FrontendMavenPluginVersion }}</frontend-maven-plugin.version>
         <frontend-maven-plugin.nodeVersion>v{{ .NodeVersion }}</frontend-maven-plugin.nodeVersion>
         <frontend-maven-plugin.npmVersion>{{ .NpmVersion }}</frontend-maven-plugin.npmVersion>
@@ -724,7 +724,7 @@
                     </execution>
                 </executions>
             </plugin>
-            {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+            {{- if .AngularSupport }}
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>

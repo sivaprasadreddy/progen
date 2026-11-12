@@ -8,7 +8,7 @@ plugins {
     {{- if .JTESupport }}
     id "gg.jte.gradle" version "{{ .JteVersion }}"
     {{- end }}
-    {{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+    {{- if .AngularSupport }}
     id "com.github.node-gradle.node" version "{{ .GradleNodePluginVersion }}"
     {{ end }}
 }
@@ -228,7 +228,7 @@ dependencyManagement {
     }
 }
 
-{{- if eq .AppType "Spring Boot + Angular Full Stack" }}
+{{- if .AngularSupport }}
 node {
     version = "{{ .NodeVersion }}"
     npmVersion = "{{ .NpmVersion }}"

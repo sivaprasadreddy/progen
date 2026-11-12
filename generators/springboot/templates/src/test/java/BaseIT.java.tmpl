@@ -1,7 +1,7 @@
 package {{ .BasePackage }};
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-{{- if eq .AppType "Web App" }}
+{{- if .ServerRenderedViews }}
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 {{ end }}
@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(TestcontainersConfig.class)
 @ActiveProfiles("test")
-{{- if eq .AppType "Web App" }}
+{{- if .ServerRenderedViews }}
 @AutoConfigureMockMvc
 {{ end }}
 {{- if .RestApiEnabled }}
@@ -26,7 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 {{ end }}
 public abstract class BaseIT {
 
-{{- if eq .AppType "Web App" }}
+{{- if .ServerRenderedViews }}
     @Autowired
     protected MockMvcTester mvc;
 {{ end }}

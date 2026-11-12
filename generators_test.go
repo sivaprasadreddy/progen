@@ -36,14 +36,12 @@ func init() {
 
 func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 	var options = []struct {
-		appType               sb.AppType
+		frontend              sb.Frontend
 		buildTool             sb.BuildTool
 		persistenceType       sb.PersistenceType
 		dbType                sb.DatabaseType
 		migrationTool         sb.DbMigrationTool
 		SpringCloudAWSSupport bool
-		ThymeleafSupport      bool
-		JTESupport            bool
 		HTMXSupport           bool
 		EmailSupport          bool
 		RabbitMQSupport       bool
@@ -51,25 +49,25 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		OpenTelemetrySupport  bool
 		K8sSupport            bool
 	}{
-		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, false, true, true, true, true, true, true},
-		{sb.WebApp, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, false, true, false, false, false, true, true},
-		{sb.WebApp, sb.Maven, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, true, true, false, false, false, false, false},
-		{sb.WebApp, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, true, false, false, false, false, false, false},
-		{sb.RestApi, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, false, false, true, false, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false, false},
-		{sb.SpringBootAngularFullStack, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, false, false},
-		{sb.RestApi, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, false, false},
+		{sb.FrontendThymeleaf, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true, true},
+		{sb.FrontendThymeleaf, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, false, false, false, true, true},
+		{sb.FrontendJTE, sb.Maven, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, true, false, false, false, false, false},
+		{sb.FrontendJTE, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false},
+		{sb.FrontendNone, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false},
+		{sb.FrontendNone, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, true, false, false, false, false},
+		{sb.FrontendAngular, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
+		{sb.FrontendAngular, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
+		{sb.FrontendNone, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
+		{sb.FrontendNone, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false},
 	}
 
 	for _, tt := range options {
-		passed := t.Run(tt.appType.String()+"-"+tt.buildTool.String()+"-"+tt.persistenceType.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
+		passed := t.Run(tt.frontend.String()+"-"+tt.buildTool.String()+"-"+tt.persistenceType.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
 			t.Log("Generating App with Options: ", tt)
 			appName := "springboot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 
 			pc := sb.ProjectConfig{
-				AppType:               tt.appType,
+				Frontend:              tt.frontend,
 				AppName:               appName,
 				GroupID:               "com.sivalabs",
 				ArtifactID:            appName,
@@ -80,8 +78,6 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				DbType:                tt.dbType,
 				DbMigrationTool:       tt.migrationTool,
 				SpringCloudAWSSupport: tt.SpringCloudAWSSupport,
-				ThymeleafSupport:      tt.ThymeleafSupport,
-				JTESupport:            tt.JTESupport,
 				HTMXSupport:           tt.HTMXSupport,
 				EmailSupport:          tt.EmailSupport,
 				RabbitMQSupport:       tt.RabbitMQSupport,
@@ -141,7 +137,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 			appName := "my-springboot-mvn-api-" + strings.ToLower(tt.dbType.String()) + "-" + strings.ToLower(tt.migrationTool.String())
 
 			pc := sb.ProjectConfig{
-				AppType:         sb.RestApi,
+				Frontend:        sb.FrontendNone,
 				AppName:         appName,
 				GroupID:         "com.sivalabs",
 				ArtifactID:      appName,

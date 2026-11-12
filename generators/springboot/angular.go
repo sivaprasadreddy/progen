@@ -18,7 +18,7 @@ func NewAngularConfig(pg projectGenerator) *AngularConfig {
 }
 
 func (b AngularConfig) generate(pc ProjectConfig) error {
-	if pc.AppType != SpringBootAngularFullStack {
+	if !pc.AngularSupport() {
 		return nil
 	}
 	if err := b.createSrcMainJava(pc); err != nil {
