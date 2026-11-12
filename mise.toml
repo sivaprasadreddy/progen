@@ -1,0 +1,57 @@
+[tools]
+go = "1.27.4"
+
+[vars]
+main_src_dir = "."
+dist_dir = "dist"
+binary_name = "progen"
+goarches = "amd64 arm64"
+
+[tasks.default]
+description = "Run tests in short mode"
+depends = ["test"]
+
+[tasks.fmt]
+description = "Format Go source files"
+run = "go fmt ./..."
+
+[tasks.build]
+description = "Compile binaries for macOS, Linux, Windows (amd64/arm64) into dist/"
+depends = ["clean"]
+run = """
+for arch in {{vars.goarches}}; do
+  echo "Building MacOS binary ($arch)"
+  GOARCH=$arch GOOS=darwin go build -o {{vars.dist_dir}}/{{vars.binary_name}}-darwin-$arch {{vars.main_src_dir}}
+  echo "Building Linux binary ($arch)"
+  GOARCH=$arch GOOS=linux go build -o {{vars.dist_dir}}/{{vars.binary_name}}-linux-$arch {{vars.main_src_dir}}
+  echo "Building Windows binary ($arch)"
+  GOARCH=$arch GOOS=windows go build -o {{vars.dist_dir}}/{{vars.binary_name}}-windows-$arch.exe {{vars.main_src_dir}}
+done
+"""
+
+[tasks.run]
+description = "Run interactively"
+raw = true
+run = "go run main.go"
+
+[tasks.test]
+description = "Run tests in short mode (skips permutation tests)"
+depends = ["fmt"]
+run = [
+  "echo 'Run tests in short mode...'",
+  "go test -v -p 1 -short ./...",
+]
+
+[tasks.all_tests]
+description = "Run all tests including slow integration tests"
+run = [
+  "echo 'Run all tests...'",
+  "go test -v -p 1 ./...",
+]
+
+[tasks.clean]
+description = "Remove dist/"
+run = [
+  "echo 'Cleaning...'",
+  "rm -rf {{vars.dist_dir}}",
+]
