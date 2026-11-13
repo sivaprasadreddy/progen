@@ -116,7 +116,7 @@ spring.modulith.events.jdbc.schema-initialization.enabled=true
 spring.modulith.events.completion-mode=update
 spring.modulith.events.republish-outstanding-events-on-restart=true
 
-{{ if .EmailSupport }}
+{{- if .EmailSupport }}
 #### Email ####
 spring.mail.host=${EMAIL_HOST:127.0.0.1}
 spring.mail.port=${EMAIL_PORT:1025}
@@ -128,7 +128,7 @@ spring.mail.properties.mail.smtp.timeout=3000
 spring.mail.properties.mail.smtp.writetimeout=5000
 {{ end }}
 
-{{ if .RabbitMQSupport }}
+{{- if .RabbitMQSupport }}
 #### RabbitMQ ####
 spring.rabbitmq.host=${SPRING_RABBITMQ_HOST:127.0.0.1}
 spring.rabbitmq.port=${SPRING_RABBITMQ_PORT:5672}
@@ -136,14 +136,14 @@ spring.rabbitmq.username=${SPRING_RABBITMQ_USERNAME:guest}
 spring.rabbitmq.password=${SPRING_RABBITMQ_PASSWORD:guest}
 {{ end }}
 
-{{ if .RedisCachingSupport }}
+{{- if .RedisCachingSupport }}
 #### Redis Caching ####
 spring.data.redis.host=${SPRING_DATA_REDIS_HOST:127.0.0.1}
 spring.data.redis.port=${SPRING_DATA_REDIS_PORT:6379}
 spring.cache.type=redis
 {{ end }}
 
-{{ if .SpringAISupport }}
+{{- if .SpringAISupport }}
 #### Spring AI ####
 # Active chat model provider: {{ range $i, $m := .SpringAIModels }}{{ if $i }}, {{ end }}{{ $m }}{{ end }}
 spring.ai.model.chat=${SPRING_AI_MODEL_CHAT:{{ .DefaultAIChatModel }}}

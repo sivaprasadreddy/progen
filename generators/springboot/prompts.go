@@ -19,26 +19,8 @@ func GetAnswers() (ProjectConfig, error) {
 }
 
 func getProjectConfigAnswers() (*ProjectConfig, error) {
-	var frontend = FrontendNone
-
-	frontendForm := huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[Frontend]().
-				Title("Select Frontend:").
-				Options(
-					huh.NewOption("None (REST API)", FrontendNone).Selected(true),
-					huh.NewOption(FrontendThymeleaf.String(), FrontendThymeleaf),
-					huh.NewOption(FrontendJTE.String(), FrontendJTE),
-					huh.NewOption(FrontendAngular.String(), FrontendAngular),
-				).Value(&frontend),
-		),
-	)
-	if err := runForm(frontendForm); err != nil {
-		return nil, err
-	}
-
 	answers := ProjectConfig{
-		Frontend:        frontend,
+		Frontend:        FrontendNone,
 		AppName:         "myapp",
 		GroupID:         "com.mycompany",
 		ArtifactID:      "myapp",
@@ -133,9 +115,18 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 				huh.NewOption(Flyway.String(), Flyway).Selected(true),
 				huh.NewOption(Liquibase.String(), Liquibase),
 			).Value(&answers.DbMigrationTool),
+
+		huh.NewSelect[Frontend]().
+			Title("Select Frontend:").
+			Options(
+				huh.NewOption("None (REST API)", FrontendNone).Selected(true),
+				huh.NewOption(FrontendThymeleaf.String(), FrontendThymeleaf),
+				huh.NewOption(FrontendJTE.String(), FrontendJTE),
+				huh.NewOption(FrontendAngular.String(), FrontendAngular),
+			).Value(&answers.Frontend),
 	}
 
-	otherFeatureOptions := []huh.Option[string]{
+	baseFeatureOptions := []huh.Option[string]{
 		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 		huh.NewOption(FeatureEmailSupport, FeatureEmailSupport),
 		huh.NewOption(FeatureRabbitMQSupport, FeatureRabbitMQSupport),
@@ -144,14 +135,18 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		huh.NewOption(FeatureK8sSupport, FeatureK8sSupport),
 	}
 
-	if answers.ServerRenderedViews() {
-		otherFeatureOptions = append(otherFeatureOptions, huh.NewOption(FeatureHTMXSupport, FeatureHTMXSupport))
-	}
-
+	// Options depend on the selected frontend (HTMX only applies to server-rendered views),
+	// so they are recomputed whenever answers.Frontend changes.
 	otherFeaturesSelect := huh.NewMultiSelect[string]().
 		Title("Select Features:").
-		Options(otherFeatureOptions...).
-		Height(len(otherFeatureOptions) + 3).
+		OptionsFunc(func() []huh.Option[string] {
+			opts := slices.Clone(baseFeatureOptions)
+			if answers.ServerRenderedViews() {
+				opts = append(opts, huh.NewOption(FeatureHTMXSupport, FeatureHTMXSupport))
+			}
+			return opts
+		}, &answers.Frontend).
+		Height(len(baseFeatureOptions) + 4).
 		Value(&features)
 
 	var aiModels []AIModelProvider
@@ -199,7 +194,7 @@ func deriveBasePackage(groupID, artifactID string) string {
 
 func updateFeatureFlags(pc *ProjectConfig, features []string) {
 	pc.SpringCloudAWSSupport = isEnabled(features, FeatureSpringCloudAWSSupport)
-	pc.HTMXSupport = isEnabled(features, FeatureHTMXSupport)
+	pc.HTMXSupport = pc.ServerRenderedViews() && isEnabled(features, FeatureHTMXSupport)
 	pc.EmailSupport = isEnabled(features, FeatureEmailSupport)
 	pc.RabbitMQSupport = isEnabled(features, FeatureRabbitMQSupport)
 	pc.RedisCachingSupport = isEnabled(features, FeatureRedisCachingSupport)
