@@ -24,6 +24,13 @@ data:
   rabbitmq_host: "{{ .ArtifactID }}-rabbitmq-svc"
   rabbitmq_port: "5672"
 {{- end }}
+{{- if .SpringAISupport }}
+  spring_ai_model_chat: "{{ .DefaultAIChatModel }}"
+{{- end }}
+{{- if .OllamaSupport }}
+  # Point this to your Ollama server
+  ollama_base_url: "http://ollama:11434"
+{{- end }}
 {{- if .OpenTelemetrySupport }}
   metrics_export_url: "http://{{ .ArtifactID }}-otel-lgtm-svc:4318/v1/metrics"
   traces_export_url: "http://{{ .ArtifactID }}-otel-lgtm-svc:4318/v1/traces"
@@ -43,4 +50,10 @@ stringData:
 {{- if or (eq .DbType "MySQL") (eq .DbType "MariaDB") }}
   db_username: "user"
   db_password: "secret"
+{{- end }}
+{{- if .OpenAISupport }}
+  openai_api_key: "your-openai-api-key"
+{{- end }}
+{{- if .AnthropicSupport }}
+  anthropic_api_key: "your-anthropic-api-key"
 {{- end }}

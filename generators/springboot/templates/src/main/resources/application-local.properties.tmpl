@@ -21,3 +21,7 @@ gg.jte.usePrecompiledTemplates=false
 gg.jte.developmentMode=true
 gg.jte.class-directory=jte-classes
 {{- end }}
+{{- if .OllamaSupport }}
+# Pull the configured Ollama chat model on startup if it is not available locally
+spring.ai.ollama.init.pull-model-strategy=when_missing
+{{- end }}

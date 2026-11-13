@@ -143,6 +143,22 @@ spring.data.redis.port=${SPRING_DATA_REDIS_PORT:6379}
 spring.cache.type=redis
 {{ end }}
 
+{{ if .SpringAISupport }}
+#### Spring AI ####
+# Active chat model provider: {{ range $i, $m := .SpringAIModels }}{{ if $i }}, {{ end }}{{ $m }}{{ end }}
+spring.ai.model.chat=${SPRING_AI_MODEL_CHAT:{{ .DefaultAIChatModel }}}
+{{- if .OllamaSupport }}
+spring.ai.ollama.base-url=${SPRING_AI_OLLAMA_BASE_URL:http://localhost:11434}
+spring.ai.ollama.chat.model=${OLLAMA_CHAT_MODEL:llama3.2}
+{{- end }}
+{{- if .OpenAISupport }}
+spring.ai.openai.api-key=${OPENAI_API_KEY:your-openai-api-key}
+{{- end }}
+{{- if .AnthropicSupport }}
+spring.ai.anthropic.api-key=${ANTHROPIC_API_KEY:your-anthropic-api-key}
+{{- end }}
+{{ end }}
+
 #### BootUI ####
 bootui.enabled=${BOOTUI_ENABLED:off}
 bootui.mcp.enabled=${BOOTUI_MCP_ENABLED:off}

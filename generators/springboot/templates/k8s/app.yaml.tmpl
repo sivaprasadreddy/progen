@@ -86,6 +86,34 @@ spec:
                   name: {{ .ArtifactID }}-configmap
                   key: rabbitmq_port
 {{- end }}
+{{- if .SpringAISupport }}
+            - name: SPRING_AI_MODEL_CHAT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .ArtifactID }}-configmap
+                  key: spring_ai_model_chat
+{{- end }}
+{{- if .OllamaSupport }}
+            - name: SPRING_AI_OLLAMA_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .ArtifactID }}-configmap
+                  key: ollama_base_url
+{{- end }}
+{{- if .OpenAISupport }}
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .ArtifactID }}-secrets
+                  key: openai_api_key
+{{- end }}
+{{- if .AnthropicSupport }}
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .ArtifactID }}-secrets
+                  key: anthropic_api_key
+{{- end }}
 {{- if .OpenTelemetrySupport }}
             - name: TRACING_ENABLED
               value: "true"

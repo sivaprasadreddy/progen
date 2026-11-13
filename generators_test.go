@@ -48,17 +48,18 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		RedisCachingSupport   bool
 		OpenTelemetrySupport  bool
 		K8sSupport            bool
+		SpringAIModels        []sb.AIModelProvider
 	}{
-		{sb.FrontendThymeleaf, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true, true},
-		{sb.FrontendThymeleaf, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, false, false, false, true, true},
-		{sb.FrontendJTE, sb.Maven, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, true, false, false, false, false, false},
-		{sb.FrontendJTE, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false},
-		{sb.FrontendNone, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false},
-		{sb.FrontendNone, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, true, false, false, false, false},
-		{sb.FrontendAngular, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
-		{sb.FrontendAngular, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
-		{sb.FrontendNone, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false},
-		{sb.FrontendNone, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false},
+		{sb.FrontendThymeleaf, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Flyway, true, true, true, true, true, true, true, []sb.AIModelProvider{sb.AIModelOllama, sb.AIModelOpenAI, sb.AIModelAnthropic}},
+		{sb.FrontendThymeleaf, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Liquibase, true, true, false, false, false, true, true, []sb.AIModelProvider{sb.AIModelOpenAI}},
+		{sb.FrontendJTE, sb.Maven, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, true, false, false, false, false, false, []sb.AIModelProvider{sb.AIModelAnthropic}},
+		{sb.FrontendJTE, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, []sb.AIModelProvider{sb.AIModelOllama}},
+		{sb.FrontendNone, sb.Maven, sb.SpringJdbcClient, sb.MariaDB, sb.Flyway, true, false, false, false, false, false, false, nil},
+		{sb.FrontendNone, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, true, false, false, false, false, nil},
+		{sb.FrontendAngular, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, nil},
+		{sb.FrontendAngular, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, nil},
+		{sb.FrontendNone, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, nil},
+		{sb.FrontendNone, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, nil},
 	}
 
 	for _, tt := range options {
@@ -84,6 +85,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				RedisCachingSupport:   tt.RedisCachingSupport,
 				OpenTelemetrySupport:  tt.OpenTelemetrySupport,
 				K8sSupport:            tt.K8sSupport,
+				SpringAIModels:        tt.SpringAIModels,
 			}
 			err := sb.GenerateProject(pc)
 			require.NoError(t, err)

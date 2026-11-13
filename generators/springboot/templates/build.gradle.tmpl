@@ -41,6 +41,9 @@ ext {
   set("bootTcFlociVersion", "{{ .SpringBootFlociTcVersion }}")
 {{- end }}
   set("springModulithVersion", "{{ .SpringModulithVersion }}")
+{{- if .SpringAISupport }}
+  set("springAiVersion", "{{ .SpringAIVersion }}")
+{{- end }}
 {{- if or .ThymeleafSupport .JTESupport }}
   set("fontawesomeVersion", "{{ .FontAwesomeVersion }}")
 {{- end }}
@@ -143,6 +146,15 @@ dependencies {
     {{- if .RabbitMQSupport }}
     implementation "org.springframework.boot:spring-boot-starter-amqp"
     {{- end }}
+    {{- if .OllamaSupport }}
+    implementation "org.springframework.ai:spring-ai-starter-model-ollama"
+    {{- end }}
+    {{- if .OpenAISupport }}
+    implementation "org.springframework.ai:spring-ai-starter-model-openai"
+    {{- end }}
+    {{- if .AnthropicSupport }}
+    implementation "org.springframework.ai:spring-ai-starter-model-anthropic"
+    {{- end }}
     {{- if .RedisCachingSupport }}
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
     implementation "org.springframework.boot:spring-boot-starter-cache"
@@ -223,6 +235,9 @@ dependencyManagement {
     imports {
         {{- if .SpringCloudAWSSupport }}
         mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${awspringVersion}"
+        {{- end }}
+        {{- if .SpringAISupport }}
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
         {{- end }}
         mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
     }

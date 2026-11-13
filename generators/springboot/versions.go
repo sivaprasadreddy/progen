@@ -17,6 +17,7 @@ const (
 	htmxSpringBootThymeleafVersion         = "6.0.1"
 	htmxSpringBootVersion                  = "6.0.1"
 	jteVersion                             = "3.2.5"
+	springAIVersion                        = "2.0.2"
 	datasourceMicrometerSpringBootVersion  = "2.3.0"
 	jjwtVersion                            = "0.13.0"
 	bootUIVersion                          = "2.3.0"
@@ -40,6 +41,7 @@ const (
 	rabbitmqImage                          = "rabbitmq:4-management"
 	redisImage                             = "redis:8-alpine"
 	grafanaLgtmImage                       = "grafana/otel-lgtm:0.38.0"
+	ollamaImage                            = "ollama/ollama:0.40.16"
 )
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.
@@ -60,6 +62,7 @@ type Versions struct {
 	HtmxSpringBootThymeleafVersion         string
 	HtmxSpringBootVersion                  string
 	JteVersion                             string
+	SpringAIVersion                        string
 	DatasourceMicrometerSpringBootVersion  string
 	JjwtVersion                            string
 	BootUIVersion                          string
@@ -83,6 +86,7 @@ type Versions struct {
 	RabbitMQImage                          string
 	RedisImage                             string
 	GrafanaLgtmImage                       string
+	OllamaImage                            string
 }
 
 func defaultVersions() Versions {
@@ -103,6 +107,7 @@ func defaultVersions() Versions {
 		HtmxSpringBootThymeleafVersion:         htmxSpringBootThymeleafVersion,
 		HtmxSpringBootVersion:                  htmxSpringBootVersion,
 		JteVersion:                             jteVersion,
+		SpringAIVersion:                        springAIVersion,
 		DatasourceMicrometerSpringBootVersion:  datasourceMicrometerSpringBootVersion,
 		BootUIVersion:                          bootUIVersion,
 		JjwtVersion:                            jjwtVersion,
@@ -126,5 +131,6 @@ func defaultVersions() Versions {
 		RabbitMQImage:                          rabbitmqImage,
 		RedisImage:                             redisImage,
 		GrafanaLgtmImage:                       grafanaLgtmImage,
+		OllamaImage:                            ollamaImage,
 	}
 }

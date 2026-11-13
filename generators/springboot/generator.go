@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -37,6 +38,7 @@ type ProjectConfig struct {
 	RedisCachingSupport   bool
 	OpenTelemetrySupport  bool
 	K8sSupport            bool
+	SpringAIModels        []AIModelProvider
 }
 
 // RestApiEnabled reports whether REST API-specific project features should be generated.
@@ -57,6 +59,37 @@ func (pc ProjectConfig) JTESupport() bool {
 // ServerRenderedViews reports whether the app uses a server-side view template engine.
 func (pc ProjectConfig) ServerRenderedViews() bool {
 	return pc.ThymeleafSupport() || pc.JTESupport()
+}
+
+// SpringAISupport reports whether any Spring AI chat model provider is selected.
+func (pc ProjectConfig) SpringAISupport() bool {
+	return len(pc.SpringAIModels) > 0
+}
+
+// OllamaSupport reports whether the Spring AI Ollama chat model is selected.
+func (pc ProjectConfig) OllamaSupport() bool {
+	return slices.Contains(pc.SpringAIModels, AIModelOllama)
+}
+
+// OpenAISupport reports whether the Spring AI OpenAI chat model is selected.
+func (pc ProjectConfig) OpenAISupport() bool {
+	return slices.Contains(pc.SpringAIModels, AIModelOpenAI)
+}
+
+// AnthropicSupport reports whether the Spring AI Anthropic chat model is selected.
+func (pc ProjectConfig) AnthropicSupport() bool {
+	return slices.Contains(pc.SpringAIModels, AIModelAnthropic)
+}
+
+// DefaultAIChatModel returns the provider activated by default via spring.ai.model.chat.
+// It is the first selected provider in canonical order (Ollama, OpenAI, Anthropic).
+func (pc ProjectConfig) DefaultAIChatModel() AIModelProvider {
+	for _, p := range allAIModelProviders {
+		if slices.Contains(pc.SpringAIModels, p) {
+			return p
+		}
+	}
+	return ""
 }
 
 // AngularSupport reports whether an Angular frontend should be generated.
@@ -82,6 +115,7 @@ var defaultProjectConfig = ProjectConfig{
 	RedisCachingSupport:   false,
 	OpenTelemetrySupport:  false,
 	K8sSupport:            false,
+	SpringAIModels:        []AIModelProvider{},
 }
 
 func GenerateProjectFromConfigFile(configFile string) error {
@@ -172,7 +206,25 @@ func validateAndSanitize(pc ProjectConfig) ProjectConfig {
 		pc.DbMigrationTool = defaultProjectConfig.DbMigrationTool
 	}
 
+	pc.SpringAIModels = sanitizeAIModels(pc.SpringAIModels)
+
 	return pc
+}
+
+// sanitizeAIModels drops invalid or duplicate providers and returns them in canonical order.
+func sanitizeAIModels(models []AIModelProvider) []AIModelProvider {
+	for _, m := range models {
+		if !m.IsValid() {
+			fmt.Printf("WARNING: SpringAIModels entry '%s' is invalid. Valid values: %v. Ignoring it.\n", m, allAIModelProviders)
+		}
+	}
+	result := []AIModelProvider{}
+	for _, p := range allAIModelProviders {
+		if slices.Contains(models, p) {
+			result = append(result, p)
+		}
+	}
+	return result
 }
 
 func writeConfigFile(pc ProjectConfig, filePath string) error {
@@ -213,6 +265,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewEmailConfig(pg),
 		NewRabbitMQConfig(pg),
 		NewRedisCachingConfig(pg),
+		NewSpringAIConfig(pg),
 		NewDockerComposeConfig(pg),
 		NewOpenTelemetryConfig(pg),
 		NewK8sConfig(pg),

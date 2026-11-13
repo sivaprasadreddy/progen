@@ -41,6 +41,9 @@
 {{- if and .JTESupport .HTMXSupport }}
         <htmx-spring-boot.version>{{ .HtmxSpringBootVersion }}</htmx-spring-boot.version>
 {{ end }}
+{{- if .SpringAISupport }}
+        <spring-ai.version>{{ .SpringAIVersion }}</spring-ai.version>
+{{ end }}
 {{- if .RestApiEnabled }}
         <jjwt.version>{{ .JjwtVersion }}</jjwt.version>
         <springdoc-openapi.version>{{ .SpringdocOpenapiVersion }}</springdoc-openapi.version>
@@ -251,6 +254,24 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
         {{ end }}
+        {{- if .OllamaSupport }}
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-ollama</artifactId>
+        </dependency>
+        {{- end }}
+        {{- if .OpenAISupport }}
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+        {{- end }}
+        {{- if .AnthropicSupport }}
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-anthropic</artifactId>
+        </dependency>
+        {{- end }}
         {{- if .RedisCachingSupport }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -486,6 +507,15 @@
                 <scope>import</scope>
             </dependency>
         {{ end }}
+        {{- if .SpringAISupport }}
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        {{- end }}
             <dependency>
                 <groupId>org.springframework.modulith</groupId>
                 <artifactId>spring-modulith-bom</artifactId>

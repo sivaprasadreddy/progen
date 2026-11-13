@@ -154,13 +154,26 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		Height(len(otherFeatureOptions) + 3).
 		Value(&features)
 
-	inputs = append(inputs, otherFeaturesSelect)
+	var aiModels []AIModelProvider
+	aiModelOptions := make([]huh.Option[AIModelProvider], 0, len(allAIModelProviders))
+	for _, p := range allAIModelProviders {
+		aiModelOptions = append(aiModelOptions, huh.NewOption(p.Label(), p))
+	}
+	aiModelsSelect := huh.NewMultiSelect[AIModelProvider]().
+		Title("Spring AI Models (optional):").
+		Description("Select the chat model providers to integrate using Spring AI.").
+		Options(aiModelOptions...).
+		Height(len(aiModelOptions) + 4).
+		Value(&aiModels)
+
+	inputs = append(inputs, otherFeaturesSelect, aiModelsSelect)
 
 	form := huh.NewForm(huh.NewGroup(inputs...))
 	if err := runForm(form); err != nil {
 		return &answers, err
 	}
 	updateFeatureFlags(&answers, features)
+	answers.SpringAIModels = sanitizeAIModels(aiModels)
 	return &answers, nil
 }
 

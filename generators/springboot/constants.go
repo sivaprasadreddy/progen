@@ -112,3 +112,44 @@ const FeatureRabbitMQSupport = "RabbitMQ"
 const FeatureRedisCachingSupport = "Redis Caching"
 const FeatureOpenTelemetrySupport = "OpenTelemetry"
 const FeatureK8sSupport = "Kubernetes Manifests"
+
+// AIModelProvider identifies a Spring AI chat model provider.
+// The value matches the provider name used by the spring.ai.model.chat property.
+type AIModelProvider string
+
+const (
+	AIModelOllama    AIModelProvider = "ollama"
+	AIModelOpenAI    AIModelProvider = "openai"
+	AIModelAnthropic AIModelProvider = "anthropic"
+)
+
+// allAIModelProviders lists the supported providers in their canonical order.
+// The first selected provider in this order becomes the default active chat model.
+var allAIModelProviders = []AIModelProvider{AIModelOllama, AIModelOpenAI, AIModelAnthropic}
+
+func (p AIModelProvider) String() string {
+	return string(p)
+}
+
+// Label returns the human-readable provider name shown in prompts.
+func (p AIModelProvider) Label() string {
+	switch p {
+	case AIModelOllama:
+		return "Ollama"
+	case AIModelOpenAI:
+		return "OpenAI"
+	case AIModelAnthropic:
+		return "Anthropic"
+	default:
+		return string(p)
+	}
+}
+
+func (p AIModelProvider) IsValid() bool {
+	switch p {
+	case AIModelOllama, AIModelOpenAI, AIModelAnthropic:
+		return true
+	default:
+		return false
+	}
+}

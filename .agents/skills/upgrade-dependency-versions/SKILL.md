@@ -85,6 +85,7 @@ those constants. Only edit `versions.go` — never hardcode versions in template
 | htmxSpringBootThymeleafVersion | Maven Central | io.github.wimdeblauwe:htmx-spring-boot-thymeleaf |
 | htmxSpringBootVersion | Maven Central | io.github.wimdeblauwe:htmx-spring-boot |
 | jteVersion | Maven Central | gg.jte:jte-spring-boot-starter-4 (also used for the jte Maven/Gradle plugins) |
+| springAIVersion | Maven Central | org.springframework.ai:spring-ai-bom (Spring AI BOM; Ollama/OpenAI/Anthropic starters) |
 | datasourceMicrometerSpringBootVersion | Maven Central | net.ttddyy.observation:datasource-micrometer-spring-boot |
 | jjwtVersion | Maven Central | io.jsonwebtoken:jjwt-api |
 | bootUIVersion | Maven Central | com.julien-dubois.bootui:bootui-spring-boot-starter |

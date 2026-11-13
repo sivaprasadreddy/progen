@@ -57,4 +57,23 @@ $ mise run build_image
 $ mise run start
 $ mise run stop
 $ mise run restart
-```
+```{{- if .SpringAISupport }}
+
+## Spring AI
+
+This application uses [Spring AI](https://docs.spring.io/spring-ai/reference/) with the following chat model providers:
+{{- if .OllamaSupport }}
+* **Ollama** (`ollama`) - runs locally. `compose.yml` includes an `ollama` service, and the `local` profile pulls the configured model (`OLLAMA_CHAT_MODEL`, default `llama3.2`) on first use.
+{{- end }}
+{{- if .OpenAISupport }}
+* **OpenAI** (`openai`) - set the `OPENAI_API_KEY` environment variable.
+{{- end }}
+{{- if .AnthropicSupport }}
+* **Anthropic** (`anthropic`) - set the `ANTHROPIC_API_KEY` environment variable.
+{{- end }}
+
+The active chat model is selected by the `spring.ai.model.chat` property (default: `{{ .DefaultAIChatModel }}`).
+To switch providers, set the `SPRING_AI_MODEL_CHAT` environment variable to one of: {{ range $i, $m := .SpringAIModels }}{{ if $i }}, {{ end }}`{{ $m }}`{{ end }}.
+
+Use `AiChatService` (or inject `ChatClient.Builder`) to talk to the model.
+{{- end }}

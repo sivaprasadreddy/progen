@@ -1,0 +1,27 @@
+package {{ .BasePackage }}.shared.ai;
+
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.stereotype.Service;
+
+/**
+ * Thin wrapper around Spring AI's {@link ChatClient}.
+ * <p>
+ * The active chat model provider is selected by the {@code spring.ai.model.chat} property
+ * (override it with the {@code SPRING_AI_MODEL_CHAT} environment variable).
+ */
+@Service
+public class AiChatService {
+    private final ChatClient chatClient;
+
+    public AiChatService(ChatClient.Builder chatClientBuilder) {
+        this.chatClient = chatClientBuilder.build();
+    }
+
+    public String chat(String message) {
+        return chatClient.prompt().user(message).call().content();
+    }
+
+    public String chat(String systemPrompt, String message) {
+        return chatClient.prompt().system(systemPrompt).user(message).call().content();
+    }
+}

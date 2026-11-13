@@ -69,6 +69,15 @@ services:
       - "6379:6379"
   {{- end }}
 
+  {{- if .OllamaSupport }}
+  ollama:
+    image: {{ .OllamaImage }}
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+  {{- end }}
+
   {{- if .OpenTelemetrySupport }}
   grafana-lgtm:
     image: {{ .GrafanaLgtmImage }}
@@ -116,6 +125,18 @@ services:
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       {{- end }}
+      {{- if .SpringAISupport }}
+      SPRING_AI_MODEL_CHAT: ${SPRING_AI_MODEL_CHAT:-{{ .DefaultAIChatModel }}}
+      {{- end }}
+      {{- if .OllamaSupport }}
+      SPRING_AI_OLLAMA_BASE_URL: http://ollama:11434
+      {{- end }}
+      {{- if .OpenAISupport }}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-your-openai-api-key}
+      {{- end }}
+      {{- if .AnthropicSupport }}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-your-anthropic-api-key}
+      {{- end }}
       {{- if .OpenTelemetrySupport }}
       TRACING_ENABLED: true
       METRICS_EXPORT_URL: http://grafana-lgtm:4318/v1/metrics
@@ -146,9 +167,17 @@ services:
       {{- if .RedisCachingSupport }}
       - redis
       {{- end }}
+      {{- if .OllamaSupport }}
+      - ollama
+      {{- end }}
       {{- if .OpenTelemetrySupport }}
       - grafana-lgtm
       {{- end }}
     restart: unless-stopped
     profiles:
       - app
+{{- if .OllamaSupport }}
+
+volumes:
+  ollama-data:
+{{- end }}
