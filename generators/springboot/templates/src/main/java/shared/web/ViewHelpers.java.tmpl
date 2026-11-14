@@ -24,6 +24,13 @@ public final class ViewHelpers {
                 && !(authentication instanceof AnonymousAuthenticationToken);
     }
 
+    public static String username() {
+        if (!isAuthenticated()) {
+            return null;
+        }
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     public static CsrfToken csrfToken() {
         HttpServletRequest request = currentRequest();
         if (request == null) {

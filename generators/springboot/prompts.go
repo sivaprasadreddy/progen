@@ -146,7 +146,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 			}
 			return opts
 		}, &answers.Frontend).
-		Height(len(baseFeatureOptions) + 4).
+		Height(len(baseFeatureOptions) + 1).
 		Value(&features)
 
 	var aiModels []AIModelProvider
@@ -158,7 +158,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		Title("Spring AI Models (optional):").
 		Description("Select the chat model providers to integrate using Spring AI.").
 		Options(aiModelOptions...).
-		Height(len(aiModelOptions) + 4).
+		Height(len(aiModelOptions) + 1).
 		Value(&aiModels)
 
 	inputs = append(inputs, otherFeaturesSelect, aiModelsSelect)
