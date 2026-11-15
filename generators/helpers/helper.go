@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -41,7 +40,9 @@ func copyFile(tmplFS fs.FS, origin, filePath, projectName, dirName string) error
 	targetFile, _ := strings.CutPrefix(filePath, origin+"/")
 	targetFilePath := fmt.Sprintf("%s/%s/%s", projectName, dirName, targetFile)
 
-	ensureDir(targetFilePath)
+	if err := ensureDir(targetFilePath); err != nil {
+		return err
+	}
 
 	if err := os.WriteFile(targetFilePath, fileContent, FilePermission); err != nil {
 		return err
@@ -61,7 +62,9 @@ func CopyTemplateFile(tmplFS fs.FS, filePath, projectName, destFileName string) 
 	}
 	targetFilePath := fmt.Sprintf("%s/%s", projectName, destFileName)
 
-	ensureDir(targetFilePath)
+	if err := ensureDir(targetFilePath); err != nil {
+		return err
+	}
 
 	if err := os.WriteFile(targetFilePath, fileContent, FilePermission); err != nil {
 		return err
@@ -71,19 +74,17 @@ func CopyTemplateFile(tmplFS fs.FS, filePath, projectName, destFileName string) 
 }
 
 func WriteTargetFile(content []byte, targetFilePath string) error {
-	ensureDir(targetFilePath)
+	if err := ensureDir(targetFilePath); err != nil {
+		return err
+	}
 	if err := os.WriteFile(targetFilePath, content, FilePermission); err != nil {
 		return err
 	}
 	return nil
 }
 
-func ensureDir(fileName string) {
-	dirName := filepath.Dir(fileName)
-	if _, serr := os.Stat(dirName); serr != nil {
-		merr := os.MkdirAll(dirName, os.ModePerm)
-		FatalIfErr(merr)
-	}
+func ensureDir(fileName string) error {
+	return os.MkdirAll(filepath.Dir(fileName), os.ModePerm)
 }
 
 func RecreateDir(dirName string) error {
@@ -97,12 +98,10 @@ func RecreateDir(dirName string) error {
 	return nil
 }
 
-func CreateFile(filePath string) *os.File {
+func CreateFile(filePath string) (*os.File, error) {
 	parent := filepath.Dir(filePath)
 	_ = os.MkdirAll(parent, DirPermission)
-	f, err := os.Create(filePath)
-	FatalIfErr(err)
-	return f
+	return os.Create(filePath)
 }
 
 func CreateFileWithData(filePath string, data []byte) (*os.File, error) {
@@ -129,18 +128,4 @@ func ValidateApplicationName(val interface{}) error {
 		return fmt.Errorf("a directory with name '%s' already exists", appName)
 	}
 	return nil
-}
-
-func FatalIfErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func FatalIfErrOrMsg(err error, msg string) {
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Println(msg)
-	}
 }

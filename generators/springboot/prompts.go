@@ -2,13 +2,15 @@ package springboot
 
 import (
 	"errors"
-	"os"
 	"slices"
 	"strings"
 
 	"charm.land/huh/v2"
 	"github.com/sivaprasadreddy/progen/generators/helpers"
 )
+
+// ErrUserAborted is returned by GetAnswers when the user cancels the interactive prompts.
+var ErrUserAborted = huh.ErrUserAborted
 
 func GetAnswers() (ProjectConfig, error) {
 	answers, err := getProjectConfigAnswers()
@@ -173,11 +175,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 }
 
 func runForm(form *huh.Form) error {
-	err := form.Run()
-	if errors.Is(err, huh.ErrUserAborted) {
-		os.Exit(0)
-	}
-	return err
+	return form.Run()
 }
 
 func deriveBasePackage(groupID, artifactID string) string {

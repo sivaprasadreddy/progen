@@ -123,9 +123,10 @@ func GenerateProjectFromConfigFile(configFile string) error {
 		return fmt.Errorf("configFile name is empty")
 	}
 	projectConfig, err := loadConfig(configFile)
-	helpers.FatalIfErr(err)
-	err = GenerateProject(projectConfig)
-	return err
+	if err != nil {
+		return err
+	}
+	return GenerateProject(projectConfig)
 }
 
 func GenerateProject(pc ProjectConfig) error {
@@ -134,9 +135,7 @@ func GenerateProject(pc ProjectConfig) error {
 	if err := pg.generate(pc); err != nil {
 		return err
 	}
-	err := writeConfigFile(pc, pc.AppName+"/"+ProjectConfigFile)
-	helpers.FatalIfErrOrMsg(err, "Project generated successfully")
-	return err
+	return writeConfigFile(pc, pc.AppName+"/"+ProjectConfigFile)
 }
 
 func GenerateInitConfig() error {
@@ -312,11 +311,13 @@ func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targe
 	if err != nil {
 		return err
 	}
-	f := helpers.CreateFile(path.Join(".", pc.AppName, targetFilePath))
-	defer f.Close()
-	err = tmpl.Execute(f, pc)
+	f, err := helpers.CreateFile(path.Join(".", pc.AppName, targetFilePath))
 	if err != nil {
 		return err
 	}
-	return nil
+	if err := tmpl.Execute(f, pc); err != nil {
+		_ = f.Close()
+		return err
+	}
+	return f.Close()
 }

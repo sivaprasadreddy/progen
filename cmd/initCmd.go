@@ -1,7 +1,8 @@
 package cmd
 
 import (
-	"github.com/sivaprasadreddy/progen/generators/helpers"
+	"fmt"
+
 	"github.com/sivaprasadreddy/progen/generators/springboot"
 	"github.com/spf13/cobra"
 )
@@ -14,8 +15,11 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize " + springboot.ProjectConfigFile,
 	Long:  "Initialize " + springboot.ProjectConfigFile + " with default values",
-	Run: func(cmd *cobra.Command, args []string) {
-		err := springboot.GenerateInitConfig()
-		helpers.FatalIfErrOrMsg(err, "Generated "+springboot.ProjectConfigFile+" successfully")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := springboot.GenerateInitConfig(); err != nil {
+			return err
+		}
+		fmt.Println("Generated " + springboot.ProjectConfigFile + " successfully")
+		return nil
 	},
 }
