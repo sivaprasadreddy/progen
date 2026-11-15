@@ -6,7 +6,7 @@ import {{ .BasePackage }}.shared.BaseEntity;
 
 @Entity
 @Table(name = "users")
-public class UserEntity extends BaseEntity {
+class UserEntity extends BaseEntity {
 
     @Id
     {{- if eq .DbType "PostgreSQL" }}

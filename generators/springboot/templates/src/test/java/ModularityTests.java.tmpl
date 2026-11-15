@@ -1,9 +1,11 @@
 package {{ .BasePackage }};
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Order;
 import org.springframework.modulith.core.ApplicationModules;
 import org.springframework.modulith.docs.Documenter;
 
+@Order(2)
 class ModularityTests {
     private final ApplicationModules modules = ApplicationModules.of(Application.class);
 
