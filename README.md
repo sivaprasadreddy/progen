@@ -20,7 +20,7 @@ The progen generates a Spring Boot application with the following features confi
 * Persistence Frameworks: **Spring Data JPA**, **Spring JdbcClient**, **jOOQ** 
 * Databases: **PostgreSQL**, **MySQL**, **MariaDB** databases
 * Database migration Tools: [Flyway](https://www.red-gate.com/products/flyway/community/) and [Liquibase](https://www.liquibase.com/) 
-* [Angular](https://angular.dev/) with [TailwindCSS](https://tailwindcss.com/) for Single Page Apps
+* [Angular](https://angular.dev/) or [React](https://react.dev/) (with [Vite](https://vite.dev/)) and [TailwindCSS](https://tailwindcss.com/) for Single Page Apps
 * [Thymeleaf](https://www.thymeleaf.org/) or [JTE](https://jte.gg/) with [TailwindCSS](https://tailwindcss.com/) for Web Apps
 * [HTMX](https://htmx.org/) with [htmx-spring-boot](https://github.com/wimdeblauwe/htmx-spring-boot)
 * [Spring Security](https://spring.io/projects/spring-security) configuration for Web Apps

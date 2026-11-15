@@ -125,6 +125,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 				huh.NewOption(FrontendThymeleaf.String(), FrontendThymeleaf),
 				huh.NewOption(FrontendJTE.String(), FrontendJTE),
 				huh.NewOption(FrontendAngular.String(), FrontendAngular),
+				huh.NewOption(FrontendReact.String(), FrontendReact),
 			).Value(&answers.Frontend),
 	}
 

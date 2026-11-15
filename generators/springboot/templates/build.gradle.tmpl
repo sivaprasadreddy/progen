@@ -8,7 +8,7 @@ plugins {
     {{- if .JTESupport }}
     id "gg.jte.gradle" version "{{ .JteVersion }}"
     {{- end }}
-    {{- if .AngularSupport }}
+    {{- if .SPASupport }}
     id "com.github.node-gradle.node" version "{{ .GradleNodePluginVersion }}"
     {{ end }}
 }
@@ -243,7 +243,7 @@ dependencyManagement {
     }
 }
 
-{{- if .AngularSupport }}
+{{- if .SPASupport }}
 node {
     version = "{{ .NodeVersion }}"
     npmVersion = "{{ .NpmVersion }}"
@@ -271,8 +271,8 @@ tasks.register("npmBuild", com.github.gradle.node.npm.task.NpmTask) {
 tasks.named("processResources") {
     dependsOn "npmBuild"
 
-    from("frontend/dist/frontend/browser") {
-        into "build/classes/public"
+    from("frontend/{{ .FrontendDistDir }}") {
+        into "public"
     }
 }
 {{ end }}

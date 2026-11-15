@@ -58,6 +58,8 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 		{sb.FrontendNone, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Liquibase, true, false, true, false, false, false, false, nil},
 		{sb.FrontendAngular, sb.Maven, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, nil},
 		{sb.FrontendAngular, sb.Gradle, sb.SpringDataJPA, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, nil},
+		{sb.FrontendReact, sb.Maven, sb.SpringDataJPA, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, nil},
+		{sb.FrontendReact, sb.Gradle, sb.SpringJdbcClient, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, nil},
 		{sb.FrontendNone, sb.Maven, sb.SpringJOOQ, sb.PostgreSQL, sb.Flyway, false, false, false, false, false, false, false, nil},
 		{sb.FrontendNone, sb.Gradle, sb.SpringJOOQ, sb.MySQL, sb.Liquibase, false, false, false, false, false, false, false, nil},
 	}

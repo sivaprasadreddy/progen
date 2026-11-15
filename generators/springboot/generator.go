@@ -43,7 +43,7 @@ type ProjectConfig struct {
 
 // RestApiEnabled reports whether REST API-specific project features should be generated.
 func (pc ProjectConfig) RestApiEnabled() bool {
-	return pc.Frontend == FrontendNone || pc.Frontend == FrontendAngular
+	return pc.Frontend == FrontendNone || pc.SPASupport()
 }
 
 // ThymeleafSupport reports whether Thymeleaf server-rendered views should be generated.
@@ -95,6 +95,26 @@ func (pc ProjectConfig) DefaultAIChatModel() AIModelProvider {
 // AngularSupport reports whether an Angular frontend should be generated.
 func (pc ProjectConfig) AngularSupport() bool {
 	return pc.Frontend == FrontendAngular
+}
+
+// ReactSupport reports whether a React frontend should be generated.
+func (pc ProjectConfig) ReactSupport() bool {
+	return pc.Frontend == FrontendReact
+}
+
+// SPASupport reports whether a single page application frontend (Angular or React)
+// is built with npm and bundled into the Spring Boot application.
+func (pc ProjectConfig) SPASupport() bool {
+	return pc.AngularSupport() || pc.ReactSupport()
+}
+
+// FrontendDistDir returns the build output directory of the SPA frontend,
+// relative to the frontend/ directory.
+func (pc ProjectConfig) FrontendDistDir() string {
+	if pc.ReactSupport() {
+		return "dist"
+	}
+	return "dist/frontend/browser"
 }
 
 var defaultProjectConfig = ProjectConfig{
@@ -275,6 +295,7 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 		NewMiseConfig(pg),
 		NewRenovateConfig(pg),
 		NewAngularConfig(pg),
+		NewReactConfig(pg),
 		NewAIConfig(pg),
 	}
 

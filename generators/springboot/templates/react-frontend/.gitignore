@@ -1,0 +1,28 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Compiled output
+/dist
+/coverage
+*.tsbuildinfo
+
+# Node
+/node_modules
+
+# IDEs and editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.sublime-workspace
+
+# Environment files
+.env.local
+.env.*.local
+
+# System files
+.DS_Store
+Thumbs.db

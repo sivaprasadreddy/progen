@@ -15,6 +15,7 @@ const (
 	FrontendThymeleaf Frontend = "Thymeleaf"
 	FrontendJTE       Frontend = "JTE"
 	FrontendAngular   Frontend = "Angular"
+	FrontendReact     Frontend = "React"
 )
 
 func (f Frontend) String() string {
@@ -23,7 +24,7 @@ func (f Frontend) String() string {
 
 func (f Frontend) IsValid() bool {
 	switch f {
-	case FrontendNone, FrontendThymeleaf, FrontendJTE, FrontendAngular:
+	case FrontendNone, FrontendThymeleaf, FrontendJTE, FrontendAngular, FrontendReact:
 		return true
 	default:
 		return false
