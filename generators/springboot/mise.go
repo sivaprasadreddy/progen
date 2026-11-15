@@ -14,6 +14,9 @@ func NewMiseConfig(pg projectGenerator) *MiseConfig {
 }
 
 func (m MiseConfig) generate(pc ProjectConfig) error {
+	if !pc.MiseSupport() {
+		return nil
+	}
 	templateFile := "mise.gradle.toml.tmpl"
 	if pc.BuildTool == Maven {
 		templateFile = "mise.maven.toml.tmpl"

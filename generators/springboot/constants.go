@@ -106,6 +106,29 @@ func (s DbMigrationTool) IsValid() bool {
 	}
 }
 
+// TaskRunner determines the tool used to run common project tasks.
+// Mise (the default) generates mise.toml, which installs the SDKs and defines the tasks.
+// Taskfile generates Taskfile.yml along with .sdkmanrc for installing SDKs.
+type TaskRunner string
+
+const (
+	TaskRunnerTaskfile TaskRunner = "Taskfile"
+	TaskRunnerMise     TaskRunner = "Mise"
+)
+
+func (t TaskRunner) String() string {
+	return string(t)
+}
+
+func (t TaskRunner) IsValid() bool {
+	switch t {
+	case TaskRunnerTaskfile, TaskRunnerMise:
+		return true
+	default:
+		return false
+	}
+}
+
 const FeatureSpringCloudAWSSupport = "Spring Cloud AWS"
 const FeatureHTMXSupport = "HTMX"
 const FeatureEmailSupport = "Email"

@@ -9,5 +9,8 @@ func NewSdkmanConfig(pg projectGenerator) *SdkmanConfig {
 }
 
 func (t SdkmanConfig) generate(pc ProjectConfig) error {
+	if !pc.TaskfileSupport() {
+		return nil
+	}
 	return t.pg.executeTemplate(pc, "sdkmanrc.tmpl", ".sdkmanrc")
 }

@@ -38,9 +38,8 @@ The progen generates a Spring Boot application with the following features confi
 * [BootUI](https://www.julien-dubois.com/boot-ui/)
 * GitHub Actions configuration
 * Code formatting using [Spotless](https://github.com/diffplug/spotless)
-* [SDKMAN](https://sdkman.io/) configuration
 * [JUnit](https://junit.org/)
-* [Taskfile](https://taskfile.dev/) to execute commonly used commands
+* Task runner of your choice to execute commonly used commands: [mise](https://mise.jdx.dev/) (default) or [Taskfile](https://taskfile.dev/) (with [SDKMAN](https://sdkman.io/) configuration)
 * [Renovate](https://docs.renovatebot.com/) 
 
 ## Installation

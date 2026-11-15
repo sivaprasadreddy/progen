@@ -14,6 +14,9 @@ func NewTaskfileConfig(pg projectGenerator) *TaskfileConfig {
 }
 
 func (t TaskfileConfig) generate(pc ProjectConfig) error {
+	if !pc.TaskfileSupport() {
+		return nil
+	}
 	templateFile := "Taskfile.gradle.yml.tmpl"
 	if pc.BuildTool == Maven {
 		templateFile = "Taskfile.maven.yml.tmpl"

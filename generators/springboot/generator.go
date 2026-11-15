@@ -31,6 +31,7 @@ type ProjectConfig struct {
 	PersistenceType       PersistenceType
 	DbType                DatabaseType
 	DbMigrationTool       DbMigrationTool
+	TaskRunner            TaskRunner
 	SpringCloudAWSSupport bool
 	HTMXSupport           bool
 	EmailSupport          bool
@@ -39,6 +40,16 @@ type ProjectConfig struct {
 	OpenTelemetrySupport  bool
 	K8sSupport            bool
 	SpringAIModels        []AIModelProvider
+}
+
+// TaskfileSupport reports whether Taskfile (with SDKMAN) is the selected task runner.
+func (pc ProjectConfig) TaskfileSupport() bool {
+	return pc.TaskRunner == TaskRunnerTaskfile
+}
+
+// MiseSupport reports whether mise is the selected task runner.
+func (pc ProjectConfig) MiseSupport() bool {
+	return pc.TaskRunner == TaskRunnerMise
 }
 
 // RestApiEnabled reports whether REST API-specific project features should be generated.
@@ -128,6 +139,7 @@ var defaultProjectConfig = ProjectConfig{
 	PersistenceType:       SpringDataJPA,
 	DbType:                PostgreSQL,
 	DbMigrationTool:       Flyway,
+	TaskRunner:            TaskRunnerMise,
 	SpringCloudAWSSupport: false,
 	HTMXSupport:           false,
 	EmailSupport:          false,
@@ -151,6 +163,9 @@ func GenerateProjectFromConfigFile(configFile string) error {
 
 func GenerateProject(pc ProjectConfig) error {
 	pc.Versions = defaultVersions()
+	if pc.TaskRunner == "" {
+		pc.TaskRunner = defaultProjectConfig.TaskRunner
+	}
 	pg := projectGenerator{tmplFS: tmplsFS}
 	if err := pg.generate(pc); err != nil {
 		return err
@@ -223,6 +238,14 @@ func validateAndSanitize(pc ProjectConfig) ProjectConfig {
 	if !pc.DbMigrationTool.IsValid() {
 		fmt.Printf("WARNING: DbMigrationTool '%s' is invalid. Using default: %s\n", pc.DbMigrationTool, defaultProjectConfig.DbMigrationTool)
 		pc.DbMigrationTool = defaultProjectConfig.DbMigrationTool
+	}
+
+	// Validate TaskRunner; configs created before the option existed have no value.
+	if !pc.TaskRunner.IsValid() {
+		if pc.TaskRunner != "" {
+			fmt.Printf("WARNING: TaskRunner '%s' is invalid. Using default: %s\n", pc.TaskRunner, defaultProjectConfig.TaskRunner)
+		}
+		pc.TaskRunner = defaultProjectConfig.TaskRunner
 	}
 
 	pc.SpringAIModels = sanitizeAIModels(pc.SpringAIModels)

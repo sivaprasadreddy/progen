@@ -28,7 +28,7 @@ const (
 	jacocoMavenPluginVersion               = "0.8.16"
 	frontendMavenPluginVersion             = "2.0.2"
 	gradleNodePluginVersion                = "7.1.0"
-	nodeVersion                            = "24.22.3"
+	nodeVersion                            = "26.0.0"
 	npmVersion                             = "12.2.2"
 	mavenAntrunPluginVersion               = "3.2.0"
 	opentelemetryLogbackAppenderVersion    = "2.33.1-alpha"

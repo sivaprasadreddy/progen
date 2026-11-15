@@ -31,6 +31,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 		PersistenceType: SpringDataJPA,
 		DbType:          PostgreSQL,
 		DbMigrationTool: Flyway,
+		TaskRunner:      TaskRunnerMise,
 	}
 
 	identityForm := huh.NewForm(
@@ -117,6 +118,13 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 				huh.NewOption(Flyway.String(), Flyway).Selected(true),
 				huh.NewOption(Liquibase.String(), Liquibase),
 			).Value(&answers.DbMigrationTool),
+
+		huh.NewSelect[TaskRunner]().
+			Title("Task Runner:").
+			Options(
+				huh.NewOption("Mise", TaskRunnerMise).Selected(true),
+				huh.NewOption("Taskfile (with SDKMAN)", TaskRunnerTaskfile),
+			).Value(&answers.TaskRunner),
 
 		huh.NewSelect[Frontend]().
 			Title("Select Frontend:").

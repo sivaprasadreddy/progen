@@ -1,5 +1,6 @@
 [tools]
 go = "1.27.4"
+node = "26"
 
 [vars]
 main_src_dir = "."
