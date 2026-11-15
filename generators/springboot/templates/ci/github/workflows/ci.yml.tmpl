@@ -9,14 +9,16 @@ on:
     branches: [ "main", "dev", "release", "fix/*", "feat/*" ]
     paths-ignore:
       - "*.md"
+      - "docs/**"
       - ".gitignore"
       - ".gitattributes"
-      - ".sdkmanrc"
       - "README.md"
       - "LICENSE"
-      - "Taskfile.yml"
       - "renovate.json"
-      - "docs/**"
+      {{- if .TaskfileSupport }}
+      - ".sdkmanrc"
+      - "Taskfile.yml"
+      {{- end }}
 
 jobs:
   build:
@@ -24,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      {{- if .TaskfileSupport }}
 
       - name: Set up JDK
         uses: actions/setup-java@v6
@@ -36,25 +39,34 @@ jobs:
           cache: 'gradle'
           {{- end }}
 
+      - name: Install Task
+        uses: go-task/setup-task@v2
+      {{- end }}
+      {{- if .MiseSupport }}
+
+      - name: Install mise and tools
+        uses: jdx/mise-action@v5
+      {{- end }}
+
      {{- if eq .BuildTool "Maven" }}
+
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
      {{- end }}
 
      {{- if eq .BuildTool "Gradle" }}
+
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
      {{- end }}
 
-     {{- if eq .BuildTool "Maven" }}
-      - name: Build with Maven
-        run: ./mvnw -ntp verify
-     {{- end }}
-
-     {{- if eq .BuildTool "Gradle" }}
-      - name: Build with Gradle
-        run: ./gradlew build
-     {{- end }}
+      - name: Build
+        {{- if .TaskfileSupport }}
+        run: task verify
+        {{- end }}
+        {{- if .MiseSupport }}
+        run: mise run verify
+        {{- end }}
 
       - if: ${{"{{"}} github.ref == 'refs/heads/release' {{"}}"}}
         name: Login to Docker Hub
@@ -65,4 +77,9 @@ jobs:
 
       - if: ${{"{{"}} github.ref == 'refs/heads/release' {{"}}"}}
         name: Build and Publish Docker Image
+        {{- if .TaskfileSupport }}
         run: task push_image
+        {{- end }}
+        {{- if .MiseSupport }}
+        run: mise run push_image
+        {{- end }}

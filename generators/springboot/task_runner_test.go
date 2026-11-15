@@ -17,7 +17,7 @@ func generateForTaskRunner(t *testing.T, taskRunner TaskRunner) string {
 	pc.TaskRunner = taskRunner
 	pc.Versions = defaultVersions()
 	pg := projectGenerator{tmplFS: tmplsFS}
-	for _, gen := range []configGenerator{NewReadMeConfig(pg), NewSdkmanConfig(pg), NewTaskfileConfig(pg), NewMiseConfig(pg)} {
+	for _, gen := range []configGenerator{NewReadMeConfig(pg), NewSdkmanConfig(pg), NewTaskfileConfig(pg), NewMiseConfig(pg), NewGhActionsConfig(pg)} {
 		require.NoError(t, gen.generate(pc))
 	}
 	return filepath.Join(dir, pc.AppName)
@@ -34,6 +34,14 @@ func TestTaskfileRunnerGeneratesTaskfileAndSdkmanrcOnly(t *testing.T) {
 	require.Contains(t, string(readme), "## Using Taskfile")
 	require.Contains(t, string(readme), "sdk env install")
 	require.NotContains(t, string(readme), "mise")
+
+	ci, err := os.ReadFile(filepath.Join(appDir, ".github", "workflows", "ci.yml"))
+	require.NoError(t, err)
+	require.Contains(t, string(ci), "go-task/setup-task@v2")
+	require.Contains(t, string(ci), "java-version-file: .sdkmanrc")
+	require.Contains(t, string(ci), "run: task verify")
+	require.Contains(t, string(ci), "run: task push_image")
+	require.NotContains(t, string(ci), "mise")
 }
 
 func TestMiseRunnerGeneratesMiseTomlOnly(t *testing.T) {
@@ -47,6 +55,15 @@ func TestMiseRunnerGeneratesMiseTomlOnly(t *testing.T) {
 	require.Contains(t, string(readme), "## Using mise")
 	require.NotContains(t, string(readme), "Taskfile")
 	require.NotContains(t, string(readme), "sdkman")
+
+	ci, err := os.ReadFile(filepath.Join(appDir, ".github", "workflows", "ci.yml"))
+	require.NoError(t, err)
+	require.Contains(t, string(ci), "jdx/mise-action@v5")
+	require.Contains(t, string(ci), "run: mise run verify")
+	require.Contains(t, string(ci), "run: mise run push_image")
+	require.NotContains(t, string(ci), "setup-java")
+	require.NotContains(t, string(ci), "sdkmanrc")
+	require.NotContains(t, string(ci), "Taskfile")
 }
 
 func TestValidateAndSanitizeDefaultsTaskRunner(t *testing.T) {
