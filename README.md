@@ -35,12 +35,16 @@ The progen generates a Spring Boot application with the following features confi
 * [Testcontainers](https://java.testcontainers.org/) based Testing and Local Development Setup
 * [Docker Compose](https://docs.docker.com/compose/) based Local Development Setup
 * [Kubernetes](https://kubernetes.io/) manifests generation based on the selected features and databases
+* [Axelix](https://axelix.io/) Spring Boot starter and build plugin (optional, Maven and Gradle)
 * [BootUI](https://www.julien-dubois.com/boot-ui/)
 * GitHub Actions configuration
 * Code formatting using [Spotless](https://github.com/diffplug/spotless)
 * [JUnit](https://junit.org/)
 * Task runner of your choice to execute commonly used commands: [mise](https://mise.jdx.dev/) (default) or [Taskfile](https://taskfile.dev/) (with [SDKMAN](https://sdkman.io/) configuration)
 * [Renovate](https://docs.renovatebot.com/) 
+
+Enable Axelix in the interactive feature selector or set `"AxelixSupport": true` in `.progen.json`.
+The generated README includes instructions for connecting the service to Axelix Master.
 
 ## Installation
 

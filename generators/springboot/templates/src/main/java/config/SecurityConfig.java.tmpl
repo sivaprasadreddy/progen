@@ -5,6 +5,14 @@ import {{ .BasePackage }}.users.JwtFilter;
 import {{ .BasePackage }}.users.TokenHelper;
 {{ end }}
 import {{ .BasePackage }}.users.Role;
+{{- if .AxelixSupport }}
+{{- if .RestApiEnabled }}
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+{{- end }}
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+{{- end }}
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -18,6 +26,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 class SecurityConfig {
+    {{- if .AxelixSupport }}
+    {{- if .RestApiEnabled }}
+    // Keep the application JWT filter in its API security chain only.
+    @Bean
+    FilterRegistrationBean<JwtFilter> jwtFilterRegistration(JwtFilter jwtFilter) {
+        var registration = new FilterRegistrationBean<>(jwtFilter);
+        registration.setEnabled(false);
+        return registration;
+    }
+    {{- end }}
+
+    // Axelix validates Master's JWT independently of application authentication.
+    @Bean
+    @Order(0)
+    SecurityFilterChain axelixSecurityFilterChain(HttpSecurity http) {
+        http.securityMatcher("/actuator/axelix-*/**")
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .csrf(csrf -> csrf.disable());
+        return http.build();
+    }
+    {{- end }}
 
     @Bean
     public PasswordEncoder passwordEncoder() {

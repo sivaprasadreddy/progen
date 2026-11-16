@@ -38,6 +38,7 @@ type ProjectConfig struct {
 	RabbitMQSupport       bool
 	RedisCachingSupport   bool
 	OpenTelemetrySupport  bool
+	AxelixSupport         bool
 	K8sSupport            bool
 	SpringAIModels        []AIModelProvider
 }

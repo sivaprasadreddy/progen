@@ -16,6 +16,9 @@
 	<name>{{ .AppName }}</name>
 
 	<properties>
+{{- if .AxelixSupport }}
+        <axelix.version>{{ .AxelixVersion }}</axelix.version>
+{{- end }}
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>{{ .JavaVersion }}</java.version>
         <spring-modulith.version>{{ .SpringModulithVersion }}</spring-modulith.version>
@@ -73,6 +76,13 @@
 	</properties>
 
 	<dependencies>
+        {{- if .AxelixSupport }}
+        <dependency>
+            <groupId>com.axelixlabs</groupId>
+            <artifactId>axelix-spring-boot-4-starter</artifactId>
+            <version>${axelix.version}</version>
+        </dependency>
+        {{- end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -528,6 +538,20 @@
 
     <build>
         <plugins>
+            {{- if .AxelixSupport }}
+            <plugin>
+                <groupId>com.axelixlabs</groupId>
+                <artifactId>axelix-maven-plugin</artifactId>
+                <version>${axelix.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>axelix-generate-project-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            {{- end }}
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>

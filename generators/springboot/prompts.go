@@ -138,6 +138,7 @@ func getProjectConfigAnswers() (*ProjectConfig, error) {
 	}
 
 	baseFeatureOptions := []huh.Option[string]{
+		huh.NewOption(FeatureAxelixSupport, FeatureAxelixSupport),
 		huh.NewOption(FeatureSpringCloudAWSSupport, FeatureSpringCloudAWSSupport),
 		huh.NewOption(FeatureEmailSupport, FeatureEmailSupport),
 		huh.NewOption(FeatureRabbitMQSupport, FeatureRabbitMQSupport),
@@ -200,6 +201,7 @@ func deriveBasePackage(groupID, artifactID string) string {
 }
 
 func updateFeatureFlags(pc *ProjectConfig, features []string) {
+	pc.AxelixSupport = isEnabled(features, FeatureAxelixSupport)
 	pc.SpringCloudAWSSupport = isEnabled(features, FeatureSpringCloudAWSSupport)
 	pc.HTMXSupport = pc.ServerRenderedViews() && isEnabled(features, FeatureHTMXSupport)
 	pc.EmailSupport = isEnabled(features, FeatureEmailSupport)

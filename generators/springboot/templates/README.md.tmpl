@@ -89,3 +89,19 @@ $ mise run restart
 ```
 {{- end }}
 
+{{- if .AxelixSupport }}
+## Axelix
+
+This project includes the [Axelix](https://axelix.io/) Spring Boot 4 starter and build plugin.
+The plugin bundles project metadata into the application during the build.
+{{- if eq .BuildTool "Gradle" }}
+Axelix {{ .AxelixVersion }} requires Gradle's configuration cache to be disabled.
+If you enabled it globally, pass `--no-configuration-cache` to Gradle commands.
+{{- end }}
+
+Connect the service to Axelix Master using the
+[starter configuration guide](https://axelix.io/docs/start/configuring-spring-boot-starter).
+Configure the same JWT signing key and algorithm in Master and this service before deploying.
+The dedicated Spring Security filter chain delegates `/actuator/axelix-*/**` authentication to Axelix,
+which validates Master's JWT. Other endpoints use the application's security configuration.
+{{- end }}
