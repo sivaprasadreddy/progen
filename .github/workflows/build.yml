@@ -40,6 +40,7 @@ jobs:
   desktop:
     name: Build Progen Desktop app
     runs-on: macos-latest
+    needs: progen
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
