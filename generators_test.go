@@ -70,6 +70,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 			appName := "springboot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 
 			pc := sb.ProjectConfig{
+				AxelixSupport:         true,
 				Frontend:              tt.frontend,
 				AppName:               appName,
 				GroupID:               "com.sivalabs",

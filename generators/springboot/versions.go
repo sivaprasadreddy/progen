@@ -1,6 +1,7 @@
 package springboot
 
 const (
+	axelixVersion                          = "1.3.0"
 	javaVersion                            = 25
 	springBootVersion                      = "4.1.2"
 	gradleDependencyMgmtVersion            = "1.1.7"
@@ -46,6 +47,7 @@ const (
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.
 type Versions struct {
+	AxelixVersion                          string
 	JavaVersion                            int
 	SpringBootVersion                      string
 	GradleDependencyMgmtVersion            string
@@ -91,6 +93,7 @@ type Versions struct {
 
 func defaultVersions() Versions {
 	return Versions{
+		AxelixVersion:                          axelixVersion,
 		JavaVersion:                            javaVersion,
 		SpringBootVersion:                      springBootVersion,
 		GradleDependencyMgmtVersion:            gradleDependencyMgmtVersion,

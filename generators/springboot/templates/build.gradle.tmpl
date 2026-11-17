@@ -1,4 +1,7 @@
 plugins {
+    {{- if .AxelixSupport }}
+    id "com.axelixlabs.axelix" version "{{ .AxelixVersion }}"
+    {{- end }}
 	id "java"
 	id "jacoco"
 	id "org.springframework.boot" version "{{ .SpringBootVersion }}"
@@ -75,6 +78,9 @@ ext {
 }
 
 dependencies {
+    {{- if .AxelixSupport }}
+    implementation "com.axelixlabs:axelix-spring-boot-4-starter:{{ .AxelixVersion }}"
+    {{- end }}
     implementation "org.springframework.boot:spring-boot-starter-webmvc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"

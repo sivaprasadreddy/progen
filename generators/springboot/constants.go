@@ -135,6 +135,7 @@ const FeatureEmailSupport = "Email"
 const FeatureRabbitMQSupport = "RabbitMQ"
 const FeatureRedisCachingSupport = "Redis Caching"
 const FeatureOpenTelemetrySupport = "OpenTelemetry"
+const FeatureAxelixSupport = "Axelix"
 const FeatureK8sSupport = "Kubernetes Manifests"
 
 // AIModelProvider identifies a Spring AI chat model provider.
