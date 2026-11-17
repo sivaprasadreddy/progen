@@ -23,9 +23,9 @@ func TestAxelixGeneration(t *testing.T) {
 					pc.Versions = defaultVersions()
 					pc.BuildTool = buildTool
 					pc.Frontend = frontend
-					updateFeatureFlags(&pc, nil)
+					pc.SetFeatures(nil)
 					if enabled {
-						updateFeatureFlags(&pc, []string{FeatureAxelixSupport})
+						pc.SetFeatures([]string{FeatureAxelixSupport})
 					}
 					require.Equal(t, enabled, pc.AxelixSupport)
 					pg := projectGenerator{tmplFS: tmplsFS}
@@ -70,8 +70,8 @@ func TestAxelixGeneration(t *testing.T) {
 						require.NotContains(t, string(readme), "Axelix")
 					}
 					configPath := filepath.Join(pc.AppName, ProjectConfigFile)
-					require.NoError(t, writeConfigFile(pc, configPath))
-					loaded, err := loadConfig(configPath)
+					require.NoError(t, WriteConfigFile(pc, configPath))
+					loaded, _, err := LoadConfigFile(configPath)
 					require.NoError(t, err)
 					require.Equal(t, enabled, loaded.AxelixSupport)
 				})

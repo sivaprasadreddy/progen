@@ -7,7 +7,7 @@ import (
 )
 
 func TestSanitizeAIModelsDropsInvalidAndDuplicatesInCanonicalOrder(t *testing.T) {
-	got := sanitizeAIModels([]AIModelProvider{"anthropic", "bogus", "ollama", "anthropic"})
+	got := NormalizeAIModels([]AIModelProvider{"anthropic", "bogus", "ollama", "anthropic"})
 	require.Equal(t, []AIModelProvider{AIModelOllama, AIModelAnthropic}, got)
 }
 

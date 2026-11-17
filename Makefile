@@ -1,4 +1,4 @@
-MAIN_SRC_DIR=.
+MAIN_SRC_DIR=./cmd/progen
 DIST_DIR=dist
 BINARY_NAME=progen
 GOARCHES=amd64 arm64
@@ -22,7 +22,7 @@ build:
 
 # Run the application
 run:
-	@go run main.go
+	@go run ${MAIN_SRC_DIR}
 
 # Run basic tests only
 test:

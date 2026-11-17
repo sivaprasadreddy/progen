@@ -3,6 +3,7 @@ package springboot
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -33,7 +34,7 @@ func copySpaFrontend(pg projectGenerator, pc ProjectConfig, spa spaFrontend) err
 		return err
 	}
 	for _, file := range spa.titleFiles {
-		filePath := pc.AppName + "/" + frontendDir + "/" + file
+		filePath := filepath.Join(pg.projectDir(pc), frontendDir, file)
 		if err := replaceInFile(filePath, spa.defaultTitle, pc.ArtifactID); err != nil {
 			return err
 		}

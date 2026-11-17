@@ -29,6 +29,5 @@ func (m MiseConfig) generate(pc ProjectConfig) error {
 	// mise.toml uses Tera templating ({{env.X}}), so substitute manually instead of using Go templates.
 	newContent := strings.ReplaceAll(string(content), "{{ .ArtifactID }}", pc.ArtifactID)
 
-	targetFilePath := fmt.Sprintf("%s/%s", pc.AppName, "mise.toml")
-	return m.pg.writeTargetFile([]byte(newContent), targetFilePath)
+	return m.pg.writeTargetFile(pc, []byte(newContent), "mise.toml")
 }

@@ -1,13 +1,13 @@
 ---
 name: upgrade-dependency-versions
-description: Checks Maven Central, the Gradle Plugin Portal, nodejs.org and the npm registry for newer versions of the dependencies and plugins used in generated Spring Boot projects, and updates generators/springboot/versions.go. Use when asked to upgrade, bump, refresh or check dependency/plugin versions for the generated Maven (pom.xml.tmpl) or Gradle (build.gradle.tmpl) builds.
+description: Checks Maven Central, the Gradle Plugin Portal, nodejs.org and the npm registry for newer versions of the dependencies and plugins used in generated Spring Boot projects, and updates internal/generators/springboot/versions.go. Use when asked to upgrade, bump, refresh or check dependency/plugin versions for the generated Maven (pom.xml.tmpl) or Gradle (build.gradle.tmpl) builds.
 ---
 
 # Upgrade dependency versions for generated Spring Boot projects
 
-All versions rendered into `generators/springboot/templates/pom.xml.tmpl` and
-`generators/springboot/templates/build.gradle.tmpl` come from the constants in
-`generators/springboot/versions.go`. This skill finds newer releases and updates
+All versions rendered into `internal/generators/springboot/templates/pom.xml.tmpl` and
+`internal/generators/springboot/templates/build.gradle.tmpl` come from the constants in
+`internal/generators/springboot/versions.go`. This skill finds newer releases and updates
 those constants. Only edit `versions.go` — never hardcode versions in templates.
 
 ## Steps
@@ -42,7 +42,7 @@ those constants. Only edit `versions.go` — never hardcode versions in template
    - `nodeVersion` stays on the current LTS major (script already limits this);
      `npmVersion` must be compatible with that Node version.
 
-3. **Edit `generators/springboot/versions.go`** — change only the constant
+3. **Edit `internal/generators/springboot/versions.go`** — change only the constant
    values; keep alignment (`gofmt` handles it via `make fmt`).
 
 4. **Verify:**

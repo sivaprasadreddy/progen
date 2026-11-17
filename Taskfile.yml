@@ -1,7 +1,7 @@
 version: "3"
 
 vars:
-  MAIN_SRC_DIR: .
+  MAIN_SRC_DIR: ./cmd/progen
   DIST_DIR: dist
   BINARY_NAME: progen
   GOARCHES: amd64 arm64
@@ -34,7 +34,7 @@ tasks:
     desc: Run interactively
     interactive: true
     cmds:
-      - go run main.go
+      - go run {{.MAIN_SRC_DIR}}
 
   test:
     desc: Run tests in short mode (skips permutation tests)

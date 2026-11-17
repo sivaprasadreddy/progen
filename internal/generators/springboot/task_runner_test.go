@@ -69,9 +69,14 @@ func TestMiseRunnerGeneratesMiseTomlOnly(t *testing.T) {
 func TestValidateAndSanitizeDefaultsTaskRunner(t *testing.T) {
 	pc := defaultProjectConfig
 	pc.TaskRunner = ""
-	require.Equal(t, TaskRunnerMise, validateAndSanitize(pc).TaskRunner)
+	require.Equal(t, TaskRunnerMise, sanitized(pc).TaskRunner)
 	pc.TaskRunner = "bogus"
-	require.Equal(t, TaskRunnerMise, validateAndSanitize(pc).TaskRunner)
+	require.Equal(t, TaskRunnerMise, sanitized(pc).TaskRunner)
 	pc.TaskRunner = TaskRunnerTaskfile
-	require.Equal(t, TaskRunnerTaskfile, validateAndSanitize(pc).TaskRunner)
+	require.Equal(t, TaskRunnerTaskfile, sanitized(pc).TaskRunner)
+}
+
+func sanitized(pc ProjectConfig) ProjectConfig {
+	pc, _ = SanitizeConfig(pc)
+	return pc
 }

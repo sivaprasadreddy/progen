@@ -1,16 +1,17 @@
 package springboot
 
 import (
+	"context"
 	"embed"
-	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"os"
-	"path"
+	"path/filepath"
 	"slices"
-	"strings"
 	"text/template"
 
-	"github.com/sivaprasadreddy/progen/generators/helpers"
+	"github.com/sivaprasadreddy/progen/internal/generators/helpers"
 )
 
 //go:embed all:templates/*
@@ -151,135 +152,72 @@ var defaultProjectConfig = ProjectConfig{
 	SpringAIModels:        []AIModelProvider{},
 }
 
-func GenerateProjectFromConfigFile(configFile string) error {
-	if strings.TrimSpace(configFile) == "" {
-		return fmt.Errorf("configFile name is empty")
-	}
-	projectConfig, err := loadConfig(configFile)
-	if err != nil {
-		return err
-	}
-	return GenerateProject(projectConfig)
-}
-
-func GenerateProject(pc ProjectConfig) error {
-	pc.Versions = defaultVersions()
-	if pc.TaskRunner == "" {
-		pc.TaskRunner = defaultProjectConfig.TaskRunner
-	}
-	pg := projectGenerator{tmplFS: tmplsFS}
-	if err := pg.generate(pc); err != nil {
-		return err
-	}
-	return writeConfigFile(pc, pc.AppName+"/"+ProjectConfigFile)
-}
-
-func GenerateInitConfig() error {
-	return writeConfigFile(defaultProjectConfig, ProjectConfigFile)
-}
-
-func loadConfig(configFile string) (ProjectConfig, error) {
-	var config ProjectConfig
-	data, err := os.ReadFile(configFile)
-	if err != nil {
-		return config, fmt.Errorf("failed to read config file: %w", err)
-	}
-	if err := json.Unmarshal(data, &config); err != nil {
-		return config, fmt.Errorf("failed to unmarshal config file: %w", err)
-	}
-	return validateAndSanitize(config), nil
-}
-
-func validateAndSanitize(pc ProjectConfig) ProjectConfig {
-	// Validate string fields
-	if strings.TrimSpace(pc.AppName) == "" {
-		fmt.Printf("WARNING: AppName '%s' is invalid. Using default: %s\n", pc.AppName, defaultProjectConfig.AppName)
-		pc.AppName = defaultProjectConfig.AppName
-	}
-	if strings.TrimSpace(pc.GroupID) == "" {
-		fmt.Printf("WARNING: GroupID '%s' is invalid. Using default: %s\n", pc.GroupID, defaultProjectConfig.GroupID)
-		pc.GroupID = defaultProjectConfig.GroupID
-	}
-	if strings.TrimSpace(pc.ArtifactID) == "" {
-		fmt.Printf("WARNING: ArtifactID '%s' is invalid. Using default: %s\n", pc.ArtifactID, defaultProjectConfig.ArtifactID)
-		pc.ArtifactID = defaultProjectConfig.ArtifactID
-	}
-	if strings.TrimSpace(pc.AppVersion) == "" {
-		fmt.Printf("WARNING: AppVersion '%s' is invalid. Using default: %s\n", pc.AppVersion, defaultProjectConfig.AppVersion)
-		pc.AppVersion = defaultProjectConfig.AppVersion
-	}
-	if strings.TrimSpace(pc.BasePackage) == "" {
-		fmt.Printf("WARNING: BasePackage '%s' is invalid. Using default: %s\n", pc.BasePackage, defaultProjectConfig.BasePackage)
-		pc.BasePackage = defaultProjectConfig.BasePackage
-	}
-	// Validate Frontend
-	if !pc.Frontend.IsValid() {
-		fmt.Printf("WARNING: Frontend '%s' is invalid. Using default: %s\n", pc.Frontend, defaultProjectConfig.Frontend)
-		pc.Frontend = defaultProjectConfig.Frontend
-	}
-
-	// Validate BuildTool
-	if !pc.BuildTool.IsValid() {
-		fmt.Printf("WARNING: BuildTool '%s' is invalid. Using default: %s\n", pc.BuildTool, defaultProjectConfig.BuildTool)
-		pc.BuildTool = defaultProjectConfig.BuildTool
-	}
-
-	// Validate DatabaseType
-	if !pc.PersistenceType.IsValid() {
-		fmt.Printf("WARNING: PersistenceType '%s' is invalid. Using default: %s\n", pc.PersistenceType, defaultProjectConfig.PersistenceType)
-		pc.PersistenceType = defaultProjectConfig.PersistenceType
-	}
-
-	if !pc.DbType.IsValid() {
-		fmt.Printf("WARNING: DbType '%s' is invalid. Using default: %s\n", pc.DbType, defaultProjectConfig.DbType)
-		pc.DbType = defaultProjectConfig.DbType
-	}
-
-	// Validate DbMigrationTool
-	if !pc.DbMigrationTool.IsValid() {
-		fmt.Printf("WARNING: DbMigrationTool '%s' is invalid. Using default: %s\n", pc.DbMigrationTool, defaultProjectConfig.DbMigrationTool)
-		pc.DbMigrationTool = defaultProjectConfig.DbMigrationTool
-	}
-
-	// Validate TaskRunner; configs created before the option existed have no value.
-	if !pc.TaskRunner.IsValid() {
-		if pc.TaskRunner != "" {
-			fmt.Printf("WARNING: TaskRunner '%s' is invalid. Using default: %s\n", pc.TaskRunner, defaultProjectConfig.TaskRunner)
-		}
-		pc.TaskRunner = defaultProjectConfig.TaskRunner
-	}
-
-	pc.SpringAIModels = sanitizeAIModels(pc.SpringAIModels)
-
+// DefaultProjectConfig returns the configuration used when no explicit values are provided.
+func DefaultProjectConfig() ProjectConfig {
+	pc := defaultProjectConfig
+	pc.SpringAIModels = slices.Clone(defaultProjectConfig.SpringAIModels)
 	return pc
 }
 
-// sanitizeAIModels drops invalid or duplicate providers and returns them in canonical order.
-func sanitizeAIModels(models []AIModelProvider) []AIModelProvider {
-	for _, m := range models {
-		if !m.IsValid() {
-			fmt.Printf("WARNING: SpringAIModels entry '%s' is invalid. Valid values: %v. Ignoring it.\n", m, allAIModelProviders)
-		}
-	}
-	result := []AIModelProvider{}
-	for _, p := range allAIModelProviders {
-		if slices.Contains(models, p) {
-			result = append(result, p)
-		}
-	}
-	return result
+// ErrProjectDirExists is returned by Generate when the target project directory
+// already exists and GenerateOptions.Overwrite is false.
+var ErrProjectDirExists = errors.New("project directory already exists")
+
+// GenerateOptions controls where and how a project is generated.
+type GenerateOptions struct {
+	// OutputDir is the parent directory in which the project directory (named after
+	// ProjectConfig.AppName) is created. Defaults to the current working directory.
+	OutputDir string
+	// Overwrite deletes an existing project directory before generating.
+	// When false, Generate fails with ErrProjectDirExists if the directory exists.
+	Overwrite bool
+	// SkipCodeFormat skips running the build tool's code formatter after generation.
+	SkipCodeFormat bool
+	// Output receives the output of external commands run during generation
+	// (e.g. the code formatter). Defaults to io.Discard.
+	Output io.Writer
 }
 
-func writeConfigFile(pc ProjectConfig, filePath string) error {
-	data, err := json.MarshalIndent(pc, "", " ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal project config: %w", err)
+// GenerateResult describes a successfully generated project.
+type GenerateResult struct {
+	// ProjectDir is the absolute path of the generated project directory.
+	ProjectDir string
+}
+
+// Generate validates the given configuration and generates a Spring Boot project
+// in <OutputDir>/<AppName>. It never prompts, prints or terminates the process,
+// so it can be used by the CLI as well as by other frontends (e.g. a desktop app).
+// Cancelling ctx stops generation between steps and kills the code formatter.
+func Generate(ctx context.Context, pc ProjectConfig, opts GenerateOptions) (GenerateResult, error) {
+	if pc.TaskRunner == "" {
+		pc.TaskRunner = defaultProjectConfig.TaskRunner
 	}
-	_, err = helpers.CreateFileWithData(filePath, data)
-	if err != nil {
-		return fmt.Errorf("failed to write %s file: %w", ProjectConfigFile, err)
+	if err := pc.Validate(); err != nil {
+		return GenerateResult{}, err
 	}
-	return nil
+	pc.Versions = defaultVersions()
+
+	outputDir := opts.OutputDir
+	if outputDir == "" {
+		outputDir = "."
+	}
+	absOutputDir, err := filepath.Abs(outputDir)
+	if err != nil {
+		return GenerateResult{}, fmt.Errorf("resolve output directory: %w", err)
+	}
+	pg := projectGenerator{tmplFS: tmplsFS, outputDir: absOutputDir, output: opts.Output}
+	projectDir := pg.projectDir(pc)
+
+	if _, err := os.Stat(projectDir); err == nil && !opts.Overwrite {
+		return GenerateResult{}, fmt.Errorf("%w: %s", ErrProjectDirExists, projectDir)
+	}
+	if err := pg.generate(ctx, pc, !opts.SkipCodeFormat); err != nil {
+		return GenerateResult{}, err
+	}
+	if err := WriteConfigFile(pc, filepath.Join(projectDir, ProjectConfigFile)); err != nil {
+		return GenerateResult{}, err
+	}
+	return GenerateResult{ProjectDir: projectDir}, nil
 }
 
 type configGenerator interface {
@@ -288,10 +226,20 @@ type configGenerator interface {
 
 type projectGenerator struct {
 	tmplFS embed.FS
+	// outputDir is the parent directory of the generated project.
+	// When empty, the project is generated relative to the working directory.
+	outputDir string
+	// output receives the output of external commands. nil discards it.
+	output io.Writer
 }
 
-func (pg projectGenerator) generate(pc ProjectConfig) error {
-	if err := helpers.RecreateDir(pc.AppName); err != nil {
+// projectDir returns the root directory of the generated project.
+func (pg projectGenerator) projectDir(pc ProjectConfig) string {
+	return filepath.Join(pg.outputDir, pc.AppName)
+}
+
+func (pg projectGenerator) generate(ctx context.Context, pc ProjectConfig, formatCode bool) error {
+	if err := helpers.RecreateDir(pg.projectDir(pc)); err != nil {
 		return err
 	}
 
@@ -324,26 +272,33 @@ func (pg projectGenerator) generate(pc ProjectConfig) error {
 	}
 
 	for _, gen := range generators {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
 		if err := gen.generate(pc); err != nil {
 			return err
 		}
 	}
 
-	return pg.formatCode(pc)
+	if !formatCode {
+		return nil
+	}
+	return pg.formatCode(ctx, pc)
 }
 
 func (pg projectGenerator) copyTemplateDir(pc ProjectConfig, origin, dirName string) error {
 	templateDirPath := fmt.Sprintf("%s/%s", templatesRootDir, origin)
-	return helpers.CopyDir(pg.tmplFS, templateDirPath, pc.AppName, dirName)
+	return helpers.CopyDir(pg.tmplFS, templateDirPath, pg.projectDir(pc), dirName)
 }
 
 func (pg projectGenerator) copyTemplateFile(pc ProjectConfig, sourceFilePath, targetFilePath string) error {
 	templateFilePath := fmt.Sprintf("%s/%s", templatesRootDir, sourceFilePath)
-	return helpers.CopyTemplateFile(pg.tmplFS, templateFilePath, pc.AppName, targetFilePath)
+	return helpers.CopyTemplateFile(pg.tmplFS, templateFilePath, pg.projectDir(pc), targetFilePath)
 }
 
-func (pg projectGenerator) writeTargetFile(content []byte, targetFilePath string) error {
-	return helpers.WriteTargetFile(content, targetFilePath)
+// writeTargetFile writes content to targetFilePath, relative to the project directory.
+func (pg projectGenerator) writeTargetFile(pc ProjectConfig, content []byte, targetFilePath string) error {
+	return helpers.WriteTargetFile(content, filepath.Join(pg.projectDir(pc), targetFilePath))
 }
 
 func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targetFilePath string) error {
@@ -356,7 +311,7 @@ func (pg projectGenerator) executeTemplate(pc ProjectConfig, templatePath, targe
 	if err != nil {
 		return err
 	}
-	f, err := helpers.CreateFile(path.Join(".", pc.AppName, targetFilePath))
+	f, err := helpers.CreateFile(filepath.Join(pg.projectDir(pc), targetFilePath))
 	if err != nil {
 		return err
 	}

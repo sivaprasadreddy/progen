@@ -2,12 +2,10 @@ package helpers
 
 import (
 	"embed"
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 )
@@ -88,7 +86,7 @@ func ensureDir(fileName string) error {
 }
 
 func RecreateDir(dirName string) error {
-	if err := os.RemoveAll(path.Join(".", dirName)); err != nil {
+	if err := os.RemoveAll(dirName); err != nil {
 		return err
 	}
 	err := os.MkdirAll(dirName, os.ModePerm)
@@ -102,30 +100,4 @@ func CreateFile(filePath string) (*os.File, error) {
 	parent := filepath.Dir(filePath)
 	_ = os.MkdirAll(parent, DirPermission)
 	return os.Create(filePath)
-}
-
-func CreateFileWithData(filePath string, data []byte) (*os.File, error) {
-	parent := filepath.Dir(filePath)
-	_ = os.MkdirAll(parent, DirPermission)
-	f, err := os.Create(filePath)
-	if err != nil {
-		return nil, err
-	}
-	err = os.WriteFile(filePath, data, FilePermission)
-	if err != nil {
-		return nil, err
-	}
-	return f, err
-}
-
-func ValidateApplicationName(val interface{}) error {
-	str, ok := val.(string)
-	if !ok || strings.Trim(str, " ") == "" {
-		return errors.New("application name is required")
-	}
-	appName := strings.Trim(str, " ")
-	if stat, err := os.Stat(appName); err == nil && stat.IsDir() {
-		return fmt.Errorf("a directory with name '%s' already exists", appName)
-	}
-	return nil
 }

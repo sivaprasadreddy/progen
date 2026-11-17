@@ -52,7 +52,7 @@ The generated README includes instructions for connecting the service to Axelix 
 If you have Go installed on your machine, you can use the following command to install `progen`:
 
 ```shell
-$ go install github.com/sivaprasadreddy/progen@latest
+$ go install github.com/sivaprasadreddy/progen/cmd/progen@latest
 $ progen --help
 ```
 

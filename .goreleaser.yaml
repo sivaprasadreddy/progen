@@ -6,7 +6,8 @@ before:
     - go mod tidy
 
 builds:
-    - env:
+    - main: ./cmd/progen
+      env:
       - CGO_ENABLED=0
       goos:
         - darwin

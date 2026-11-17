@@ -28,6 +28,5 @@ func (t TaskfileConfig) generate(pc ProjectConfig) error {
 	}
 	newContent := strings.ReplaceAll(string(content), "{{ .ArtifactID }}", pc.ArtifactID)
 
-	targetFilePath := fmt.Sprintf("%s/%s", pc.AppName, "Taskfile.yml")
-	return t.pg.writeTargetFile([]byte(newContent), targetFilePath)
+	return t.pg.writeTargetFile(pc, []byte(newContent), "Taskfile.yml")
 }

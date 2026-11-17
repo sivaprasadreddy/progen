@@ -3,7 +3,7 @@ go = "1.27.4"
 node = "26"
 
 [vars]
-main_src_dir = "."
+main_src_dir = "./cmd/progen"
 dist_dir = "dist"
 binary_name = "progen"
 goarches = "amd64 arm64"
@@ -33,7 +33,7 @@ done
 [tasks.run]
 description = "Run interactively"
 raw = true
-run = "go run main.go"
+run = "go run {{vars.main_src_dir}}"
 
 [tasks.test]
 description = "Run tests in short mode (skips permutation tests)"

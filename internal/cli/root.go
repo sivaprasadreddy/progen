@@ -1,19 +1,26 @@
-package cmd
+package cli
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
+	"os/signal"
 
-	"github.com/sivaprasadreddy/progen/generators/springboot"
+	"charm.land/huh/v2"
+	"github.com/sivaprasadreddy/progen/internal/generators/springboot"
+	"github.com/sivaprasadreddy/progen/internal/version"
 	"github.com/spf13/cobra"
 )
 
 // Execute runs the CLI. It is the only place that terminates the process;
-// library packages under generators/ always return errors to the caller.
+// packages under internal/generators always return errors to the caller.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		if errors.Is(err, springboot.ErrUserAborted) {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
+		stop()
+		if errors.Is(err, huh.ErrUserAborted) {
 			os.Exit(0)
 		}
 		fmt.Fprintln(os.Stderr, "Error:", err)
@@ -33,7 +40,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := invokeGenerator(configFile); err != nil {
+		if err := invokeGenerator(cmd.Context(), configFile); err != nil {
 			return err
 		}
 		fmt.Println("Project generated successfully")
@@ -42,6 +49,6 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.Version = VERSION
+	rootCmd.Version = version.Version
 	rootCmd.Flags().StringP("config", "c", "", "--config "+springboot.ProjectConfigFile)
 }

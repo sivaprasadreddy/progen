@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Checks Maven Central / Gradle Plugin Portal / nodejs.org / npm registry for the
-# latest versions of the dependencies declared in generators/springboot/versions.go.
+# latest versions of the dependencies declared in internal/generators/springboot/versions.go.
 # Prints a TSV table: CONSTANT  CURRENT  LATEST  STATUS
 set -uo pipefail
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-VERSIONS_FILE="$ROOT/generators/springboot/versions.go"
+VERSIONS_FILE="$ROOT/internal/generators/springboot/versions.go"
 
 MAVEN="https://repo1.maven.org/maven2"
 GRADLE="https://plugins.gradle.org/m2"

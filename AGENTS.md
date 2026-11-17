@@ -10,7 +10,7 @@ It works offline, ships as a single binary, and uses interactive prompts or a JS
 ## Commands
 
 ```bash
-make run         # Run interactively (go run main.go)
+make run         # Run interactively (go run ./cmd/progen)
 make build       # Compile binaries for macOS, Linux, Windows → dist/
 make test        # Run tests in short mode (fast, skips permutation tests)
 make all_tests   # Run all tests including slow integration tests

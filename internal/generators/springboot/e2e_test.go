@@ -1,16 +1,18 @@
-package main
+package springboot_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
 
-	sb "github.com/sivaprasadreddy/progen/generators/springboot"
+	sb "github.com/sivaprasadreddy/progen/internal/generators/springboot"
 	"github.com/stretchr/testify/require"
 )
 
@@ -90,18 +92,15 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 				K8sSupport:            tt.K8sSupport,
 				SpringAIModels:        tt.SpringAIModels,
 			}
-			err := sb.GenerateProject(pc)
-			require.NoError(t, err)
+			projectDir := generate(t, pc)
+			var err error
 			if tt.buildTool == sb.Maven {
-				err = testGeneratedProject(appName, mvnExec, mvnTestCmd)
+				err = testGeneratedProject(projectDir, mvnExec, mvnTestCmd)
 			} else {
-				err = testGeneratedProject(appName, gradleExec, gradleTestCmd)
+				err = testGeneratedProject(projectDir, gradleExec, gradleTestCmd)
 			}
 			require.NoError(t, err)
-
-			if err == nil {
-				err = deleteDir(appName)
-			}
+			cleanup(t, projectDir)
 		})
 		if !passed {
 			t.FailNow()
@@ -155,17 +154,10 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 				EmailSupport:    true,
 				K8sSupport:      true,
 			}
-			err := sb.GenerateProject(pc)
+			projectDir := generate(t, pc)
+			err := testGeneratedProject(projectDir, mvnExec, "test")
 			require.NoError(t, err)
-			err = testGeneratedProject(appName, mvnExec, "test")
-			require.NoError(t, err)
-
-			//cleanup
-			//err = deleteDir(appName)
-			//assert.Nil(t, err)
-			if err == nil {
-				err = deleteDir(appName)
-			}
+			cleanup(t, projectDir)
 		})
 		if !passed {
 			t.FailNow()
@@ -173,23 +165,30 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 	}
 }
 
-func testGeneratedProject(dirName, executable, testCmd string) error {
-	appTestCmd := fmt.Sprintf("cd %s; %s %s;", dirName, executable, testCmd)
-	cmd := exec.Command("/bin/sh", "-c", appTestCmd)
-	if hostOS == "windows" {
-		appTestCmd = fmt.Sprintf("cd %s && %s %s", dirName, executable, testCmd)
-		cmd = exec.Command("cmd", "/C", appTestCmd)
-	}
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+// generate creates the project in a fresh directory under the OS temp dir.
+// It is not t.TempDir() so that a failing project is kept for inspection.
+func generate(t *testing.T, pc sb.ProjectConfig) string {
+	t.Helper()
+	outputDir, err := os.MkdirTemp("", "progen-e2e-")
+	require.NoError(t, err)
+	result, err := sb.Generate(context.Background(), pc, sb.GenerateOptions{OutputDir: outputDir, Output: os.Stdout})
+	require.NoError(t, err)
+	t.Log("Generated project in", result.ProjectDir)
+	return result.ProjectDir
 }
 
-func deleteDir(dirName string) error {
-	cmd := exec.Command("/bin/sh", "-c", "rm -rf "+dirName)
+// cleanup removes the generated project once its build has passed.
+func cleanup(t *testing.T, projectDir string) {
+	t.Helper()
+	require.NoError(t, os.RemoveAll(filepath.Dir(projectDir)))
+}
+
+func testGeneratedProject(projectDir, executable, testCmd string) error {
+	cmd := exec.Command(executable, testCmd)
 	if hostOS == "windows" {
-		cmd = exec.Command("cmd", "/C", "rd /s /q "+dirName)
+		cmd = exec.Command("cmd", "/C", executable, testCmd)
 	}
+	cmd.Dir = projectDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
