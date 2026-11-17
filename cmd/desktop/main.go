@@ -15,7 +15,8 @@ import (
 
 func main() {
 	// Templates and defaults live in the user data directory, e.g.
-	// ~/Library/Application Support/Progen Desktop/templates.json.
+	// ~/Library/Application Support/Progen Desktop/templates.json on macOS,
+	// %AppData%\Progen Desktop on Windows, ~/.config/Progen Desktop on Linux.
 	userData := func() (string, error) { return mygo.App.Path(mygo.PathUserData) }
 
 	mygo.App.WhenReady(func() {

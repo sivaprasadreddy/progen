@@ -44,11 +44,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-  desktop-macos:
-    name: Progen Desktop macOS app
-    # GoReleaser creates the GitHub release; Progen Desktop is uploaded to it.
-    needs: goreleaser
-    runs-on: macos-latest
+  # Progen Desktop is built for every platform, and uploaded only when every build
+  # succeeds: a release has all of its desktop archives or none of them.
+  desktop:
+    name: Progen Desktop ${{ matrix.target }}
+    needs: check-version
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - { target: macos, os: macos-latest, platform: darwin/universal }
+          # MyGo needs no cgo, so Ubuntu builds the Windows and Linux apps.
+          - { target: windows-amd64, os: ubuntu-latest, platform: windows/amd64 }
+          - { target: linux-amd64, os: ubuntu-latest, platform: linux/amd64 }
+          - { target: linux-arm64, os: ubuntu-latest, platform: linux/arm64 }
     steps:
       - uses: actions/checkout@v7
 
@@ -62,19 +71,40 @@ jobs:
           jq --arg version "${GITHUB_REF_NAME#v}" '.version = $version' mygo.json > mygo.json.tmp
           mv mygo.json.tmp mygo.json
 
-      - name: Package macOS app
-        run: go tool mygo build -platform darwin/universal -skip-dmg ./cmd/desktop
+      # Progen Desktop ships as an archive: no disk image, no Windows installer.
+      - name: Build
+        run: go tool mygo build -platform ${{ matrix.platform }} -skip-dmg -skip-installer ./cmd/desktop
 
-      - name: Archive app bundle
+      - name: Package
+        run: .github/scripts/package-desktop.sh ${{ matrix.target }} dist
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: progen-desktop-${{ matrix.target }}
+          path: dist/
+          if-no-files-found: error
+
+  desktop-upload:
+    name: Upload Progen Desktop
+    # GoReleaser creates the GitHub release; Progen Desktop is uploaded to it.
+    needs: [goreleaser, desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: progen-desktop-*
+          path: dist
+          merge-multiple: true
+
+      - name: Check every archive is there
         run: |
-          ditto -c -k --sequesterRsrc --keepParent \
-            "cmd/desktop/build/darwin-universal/Progen Desktop.app" \
-            "progen-desktop-${GITHUB_REF_NAME}-macos.zip"
+          for file in macos.zip windows-amd64.zip linux-amd64.tar.gz linux-arm64.tar.gz; do
+            test -f "dist/progen-desktop-${GITHUB_REF_NAME}-${file}" || { echo "missing progen-desktop-${GITHUB_REF_NAME}-${file}"; exit 1; }
+          done
 
       - name: Upload to the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "${GITHUB_REF_NAME}" \
-            "progen-desktop-${GITHUB_REF_NAME}-macos.zip" \
-            --clobber
+          gh release upload "${GITHUB_REF_NAME}" dist/progen-desktop-* \
+            --repo "${GITHUB_REPOSITORY}" --clobber

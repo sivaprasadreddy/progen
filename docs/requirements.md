@@ -10,6 +10,7 @@ Each requirement is a feature or use case. Status values: `COMPLETED`, `IN PROGR
 | REQ-02 | Install the CLI with `go install`, from GitHub Releases, or with Homebrew (GoReleaser formula)                   | COMPLETED |
 | REQ-03 | Ship Progen Desktop as a universal macOS app (Apple Silicon and Intel, macOS 12+), uploaded as a ZIP to each release | COMPLETED |
 | REQ-04 | Release the CLI and Progen Desktop together from one `vX.Y.Z` tag that must match `internal/version/version.go`  | COMPLETED |
+| REQ-05 | Ship Progen Desktop for Windows (amd64) and Linux (amd64, arm64), uploaded as archives to each release           | IN PROGRESS |
 
 ## 2. CLI use cases
 
@@ -34,7 +35,7 @@ Each requirement is a feature or use case. Status values: `COMPLETED`, `IN PROGR
 | DSK-06 | Save templates (a selection of every step's options), and use, update and delete them (deleting asks for confirmation)   | COMPLETED |
 | DSK-07 | Include three built-in templates: REST API, Thymeleaf + HTMX, Angular                                                    | COMPLETED |
 | DSK-08 | Let the user set the defaults for new projects (version, Group ID, build tool, task runner) and restore the built-in values | COMPLETED |
-| DSK-09 | Store templates and defaults as JSON in `~/Library/Application Support/Progen Desktop/`                                  | COMPLETED |
+| DSK-09 | Store templates and defaults as JSON in the OS user-data directory (e.g. `~/Library/Application Support/Progen Desktop/`) | COMPLETED |
 | DSK-10 | Configure security from the chosen frontend: session login for Thymeleaf/JTE, JWT for REST API, Angular and React        | COMPLETED |
 | DSK-11 | Preview the generated project (file tree and read-only file contents) from the Review step before saving the ZIP         | COMPLETED |
 

@@ -66,3 +66,37 @@ jobs:
         with:
           name: progen-desktop-darwin
           path: cmd/desktop/build/
+
+  desktop-cross:
+    name: Build Progen Desktop for ${{ matrix.target }}
+    # MyGo needs no cgo, so Ubuntu builds the Windows and Linux apps. Their tests
+    # run on macOS, in the desktop job.
+    runs-on: ubuntu-latest
+    needs: progen
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: windows-amd64, platform: windows/amd64 }
+          - { target: linux-amd64, platform: linux/amd64 }
+          - { target: linux-arm64, platform: linux/arm64 }
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # Progen Desktop ships as an archive, without a Windows installer.
+      - name: Build
+        run: go tool mygo build -platform ${{ matrix.platform }} -skip-installer ./cmd/desktop
+
+      - name: Package
+        run: .github/scripts/package-desktop.sh ${{ matrix.target }} dist
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: progen-desktop-${{ matrix.target }}
+          path: dist/

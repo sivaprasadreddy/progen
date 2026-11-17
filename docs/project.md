@@ -5,7 +5,7 @@ Progen generates production-ready Spring Boot projects. It works offline, needs 
 ## Two ways to use it
 
 - **Progen CLI** (`progen`): a single Go binary for macOS, Linux and Windows. It asks its questions as interactive prompts, or reads them from a `.progen.json` config file.
-- **Progen Desktop**: a native macOS app, built with [MyGo](https://mygo.run/), that asks the same questions in a step-by-step wizard and saves the project as a ZIP in `~/Downloads`.
+- **Progen Desktop**: a native desktop app for macOS, Windows and Linux, built with [MyGo](https://mygo.run/), that asks the same questions in a step-by-step wizard and saves the project as a ZIP in the `Downloads` folder of the user's home directory.
 
 Both use the same generator (`internal/generators/springboot`), so they produce the same projects. They are released together under one version.
 

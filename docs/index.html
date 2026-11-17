@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Progen — Spring Boot Project Generator</title>
-    <meta name="description" content="Progen is an offline-first CLI and macOS desktop app that scaffolds production-ready Spring Boot projects in seconds." />
+    <meta name="description" content="Progen is an offline-first CLI and desktop app (macOS, Windows, Linux) that scaffolds production-ready Spring Boot projects in seconds." />
     <style>
         :root {
             --bg: #f5f7f5;
@@ -351,14 +351,14 @@
         <div class="badge-row">
             <span class="pill">Offline-first</span>
             <span class="pill">Single Go binary</span>
-            <span class="pill">macOS desktop app</span>
+            <span class="pill">Desktop app for macOS, Windows &amp; Linux</span>
             <span class="pill">Apache 2.0</span>
         </div>
         <h1>Scaffold production-ready<br/>Spring Boot projects, instantly.</h1>
         <p class="lead">
             Progen generates complete Spring Boot applications — build files, Java source, tests,
             Docker Compose, CI, database migrations, security setup and more. Use the CLI with an
-            interactive prompt or a JSON config file, or the Progen Desktop wizard on macOS.
+            interactive prompt or a JSON config file, or the Progen Desktop wizard on macOS, Windows or Linux.
         </p>
         <div class="hero-actions">
             <a class="btn btn-primary" href="#install">Get Started</a>
@@ -405,7 +405,7 @@ Project generated successfully</code></pre>
 <section id="install">
     <div class="container">
         <h2>Installation</h2>
-        <p class="section-sub">Install the <code>progen</code> CLI binary, or download the Progen Desktop app for macOS.</p>
+        <p class="section-sub">Install the <code>progen</code> CLI binary, or download the Progen Desktop app for macOS, Windows or Linux.</p>
 
         <div class="tabs">
             <button class="tab-btn active" data-tab="go">Go Install</button>
@@ -441,17 +441,27 @@ progen --help</code></pre>
 
         <div class="tab-panel" id="tab-desktop">
             <p style="color: var(--text-dim); font-size: 1rem; margin-top:0;">
-                Download <code>progen-desktop-&lt;version&gt;-macos.zip</code> from the
-                <a href="https://github.com/sivaprasadreddy/progen/releases" target="_blank" rel="noopener">GitHub Releases page</a>,
-                unzip it and move <code>Progen Desktop.app</code> to your <code>Applications</code> folder.
-                It is a universal app (Apple Silicon and Intel) for macOS 12 or later, and needs a JDK on your
-                <code>PATH</code> to format the generated project.
+                Download the archive for your platform from the
+                <a href="https://github.com/sivaprasadreddy/progen/releases" target="_blank" rel="noopener">GitHub Releases page</a>.
+                On every platform the app needs a JDK on your <code>PATH</code> to format the generated project.
             </p>
+            <ul style="color: var(--text-dim);">
+                <li><strong>macOS 12+</strong> (Apple Silicon and Intel): unzip <code>progen-desktop-&lt;version&gt;-macos.zip</code>
+                    and move <code>Progen Desktop.app</code> to your <code>Applications</code> folder.</li>
+                <li><strong>Windows 10/11</strong> (x64): extract <code>progen-desktop-&lt;version&gt;-windows-amd64.zip</code>
+                    and run <code>Progen Desktop.exe</code> in the <code>Progen Desktop</code> folder.</li>
+                <li><strong>Linux</strong> (x86-64 or ARM64, with GTK 3): extract <code>progen-desktop-&lt;version&gt;-linux-amd64.tar.gz</code>
+                    (or <code>-linux-arm64</code>), then run <code>./progen-desktop</code>, or <code>sh install.sh</code> to add it to your applications menu.</li>
+            </ul>
             <div class="callout">
                 <strong>macOS Gatekeeper note:</strong> the app is not notarized, so macOS blocks it the first
                 time. Try to open it, click <em>Done</em>, then go to <em>System Settings → Privacy &amp; Security</em>
                 and click <em>Open Anyway</em>. Or remove the quarantine attribute from a terminal:
                 <code>xattr -dr com.apple.quarantine "/Applications/Progen Desktop.app"</code>
+            </div>
+            <div class="callout">
+                <strong>Windows SmartScreen note:</strong> the app is not code-signed, so Windows may show
+                “Windows protected your PC” the first time. Click <em>More info</em>, then <em>Run anyway</em>.
             </div>
         </div>
     </div>
@@ -533,7 +543,7 @@ progen --help</code></pre>
     <div class="container">
         <h2>Progen Desktop</h2>
         <p class="section-sub">
-            A native macOS app (built with <a href="https://mygo.run/" target="_blank" rel="noopener">MyGo</a>, no web view)
+            A native app for macOS, Windows and Linux (built with <a href="https://mygo.run/" target="_blank" rel="noopener">MyGo</a>, no web view)
             that uses the same generator as the CLI, so it creates the same projects — through a step-by-step wizard instead of terminal prompts.
         </p>
 
@@ -553,8 +563,9 @@ progen --help</code></pre>
         </div>
         <div class="callout">
             Click <strong>Generate</strong> on the Review step and the project is saved as
-            <code>~/Downloads/&lt;application-name&gt;.zip</code>. Templates and defaults are stored in
-            <code>~/Library/Application Support/Progen Desktop/</code>.
+            <code>&lt;application-name&gt;.zip</code> in the <code>Downloads</code> folder of your home directory.
+            Templates and defaults are stored in <code>~/Library/Application Support/Progen Desktop/</code> on macOS,
+            <code>%AppData%\Progen Desktop\</code> on Windows and <code>~/.config/Progen Desktop/</code> on Linux.
         </div>
     </div>
 </section>

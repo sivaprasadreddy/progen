@@ -1,7 +1,7 @@
 # Project Generator CLI
 A CLI tool for generating Spring Boot projects.
 
-This repository also contains **Progen Desktop**, a macOS desktop app that generates the same Spring Boot projects
+This repository also contains **Progen Desktop**, a desktop app for macOS, Windows and Linux that generates the same Spring Boot projects
 through a step-by-step wizard. See [Progen Desktop](#progen-desktop-app) below.
 
 [![Build](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml)
@@ -45,8 +45,18 @@ $ progen -c .progen.json
 > You will then be prompted to confirm that you want to open the binary. After confirming, you can run progen as usual.
 
 ### Progen Desktop App
-Progen Desktop is a native macOS app (built with [MyGo](https://mygo.run/)) that uses the same generator as the `progen` CLI.
-You can download `progen-desktop-<version>-macos.zip` from https://github.com/sivaprasadreddy/progen/releases.
+Progen Desktop is a native desktop app (built with [MyGo](https://mygo.run/)) for macOS, Windows and Linux
+that uses the same generator as the `progen` CLI.
+Download the archive for your platform from https://github.com/sivaprasadreddy/progen/releases:
+
+| Platform                         | Archive                                       |
+|----------------------------------|-----------------------------------------------|
+| macOS 12+ (Apple Silicon, Intel) | `progen-desktop-<version>-macos.zip`          |
+| Windows 10/11 (x64)              | `progen-desktop-<version>-windows-amd64.zip`  |
+| Linux (x86-64)                   | `progen-desktop-<version>-linux-amd64.tar.gz` |
+| Linux (ARM64)                    | `progen-desktop-<version>-linux-arm64.tar.gz` |
+
+See the [Progen Desktop README](cmd/desktop/README.md) for installing it on each platform.
 
 > [!IMPORTANT]
 > Progen Desktop releases are not signed with an Apple Developer ID or notarized by Apple, so macOS Gatekeeper
@@ -61,6 +71,10 @@ You can download `progen-desktop-<version>-macos.zip` from https://github.com/si
 
 On macOS 14 (Sonoma) and earlier you can instead Control-click (right-click) `Progen Desktop.app` in Finder,
 choose **Open**, and then click **Open** in the dialog.
+
+#### Allowing the app to run on Windows
+Progen Desktop releases are not code-signed, so the first time you run `Progen Desktop.exe`,
+Microsoft Defender SmartScreen may show *"Windows protected your PC"*. Click **More info**, then **Run anyway**.
 
 ## Features
 The progen generates a Spring Boot application with the following features configured:
