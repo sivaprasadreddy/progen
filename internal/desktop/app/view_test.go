@@ -16,12 +16,12 @@ import (
 
 // newTestWizard is a wizard whose templates and defaults are in a temporary
 // directory, generating with generate and running work at once.
-func newTestWizard(t *testing.T, generate func(config.GeneratorConfiguration) (string, error)) *Wizard {
+func newTestWizard(t *testing.T, generate func(config.GeneratorConfiguration) (string, []string, error)) *Wizard {
 	t.Helper()
 	dir := filepath.Join(t.TempDir(), "Progen Desktop")
 	userData := func() (string, error) { return dir, nil }
 	if generate == nil {
-		generate = func(config.GeneratorConfiguration) (string, error) { return "/tmp/demo.zip", nil }
+		generate = func(config.GeneratorConfiguration) (string, []string, error) { return "/tmp/demo.zip", nil, nil }
 	}
 	prepare := func(config.GeneratorConfiguration) (PreparedProject, error) {
 		return nil, errors.New("no preview in this test")
@@ -179,9 +179,9 @@ func TestHTMXGoesWithServerRenderedFrontends(t *testing.T) {
 
 func TestGeneratesTheSelection(t *testing.T) {
 	var generated config.GeneratorConfiguration
-	w := newTestWizard(t, func(c config.GeneratorConfiguration) (string, error) {
+	w := newTestWizard(t, func(c config.GeneratorConfiguration) (string, []string, error) {
 		generated = c
-		return "/Users/me/Downloads/orders.zip", nil
+		return "/Users/me/Downloads/orders.zip", nil, nil
 	})
 	tt := viewTester(w)
 	click(t, tt, "Get started")
@@ -223,9 +223,28 @@ func TestGeneratesTheSelection(t *testing.T) {
 	}
 }
 
+func TestShowsAGenerationWarningOnComplete(t *testing.T) {
+	w := newTestWizard(t, func(config.GeneratorConfiguration) (string, []string, error) {
+		return "/Users/me/Downloads/demo.zip", []string{"formatting its code failed"}, nil
+	})
+	tt := viewTester(w)
+	click(t, tt, "Get started")
+	for range 4 {
+		click(t, tt, "Next")
+	}
+	click(t, tt, "Generate")
+	if w.step != stepComplete || !tt.HasText("/Users/me/Downloads/demo.zip") || !tt.HasText("WARNING: formatting its code failed") {
+		t.Fatalf("warning not shown on Complete: step %d, texts %q", w.step, tt.Texts())
+	}
+	click(t, tt, "Start New")
+	if w.generationWarnings != nil {
+		t.Errorf("warnings kept after Start New: %q", w.generationWarnings)
+	}
+}
+
 func TestShowsAGenerationError(t *testing.T) {
-	w := newTestWizard(t, func(config.GeneratorConfiguration) (string, error) {
-		return "", errors.New("generate project: exit status 1")
+	w := newTestWizard(t, func(config.GeneratorConfiguration) (string, []string, error) {
+		return "", nil, errors.New("generate project: exit status 1")
 	})
 	tt := viewTester(w)
 	click(t, tt, "Get started")

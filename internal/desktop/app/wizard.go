@@ -57,8 +57,9 @@ const (
 type Wizard struct {
 	templates TemplateStore
 	defaults  DefaultsStore
-	// generate generates a project and returns the archive's path.
-	generate func(config.GeneratorConfiguration) (string, error)
+	// generate generates a project and returns the archive's path and the
+	// generation's warnings.
+	generate func(config.GeneratorConfiguration) (string, []string, error)
 	// prepare generates a project to preview before it is saved.
 	prepare func(config.GeneratorConfiguration) (PreparedProject, error)
 	// async runs work off the UI thread, then apply on it: in a goroutine
@@ -80,6 +81,9 @@ type Wizard struct {
 	downloadedPath  string
 	generationError string
 	generating      bool
+	// generationWarnings are the last generation's warnings, as a failed
+	// code formatting, shown on the Complete step.
+	generationWarnings []string
 
 	// preview is the project last prepared for the preview page, kept
 	// while the selection it was prepared from stays the same; preparing
@@ -123,10 +127,10 @@ type DefaultsStore interface {
 }
 
 // NewWizard returns a wizard on the Welcome step. generate generates a
-// project and returns the archive's path; prepare generates one to preview
+// project and returns the archive's path and warnings; prepare generates one to preview
 // and save; async runs work off the UI thread and then the func it returns
 // on it.
-func NewWizard(templates TemplateStore, defaults DefaultsStore, generate func(config.GeneratorConfiguration) (string, error),
+func NewWizard(templates TemplateStore, defaults DefaultsStore, generate func(config.GeneratorConfiguration) (string, []string, error),
 	prepare func(config.GeneratorConfiguration) (PreparedProject, error), async func(func() func())) *Wizard {
 	w := &Wizard{templates: templates, defaults: defaults, generate: generate, prepare: prepare, async: async}
 	w.projectDefaults = store.BuiltInDefaults
@@ -306,6 +310,7 @@ func (w *Wizard) startNew() {
 	w.resetSelection()
 	w.downloadedPath = ""
 	w.generationError = ""
+	w.generationWarnings = nil
 	w.generating = false
 	w.step = stepWelcome
 }
@@ -412,11 +417,14 @@ func (w *Wizard) startGenerating() {
 	w.generationError = ""
 	generate := w.generate
 	if p := w.currentPreview(); p != nil {
-		generate = func(config.GeneratorConfiguration) (string, error) { return p.project.Save() }
+		generate = func(config.GeneratorConfiguration) (string, []string, error) {
+			path, err := p.project.Save()
+			return path, p.project.Warnings(), err
+		}
 	}
 	configuration := w.configuration()
 	w.async(func() func() {
-		path, err := generate(configuration)
+		path, warnings, err := generate(configuration)
 		return func() {
 			w.generating = false
 			if err != nil {
@@ -424,6 +432,7 @@ func (w *Wizard) startGenerating() {
 				return
 			}
 			w.downloadedPath = path
+			w.generationWarnings = warnings
 			w.previewing = false
 			w.step = stepComplete
 		}

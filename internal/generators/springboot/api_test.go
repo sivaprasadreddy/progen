@@ -35,6 +35,36 @@ func TestGenerateWritesIntoOutputDirWithoutChangingWorkingDir(t *testing.T) {
 	require.Equal(t, pc.Frontend, loaded.Frontend)
 }
 
+func TestGenerateWarnsWhenCodeFormattingFails(t *testing.T) {
+	original := formatProjectCode
+	t.Cleanup(func() { formatProjectCode = original })
+	formatProjectCode = func(projectGenerator, context.Context, ProjectConfig) error {
+		return errors.New("failed to format project code: exit status 1")
+	}
+	pc := DefaultProjectConfig()
+
+	result, err := Generate(context.Background(), pc, GenerateOptions{OutputDir: t.TempDir()})
+	require.NoError(t, err)
+	require.Len(t, result.Warnings, 1)
+	require.Contains(t, result.Warnings[0], "exit status 1")
+	require.Contains(t, result.Warnings[0], "spotless")
+	require.FileExists(t, filepath.Join(result.ProjectDir, "pom.xml"))
+	require.FileExists(t, filepath.Join(result.ProjectDir, ProjectConfigFile))
+}
+
+func TestGenerateFailsWhenCancelledWhileFormatting(t *testing.T) {
+	original := formatProjectCode
+	t.Cleanup(func() { formatProjectCode = original })
+	ctx, cancel := context.WithCancel(context.Background())
+	formatProjectCode = func(projectGenerator, context.Context, ProjectConfig) error {
+		cancel()
+		return errors.New("signal: killed")
+	}
+
+	_, err := Generate(ctx, DefaultProjectConfig(), GenerateOptions{OutputDir: t.TempDir()})
+	require.ErrorIs(t, err, context.Canceled)
+}
+
 func TestGenerateRefusesExistingProjectDirUnlessOverwrite(t *testing.T) {
 	outputDir := t.TempDir()
 	pc := DefaultProjectConfig()

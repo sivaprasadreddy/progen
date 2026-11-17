@@ -182,12 +182,17 @@ type GenerateOptions struct {
 type GenerateResult struct {
 	// ProjectDir is the absolute path of the generated project directory.
 	ProjectDir string
+	// Warnings describe steps that failed without failing generation, as the
+	// code formatter when the required Java version is not installed.
+	Warnings []string
 }
 
 // Generate validates the given configuration and generates a Spring Boot project
 // in <OutputDir>/<AppName>. It never prompts, prints or terminates the process,
 // so it can be used by the CLI as well as by other frontends (e.g. a desktop app).
 // Cancelling ctx stops generation between steps and kills the code formatter.
+// A failing code formatter does not fail generation: the project is kept
+// unformatted and the failure is reported in GenerateResult.Warnings.
 func Generate(ctx context.Context, pc ProjectConfig, opts GenerateOptions) (GenerateResult, error) {
 	if pc.TaskRunner == "" {
 		pc.TaskRunner = defaultProjectConfig.TaskRunner
@@ -211,13 +216,22 @@ func Generate(ctx context.Context, pc ProjectConfig, opts GenerateOptions) (Gene
 	if _, err := os.Stat(projectDir); err == nil && !opts.Overwrite {
 		return GenerateResult{}, fmt.Errorf("%w: %s", ErrProjectDirExists, projectDir)
 	}
-	if err := pg.generate(ctx, pc, !opts.SkipCodeFormat); err != nil {
+	if err := pg.generate(ctx, pc); err != nil {
 		return GenerateResult{}, err
+	}
+	var warnings []string
+	if !opts.SkipCodeFormat {
+		if err := formatProjectCode(pg, ctx, pc); err != nil {
+			if ctxErr := ctx.Err(); ctxErr != nil {
+				return GenerateResult{}, ctxErr
+			}
+			warnings = append(warnings, codeFormatWarning(pc, err))
+		}
 	}
 	if err := WriteConfigFile(pc, filepath.Join(projectDir, ProjectConfigFile)); err != nil {
 		return GenerateResult{}, err
 	}
-	return GenerateResult{ProjectDir: projectDir}, nil
+	return GenerateResult{ProjectDir: projectDir, Warnings: warnings}, nil
 }
 
 type configGenerator interface {
@@ -238,7 +252,7 @@ func (pg projectGenerator) projectDir(pc ProjectConfig) string {
 	return filepath.Join(pg.outputDir, pc.AppName)
 }
 
-func (pg projectGenerator) generate(ctx context.Context, pc ProjectConfig, formatCode bool) error {
+func (pg projectGenerator) generate(ctx context.Context, pc ProjectConfig) error {
 	if err := helpers.RecreateDir(pg.projectDir(pc)); err != nil {
 		return err
 	}
@@ -279,11 +293,7 @@ func (pg projectGenerator) generate(ctx context.Context, pc ProjectConfig, forma
 			return err
 		}
 	}
-
-	if !formatCode {
-		return nil
-	}
-	return pg.formatCode(ctx, pc)
+	return nil
 }
 
 func (pg projectGenerator) copyTemplateDir(pc ProjectConfig, origin, dirName string) error {

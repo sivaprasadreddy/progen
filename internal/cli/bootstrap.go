@@ -29,9 +29,15 @@ func invokeGenerator(ctx context.Context, configFile string) error {
 	}
 	// The CLI has always replaced an existing project directory; interactive mode
 	// already rejects names of existing directories while prompting.
-	_, err := springboot.Generate(ctx, projectConfig, springboot.GenerateOptions{
+	result, err := springboot.Generate(ctx, projectConfig, springboot.GenerateOptions{
 		Overwrite: true,
 		Output:    os.Stdout,
 	})
-	return err
+	if err != nil {
+		return err
+	}
+	for _, w := range result.Warnings {
+		fmt.Println("WARNING: " + w)
+	}
+	return nil
 }

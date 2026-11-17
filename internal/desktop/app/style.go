@@ -358,3 +358,14 @@ func errorBox(c *ui.Context, text string) ui.Element {
 		ui.Text(c, text).FontSize(13).LineHeight(1.45).TextColor(colorDanger)
 	})
 }
+
+// warningBox is a warning in an amber box, as a failed code formatting.
+func warningBox(c *ui.Context, text string) ui.Element {
+	return ui.Column(c).Margin(14, 0, 0, 0).Padding(10, 12).Radius(8).
+		Border(1, ui.Hex("#f0d58a")).Background(ui.Hex("#fff8e6")).Children(func() {
+		ui.RichText(c,
+			ui.Span{Text: "WARNING: ", Weight: 700},
+			ui.Span{Text: text},
+		).FontSize(13).LineHeight(1.45).TextColor(ui.Hex("#8a5a00")).Selectable()
+	})
+}

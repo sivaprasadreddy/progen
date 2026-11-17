@@ -27,14 +27,18 @@ type Service struct {
 
 // GenerateProject generates a Spring Boot project for configuration, saves it
 // as a ZIP archive in the user's Downloads directory and returns the
-// archive's path.
-func (s *Service) GenerateProject(configuration config.GeneratorConfiguration) (string, error) {
+// archive's path, with the warnings of generation (see Prepared.Warnings).
+func (s *Service) GenerateProject(configuration config.GeneratorConfiguration) (string, []string, error) {
 	prepared, err := s.Prepare(configuration)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	defer prepared.Discard()
-	return prepared.Save()
+	path, err := prepared.Save()
+	if err != nil {
+		return "", nil, err
+	}
+	return path, prepared.Warnings(), nil
 }
 
 // Prepare generates a Spring Boot project for configuration into a
@@ -63,7 +67,8 @@ func (s *Service) Prepare(configuration config.GeneratorConfiguration) (*Prepare
 		_ = os.RemoveAll(workingDirectory)
 		return nil, fmt.Errorf("read generated project: %w", err)
 	}
-	return &Prepared{workingDirectory: workingDirectory, projectDirectory: result.ProjectDir, name: projectConfig.AppName, files: files}, nil
+	return &Prepared{workingDirectory: workingDirectory, projectDirectory: result.ProjectDir, name: projectConfig.AppName,
+		files: files, warnings: result.Warnings}, nil
 }
 
 // Prepared is a generated project waiting in a temporary directory to be
@@ -73,6 +78,7 @@ type Prepared struct {
 	projectDirectory string
 	name             string
 	files            []File
+	warnings         []string
 }
 
 // File is a file of a prepared project.
@@ -91,6 +97,10 @@ func (p *Prepared) Name() string { return filepath.Base(p.projectDirectory) }
 
 // Files are the project's files, in the order a directory walk finds them.
 func (p *Prepared) Files() []File { return p.files }
+
+// Warnings describe steps that failed without failing generation, as code
+// formatting when the required Java version is not installed.
+func (p *Prepared) Warnings() []string { return p.warnings }
 
 // Save archives the project as a ZIP in the user's Downloads directory,
 // named after the application with a numeric suffix if the name is taken,

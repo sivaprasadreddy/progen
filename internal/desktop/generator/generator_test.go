@@ -96,7 +96,7 @@ func TestGenerateProjectWritesZipToDownloads(t *testing.T) {
 	t.Setenv("HOME", home)
 	t.Setenv("USERPROFILE", home)
 
-	path, err := (&Service{}).GenerateProject(validConfiguration())
+	path, _, err := (&Service{}).GenerateProject(validConfiguration())
 	if err != nil {
 		t.Fatalf("generate project: %v", err)
 	}
@@ -113,7 +113,7 @@ func TestGenerateProjectWritesZipToDownloads(t *testing.T) {
 	}
 
 	// A second generation must not overwrite the first archive.
-	second, err := (&Service{}).GenerateProject(validConfiguration())
+	second, _, err := (&Service{}).GenerateProject(validConfiguration())
 	if err != nil {
 		t.Fatalf("generate second project: %v", err)
 	}

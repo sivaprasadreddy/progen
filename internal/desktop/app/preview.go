@@ -19,6 +19,9 @@ type PreparedProject interface {
 	Name() string
 	// Files are the project's files, their paths in the project directory.
 	Files() []generator.File
+	// Warnings describe steps that failed without failing generation, as
+	// code formatting.
+	Warnings() []string
 	// Save archives the project in the Downloads directory and returns the
 	// archive's path.
 	Save() (string, error)
@@ -258,6 +261,9 @@ func (w *Wizard) previewPage(c *ui.Context) {
 				w.previewFile(c, p)
 			})
 		})
+		for _, warning := range p.project.Warnings() {
+			warningBox(c, warning)
+		}
 		if w.generationError != "" {
 			errorBox(c, w.generationError)
 		}

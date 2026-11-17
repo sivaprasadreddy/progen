@@ -8,6 +8,9 @@ import (
 	"runtime"
 )
 
+// formatProjectCode runs the code formatter; tests replace it.
+var formatProjectCode = projectGenerator.formatCode
+
 func (pg projectGenerator) formatCode(ctx context.Context, pc ProjectConfig) error {
 	executable, formatCmd := pg.getCodeFormatCommand(pc.BuildTool)
 	cmd := pg.createOSCommand(ctx, executable, formatCmd)
@@ -22,6 +25,15 @@ func (pg projectGenerator) formatCode(ctx context.Context, pc ProjectConfig) err
 		return fmt.Errorf("failed to format project code: %w", err)
 	}
 	return nil
+}
+
+// codeFormatWarning explains that formatting failed with err and how to
+// format the project later.
+func codeFormatWarning(pc ProjectConfig, err error) string {
+	executable, formatCmd := projectGenerator{}.getCodeFormatCommand(pc.BuildTool)
+	return fmt.Sprintf("The project was generated, but formatting its code failed (%v). "+
+		"Formatting needs Java %d; install it, then run '%s %s' in the project directory.",
+		err, pc.JavaVersion, executable, formatCmd)
 }
 
 func (pg projectGenerator) getCodeFormatCommand(buildTool BuildTool) (executable, formatCmd string) {

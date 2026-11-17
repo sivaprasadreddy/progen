@@ -18,11 +18,13 @@ type fakeProject struct {
 	saves     int
 	saveErr   error
 	discarded bool
+	warnings  []string
 }
 
 func (p *fakeProject) Name() string            { return p.name }
 func (p *fakeProject) Files() []generator.File { return p.files }
 func (p *fakeProject) Discard()                { p.discarded = true }
+func (p *fakeProject) Warnings() []string      { return p.warnings }
 func (p *fakeProject) Save() (string, error) {
 	p.saves++
 	if p.saveErr != nil {
@@ -49,9 +51,9 @@ type previewFixture struct {
 func newPreviewFixture(t *testing.T) *previewFixture {
 	t.Helper()
 	f := &previewFixture{}
-	f.w = newTestWizard(t, func(config.GeneratorConfiguration) (string, error) {
+	f.w = newTestWizard(t, func(config.GeneratorConfiguration) (string, []string, error) {
 		f.generations++
-		return "/Users/me/Downloads/generated.zip", nil
+		return "/Users/me/Downloads/generated.zip", nil, nil
 	})
 	f.w.prepare = func(c config.GeneratorConfiguration) (PreparedProject, error) {
 		if f.prepareErr != nil {

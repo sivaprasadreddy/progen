@@ -581,6 +581,9 @@ func (w *Wizard) completeStep(c *ui.Context) {
 			ui.Text(c, "DOWNLOADED PROJECT").FontSize(9).FontWeight(700).LetterSpacing(0.72).TextColor(ui.Hex("#8b8e9b")).Margin(0, 0, 7, 0)
 			ui.Text(c, w.downloadedPath).Font("monospace").FontSize(11).LineHeight(1.5).TextColor(ui.Hex("#303242")).Selectable()
 		})
+		for _, warning := range w.generationWarnings {
+			warningBox(c, warning).FillWidth().Margin(0, 0, 25, 0)
+		}
 		if outlineButton(c, "Start New").Clicked() {
 			w.startNew()
 		}
