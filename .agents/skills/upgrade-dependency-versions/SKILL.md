@@ -99,15 +99,24 @@ those constants. Only edit `versions.go` — never hardcode versions in template
 | mavenAntrunPluginVersion | Maven Central | org.apache.maven.plugins:maven-antrun-plugin |
 | opentelemetryLogbackAppenderVersion | Maven Central | io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0 (`-alpha`) |
 | opentelemetryAPIIncubatorVersion | Maven Central | io.opentelemetry:opentelemetry-api-incubator (`-alpha`) |
-| nodeVersion | nodejs.org/dist/index.json | latest LTS in current major |
+| mavenVersion | Maven Central | org.apache.maven:apache-maven (Maven wrapper distribution, `.sdkmanrc`, `mise.toml`) |
+| mavenWrapperVersion | Maven Central | org.apache.maven.wrapper:maven-wrapper (`wrapperVersion` in `maven-wrapper.properties`) |
+| gradleVersion | services.gradle.org/versions/current | Gradle wrapper distribution, `.sdkmanrc`, `mise.toml` |
+| nodeVersion | nodejs.org/dist/index.json | latest LTS in current major (its major is also used in `mise.toml`) |
 | npmVersion | registry.npmjs.org | npm `latest` dist-tag |
 
 Manual lookup URLs:
 - Maven Central: `https://repo1.maven.org/maven2/<groupId with / >/<artifactId>/maven-metadata.xml`
 - Gradle plugin: `https://plugins.gradle.org/m2/<plugin id with / >/<plugin id>.gradle.plugin/maven-metadata.xml`
 
-Not covered: `javaVersion` and the Docker image constants (`*Image`) — change
-those only when the user explicitly asks.
+Not covered: `javaVersion`, the Docker image constants (`*Image`) and the GitHub
+Actions constants (`*ActionVersion`, used in `ci.yml.tmpl`) — change those only
+when the user explicitly asks.
+
+When bumping `mavenWrapperVersion`, also refresh the vendored `mvnw` and `mvnw.cmd`
+scripts in `templates/maven-wrapper/` (e.g. run `mvn wrapper:wrapper
+-Dtype=only-script -Dmaven=<mavenVersion>` in a scratch project and copy them over);
+they carry the wrapper version in their header.
 
 If a new constant is added to `versions.go`, add it to the `DEPS` list in
 `scripts/check-versions.sh` and to the table above.

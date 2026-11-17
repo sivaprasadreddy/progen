@@ -41,6 +41,8 @@ gradleNodePluginVersion|gradle|com.github.node-gradle.node|
 mavenAntrunPluginVersion|maven|org.apache.maven.plugins:maven-antrun-plugin|
 opentelemetryLogbackAppenderVersion|maven|io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0|alpha
 opentelemetryAPIIncubatorVersion|maven|io.opentelemetry:opentelemetry-api-incubator|alpha
+mavenVersion|maven|org.apache.maven:apache-maven|
+mavenWrapperVersion|maven|org.apache.maven.wrapper:maven-wrapper|
 LIST
 )
 
@@ -92,6 +94,11 @@ latest=$(curl -fsSL --max-time 20 https://nodejs.org/dist/index.json \
   | grep -oE '"version":"v[0-9.]+"[^}]*"lts":"[A-Za-z]+"' \
   | grep -oE 'v[0-9.]+' | sed 's/^v//' | grep -E "^${cur%%.*}\." | sort -V | tail -1)
 printf '%s\t%s\t%s\t%s\n' nodeVersion "$cur" "$latest" "$(status_of "$cur" "$latest")"
+
+# Gradle distribution (used by the Gradle wrapper, .sdkmanrc and mise.toml)
+cur=$(current_version gradleVersion)
+latest=$(curl -fsSL --max-time 20 https://services.gradle.org/versions/current | grep -oE '"version" *: *"[^"]+"' | cut -d'"' -f4)
+printf '%s\t%s\t%s\t%s\n' gradleVersion "$cur" "$latest" "$(status_of "$cur" "$latest")"
 
 # npm
 cur=$(current_version npmVersion)

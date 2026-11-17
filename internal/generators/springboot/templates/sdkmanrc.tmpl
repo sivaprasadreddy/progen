@@ -1,7 +1,7 @@
-java=25-tem
+java={{ .JavaVersion }}-tem
 {{- if eq .BuildTool "Maven" }}
-maven=3.10.1
+maven={{ .MavenVersion }}
 {{- end }}
 {{- if eq .BuildTool "Gradle" }}
-gradle=9.9.1
+gradle={{ .GradleVersion }}
 {{- end }}

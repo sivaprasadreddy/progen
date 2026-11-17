@@ -2,6 +2,7 @@ package springboot
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -27,7 +28,13 @@ func (m MiseConfig) generate(pc ProjectConfig) error {
 		return err
 	}
 	// mise.toml uses Tera templating ({{env.X}}), so substitute manually instead of using Go templates.
-	newContent := strings.ReplaceAll(string(content), "{{ .ArtifactID }}", pc.ArtifactID)
+	newContent := strings.NewReplacer(
+		"{{ .ArtifactID }}", pc.ArtifactID,
+		"{{ .JavaVersion }}", strconv.Itoa(pc.JavaVersion),
+		"{{ .MavenVersion }}", pc.MavenVersion,
+		"{{ .GradleVersion }}", pc.GradleVersion,
+		"{{ .NodeMajorVersion }}", pc.NodeMajorVersion(),
+	).Replace(string(content))
 
 	return m.pg.writeTargetFile(pc, []byte(newContent), "mise.toml")
 }

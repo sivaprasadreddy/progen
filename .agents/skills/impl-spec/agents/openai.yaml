@@ -1,0 +1,6 @@
+interface:
+  display_name: "Implement Use Case"
+  short_description: "Implement and verify one use case"
+  default_prompt: "Use $impl-spec to implement UC-001."
+policy:
+  allow_implicit_invocation: false

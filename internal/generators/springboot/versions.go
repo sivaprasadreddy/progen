@@ -1,7 +1,8 @@
 package springboot
 
+import "strings"
+
 const (
-	axelixVersion                          = "1.3.0"
 	javaVersion                            = 25
 	springBootVersion                      = "4.1.2"
 	gradleDependencyMgmtVersion            = "1.1.7"
@@ -22,6 +23,7 @@ const (
 	datasourceMicrometerSpringBootVersion  = "2.3.0"
 	jjwtVersion                            = "0.13.0"
 	bootUIVersion                          = "2.4.0"
+	axelixVersion                          = "1.3.0"
 	archunitVersion                        = "1.5.1"
 	taikaiVersion                          = "2.8.0"
 	palantirJavaFormatVersion              = "2.103.0"
@@ -34,6 +36,14 @@ const (
 	mavenAntrunPluginVersion               = "3.2.0"
 	opentelemetryLogbackAppenderVersion    = "2.33.1-alpha"
 	opentelemetryAPIIncubatorVersion       = "1.67.0-alpha"
+	mavenVersion                           = "3.10.1"
+	mavenWrapperVersion                    = "3.3.4"
+	gradleVersion                          = "9.9.1"
+	checkoutActionVersion                  = "v7"
+	setupJavaActionVersion                 = "v6"
+	setupTaskActionVersion                 = "v2"
+	miseActionVersion                      = "v5"
+	dockerLoginActionVersion               = "v4"
 	postgresImage                          = "postgres:18-alpine"
 	mysqlImage                             = "mysql:9"
 	mariadbImage                           = "mariadb:12"
@@ -47,7 +57,6 @@ const (
 
 // Versions holds all third-party dependency and plugin versions used in generated projects.
 type Versions struct {
-	AxelixVersion                          string
 	JavaVersion                            int
 	SpringBootVersion                      string
 	GradleDependencyMgmtVersion            string
@@ -68,6 +77,7 @@ type Versions struct {
 	DatasourceMicrometerSpringBootVersion  string
 	JjwtVersion                            string
 	BootUIVersion                          string
+	AxelixVersion                          string
 	ArchunitVersion                        string
 	TaikaiVersion                          string
 	PalantirJavaFormatVersion              string
@@ -80,6 +90,14 @@ type Versions struct {
 	MavenAntrunPluginVersion               string
 	OpenTelemetryLogbackAppenderVersion    string
 	OpenTelemetryAPIIncubatorVersion       string
+	MavenVersion                           string
+	MavenWrapperVersion                    string
+	GradleVersion                          string
+	CheckoutActionVersion                  string
+	SetupJavaActionVersion                 string
+	SetupTaskActionVersion                 string
+	MiseActionVersion                      string
+	DockerLoginActionVersion               string
 	PostgresImage                          string
 	MysqlImage                             string
 	MariadbImage                           string
@@ -93,7 +111,6 @@ type Versions struct {
 
 func defaultVersions() Versions {
 	return Versions{
-		AxelixVersion:                          axelixVersion,
 		JavaVersion:                            javaVersion,
 		SpringBootVersion:                      springBootVersion,
 		GradleDependencyMgmtVersion:            gradleDependencyMgmtVersion,
@@ -113,6 +130,7 @@ func defaultVersions() Versions {
 		SpringAIVersion:                        springAIVersion,
 		DatasourceMicrometerSpringBootVersion:  datasourceMicrometerSpringBootVersion,
 		BootUIVersion:                          bootUIVersion,
+		AxelixVersion:                          axelixVersion,
 		JjwtVersion:                            jjwtVersion,
 		ArchunitVersion:                        archunitVersion,
 		TaikaiVersion:                          taikaiVersion,
@@ -126,6 +144,14 @@ func defaultVersions() Versions {
 		MavenAntrunPluginVersion:               mavenAntrunPluginVersion,
 		OpenTelemetryLogbackAppenderVersion:    opentelemetryLogbackAppenderVersion,
 		OpenTelemetryAPIIncubatorVersion:       opentelemetryAPIIncubatorVersion,
+		MavenVersion:                           mavenVersion,
+		MavenWrapperVersion:                    mavenWrapperVersion,
+		GradleVersion:                          gradleVersion,
+		CheckoutActionVersion:                  checkoutActionVersion,
+		SetupJavaActionVersion:                 setupJavaActionVersion,
+		SetupTaskActionVersion:                 setupTaskActionVersion,
+		MiseActionVersion:                      miseActionVersion,
+		DockerLoginActionVersion:               dockerLoginActionVersion,
 		PostgresImage:                          postgresImage,
 		MysqlImage:                             mysqlImage,
 		MariadbImage:                           mariadbImage,
@@ -136,4 +162,11 @@ func defaultVersions() Versions {
 		GrafanaLgtmImage:                       grafanaLgtmImage,
 		OllamaImage:                            ollamaImage,
 	}
+}
+
+// NodeMajorVersion returns the major line of NodeVersion (e.g. "26"), used where
+// tools pick the latest release of that line, such as mise.toml.
+func (v Versions) NodeMajorVersion() string {
+	major, _, _ := strings.Cut(v.NodeVersion, ".")
+	return major
 }

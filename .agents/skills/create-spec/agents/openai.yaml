@@ -1,0 +1,6 @@
+interface:
+  display_name: "Create Spec for a UseCase"
+  short_description: "Create spec from a UseCase ID in docs/requirements.md or user input"
+  default_prompt: "Use $create-spec to generate docs/specs/{uc-no}-{uc-title}.md from a feature description or a UseCase ID from docs/requirements.md."
+policy:
+  allow_implicit_invocation: false

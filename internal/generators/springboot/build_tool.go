@@ -32,13 +32,19 @@ func (b BuildToolConfig) createMavenBuildFiles(pc ProjectConfig) error {
 }
 
 func (b BuildToolConfig) createMavenWrapper(pc ProjectConfig) error {
-	return b.pg.copyTemplateDir(pc, "maven-wrapper", "")
+	if err := b.pg.copyTemplateDir(pc, "maven-wrapper", ""); err != nil {
+		return err
+	}
+	return b.pg.executeTemplate(pc, "maven-wrapper.properties.tmpl", ".mvn/wrapper/maven-wrapper.properties")
 }
 
 /** Gradle Functions **/
 
 func (b BuildToolConfig) createGradleWrapper(pc ProjectConfig) error {
-	return b.pg.copyTemplateDir(pc, "gradle-wrapper", "")
+	if err := b.pg.copyTemplateDir(pc, "gradle-wrapper", ""); err != nil {
+		return err
+	}
+	return b.pg.executeTemplate(pc, "gradle-wrapper.properties.tmpl", "gradle/wrapper/gradle-wrapper.properties")
 }
 
 func (b BuildToolConfig) createGradleBuildFiles(pc ProjectConfig) error {

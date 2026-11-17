@@ -1,7 +1,7 @@
 [tools]
-java = "temurin-25"
-maven = "3.10.1"
-node = "26"
+java = "temurin-{{ .JavaVersion }}"
+maven = "{{ .MavenVersion }}"
+node = "{{ .NodeMajorVersion }}"
 
 [settings]
 lockfile = true

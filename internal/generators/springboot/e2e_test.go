@@ -68,7 +68,7 @@ func TestGenerateSpringBootWithAllFeatures(t *testing.T) {
 
 	for _, tt := range options {
 		passed := t.Run(tt.frontend.String()+"-"+tt.buildTool.String()+"-"+tt.persistenceType.String()+"-"+tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
-			t.Log("Generating App with Options: ", tt)
+			t.Logf("Generating App with Options: %+v", tt)
 			appName := "springboot-demo-" + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 
 			pc := sb.ProjectConfig{
@@ -137,7 +137,7 @@ func TestGenerateSpringBootMavenRestApiWithPermutations(t *testing.T) {
 
 	for _, tt := range options {
 		passed := t.Run(tt.dbType.String()+"-"+tt.migrationTool.String(), func(t *testing.T) {
-			t.Log("Generating App with Options: ", tt)
+			t.Logf("Generating App with Options: %+v", tt)
 			appName := "my-springboot-mvn-api-" + strings.ToLower(tt.dbType.String()) + "-" + strings.ToLower(tt.migrationTool.String())
 
 			pc := sb.ProjectConfig{

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Progen — Spring Boot Project Generator CLI</title>
-    <meta name="description" content="Progen is an offline-first CLI tool that scaffolds production-ready Spring Boot projects in seconds." />
+    <title>Progen — Spring Boot Project Generator</title>
+    <meta name="description" content="Progen is an offline-first CLI and macOS desktop app that scaffolds production-ready Spring Boot projects in seconds." />
     <style>
         :root {
             --bg: #f5f7f5;
@@ -339,6 +339,7 @@
             <a href="#what-is">What is it</a>
             <a href="#install">Install</a>
             <a href="#usage">Usage</a>
+            <a href="#desktop">Desktop App</a>
             <a href="#features">Features</a>
         </nav>
         <a class="gh-btn" href="https://github.com/sivaprasadreddy/progen" target="_blank" rel="noopener">★ GitHub</a>
@@ -350,13 +351,14 @@
         <div class="badge-row">
             <span class="pill">Offline-first</span>
             <span class="pill">Single Go binary</span>
+            <span class="pill">macOS desktop app</span>
             <span class="pill">Apache 2.0</span>
         </div>
         <h1>Scaffold production-ready<br/>Spring Boot projects, instantly.</h1>
         <p class="lead">
-            Progen is a CLI tool that generates complete Spring Boot applications — build files, Java
-            source, tests, Docker Compose, CI, database migrations, security setup and more — via a
-            quick interactive prompt or a single JSON config file.
+            Progen generates complete Spring Boot applications — build files, Java source, tests,
+            Docker Compose, CI, database migrations, security setup and more. Use the CLI with an
+            interactive prompt or a JSON config file, or the Progen Desktop wizard on macOS.
         </p>
         <div class="hero-actions">
             <a class="btn btn-primary" href="#install">Get Started</a>
@@ -364,13 +366,14 @@
         </div>
         <div class="hero-code">
             <div class="code-block">
-        <pre><code>$ go install github.com/sivaprasadreddy/progen@latest
+        <pre><code>$ go install github.com/sivaprasadreddy/progen/cmd/progen@latest
 $ progen
-✔ Frontend: None (REST API)
+✔ Application Name: myapp
 ✔ Build Tool: Maven
 ✔ Persistence: Spring Data JPA
 ✔ Database: PostgreSQL
-Generated project "myapp" successfully 🎉</code></pre>
+✔ Select Frontend: None (REST API)
+Project generated successfully</code></pre>
             </div>
         </div>
     </div>
@@ -402,16 +405,17 @@ Generated project "myapp" successfully 🎉</code></pre>
 <section id="install">
     <div class="container">
         <h2>Installation</h2>
-        <p class="section-sub">Two ways to get the <code>progen</code> binary onto your machine.</p>
+        <p class="section-sub">Install the <code>progen</code> CLI binary, or download the Progen Desktop app for macOS.</p>
 
         <div class="tabs">
             <button class="tab-btn active" data-tab="go">Go Install</button>
             <button class="tab-btn" data-tab="binary">OS Binary</button>
+            <button class="tab-btn" data-tab="desktop">Progen Desktop</button>
         </div>
 
         <div class="tab-panel active" id="tab-go">
             <div class="code-block">
-        <pre><code>go install github.com/sivaprasadreddy/progen@latest
+        <pre><code>go install github.com/sivaprasadreddy/progen/cmd/progen@latest
 progen --help</code></pre>
             </div>
             <div class="callout">
@@ -427,13 +431,28 @@ progen --help</code></pre>
                 <a href="https://github.com/sivaprasadreddy/progen/releases" target="_blank" rel="noopener">GitHub Releases page</a>,
                 then move it onto your <code>PATH</code>.
             </p>
+            <div class="callout">
+                <strong>macOS Gatekeeper note:</strong> if you see “progen cannot be opened because the
+                developer cannot be verified”, locate the binary in Finder, hold <code>control</code> and
+                click it, choose <em>Open</em>, then confirm. After that, <code>progen</code> runs normally
+                from the terminal.
+            </div>
         </div>
 
-        <div class="callout">
-            <strong>macOS Gatekeeper note:</strong> if you see “progen cannot be opened because the
-            developer cannot be verified”, locate the binary in Finder, hold <code>control</code> and
-            click it, choose <em>Open</em>, then confirm. After that, <code>progen</code> runs normally
-            from the terminal.
+        <div class="tab-panel" id="tab-desktop">
+            <p style="color: var(--text-dim); font-size: 1rem; margin-top:0;">
+                Download <code>progen-desktop-&lt;version&gt;-macos.zip</code> from the
+                <a href="https://github.com/sivaprasadreddy/progen/releases" target="_blank" rel="noopener">GitHub Releases page</a>,
+                unzip it and move <code>Progen Desktop.app</code> to your <code>Applications</code> folder.
+                It is a universal app (Apple Silicon and Intel) for macOS 12 or later, and needs a JDK on your
+                <code>PATH</code> to format the generated project.
+            </p>
+            <div class="callout">
+                <strong>macOS Gatekeeper note:</strong> the app is not notarized, so macOS blocks it the first
+                time. Try to open it, click <em>Done</em>, then go to <em>System Settings → Privacy &amp; Security</em>
+                and click <em>Open Anyway</em>. Or remove the quarantine attribute from a terminal:
+                <code>xattr -dr com.apple.quarantine "/Applications/Progen Desktop.app"</code>
+            </div>
         </div>
     </div>
 </section>
@@ -441,13 +460,13 @@ progen --help</code></pre>
 <section id="usage">
     <div class="container">
         <h2>How to Use It?</h2>
-        <p class="section-sub">Three workflows: fully interactive, config-file driven for repeatable / scripted generation, or through an AI coding agent.</p>
+        <p class="section-sub">Run the CLI interactively, drive it from a config file for repeatable / scripted generation, or use it through an AI coding agent. Prefer a GUI? See <a href="#desktop">Progen Desktop</a>.</p>
 
         <div class="step">
             <div class="step-num">1</div>
             <div>
                 <h4>Run interactively</h4>
-                <p>Launch progen with no arguments to walk through an interactive prompt covering frontend, build tool, persistence, database, and optional features.</p>
+                <p>Launch progen with no arguments to walk through an interactive prompt covering project details, build tool, persistence, database, migration tool, task runner, frontend, optional features and Spring AI models.</p>
                 <div class="code-block"><pre><code>progen</code></pre></div>
             </div>
         </div>
@@ -466,7 +485,7 @@ progen --help</code></pre>
             <div class="step-num">3</div>
             <div>
                 <h4>Generate a project from config</h4>
-                <p>Feed the config file back in with <code>-c</code> / <code>--config</code> to generate the project non-interactively — ideal for CI, templates, or sharing team defaults.</p>
+                <p>Feed the config file back in with <code>-c</code> / <code>--config</code> to generate the project non-interactively — ideal for CI, templates, or sharing team defaults. Invalid values are replaced with defaults, with a warning for each. The config used is also saved as <code>.progen.json</code> inside the generated project.</p>
                 <div class="code-block"><pre><code>progen -c .progen.json</code></pre></div>
             </div>
         </div>
@@ -489,7 +508,7 @@ progen --help</code></pre>
   "AppName": "myapp",
   "GroupID": "com.mycompany",
   "ArtifactID": "myapp",
-  "AppVersion": "1.0.0",
+  "AppVersion": "0.0.1",
   "BasePackage": "com.mycompany.myapp",
   "BuildTool": "Maven",
   "PersistenceType": "Spring Data JPA",
@@ -502,9 +521,40 @@ progen --help</code></pre>
   "RabbitMQSupport": false,
   "RedisCachingSupport": false,
   "OpenTelemetrySupport": false,
+  "AxelixSupport": false,
   "K8sSupport": false,
   "SpringAIModels": []
 }</code></pre>
+        </div>
+    </div>
+</section>
+
+<section id="desktop">
+    <div class="container">
+        <h2>Progen Desktop</h2>
+        <p class="section-sub">
+            A native macOS app (built with <a href="https://mygo.run/" target="_blank" rel="noopener">MyGo</a>, no web view)
+            that uses the same generator as the CLI, so it creates the same projects — through a step-by-step wizard instead of terminal prompts.
+        </p>
+
+        <div class="grid cols-3">
+            <div class="card">
+                <h3><span class="icon-dot"></span>Step-by-step wizard</h3>
+                <p>Project → Frontend → Database → Features → Review. The package name is filled in from the Group ID and Artifact ID, and you can still edit the project details on Review.</p>
+            </div>
+            <div class="card">
+                <h3><span class="icon-dot"></span>Templates</h3>
+                <p>Save a combination you generate often as a template, then reuse, update or delete it. Comes with REST API, Thymeleaf + HTMX and Angular templates.</p>
+            </div>
+            <div class="card">
+                <h3><span class="icon-dot"></span>Defaults</h3>
+                <p>Set the version, Group ID, build tool and task runner that every new project starts with, or restore the built-in values.</p>
+            </div>
+        </div>
+        <div class="callout">
+            Click <strong>Generate</strong> on the Review step and the project is saved as
+            <code>~/Downloads/&lt;application-name&gt;.zip</code>. Templates and defaults are stored in
+            <code>~/Library/Application Support/Progen Desktop/</code>.
         </div>
     </div>
 </section>
@@ -519,11 +569,12 @@ progen --help</code></pre>
             <table>
                 <thead><tr><th>Option</th><th>Choices</th></tr></thead>
                 <tbody>
-                <tr><td>Frontend</td><td>None (REST API) · Thymeleaf · JTE · Angular · React</td></tr>
+                <tr><td>Frontend</td><td>None (REST API) · Thymeleaf · JTE · Angular · React (Vite) — all styled with TailwindCSS</td></tr>
                 <tr><td>Build Tool</td><td>Maven · Gradle</td></tr>
                 <tr><td>Persistence</td><td>Spring Data JPA · Spring JdbcClient · jOOQ</td></tr>
                 <tr><td>Database</td><td>PostgreSQL · MySQL · MariaDB</td></tr>
                 <tr><td>DB Migration Tool</td><td>Flyway · Liquibase</td></tr>
+                <tr><td>Task Runner</td><td>Mise (default; also installs the JDK/tooling) · Taskfile with SDKMAN</td></tr>
                 </tbody>
             </table>
         </div>
@@ -533,15 +584,15 @@ progen --help</code></pre>
             <table>
                 <thead><tr><th>Feature</th><th>What it adds</th></tr></thead>
                 <tbody>
-                <tr><td>Thymeleaf / JTE + TailwindCSS</td><td>Server-rendered views for Web Apps, styled with Tailwind</td></tr>
-                <tr><td>HTMX</td><td>htmx-spring-boot integration for dynamic server-driven UI</td></tr>
+                <tr><td>HTMX</td><td>htmx-spring-boot integration for dynamic server-driven UI (Thymeleaf and JTE only)</td></tr>
                 <tr><td>Spring Cloud AWS</td><td>AWS integration configured via Floci</td></tr>
                 <tr><td>Spring RabbitMQ</td><td>Messaging configuration using Spring AMQP</td></tr>
                 <tr><td>Spring AI</td><td>Chat model integration via Spring AI &mdash; choose any of Ollama, OpenAI, Anthropic (<code>"SpringAIModels": ["ollama", "openai", "anthropic"]</code>)</td></tr>
                 <tr><td>Redis Caching</td><td>Spring Boot caching backed by Redis</td></tr>
                 <tr><td>Email support</td><td>MailPit + Testcontainers Mailpit for local email testing</td></tr>
                 <tr><td>OpenTelemetry</td><td>Observability instrumentation out of the box with Grafana LGTM stack</td></tr>
-                <tr><td>Kubernetes manifests</td><td>Generated based on selected features</td></tr>
+                <tr><td>Axelix</td><td><a href="https://axelix.io/" target="_blank" rel="noopener">Axelix</a> Spring Boot starter and build plugin (Maven and Gradle)</td></tr>
+                <tr><td>Kubernetes manifests</td><td>Generated based on the selected features and database</td></tr>
                 </tbody>
             </table>
         </div>
@@ -552,15 +603,14 @@ progen --help</code></pre>
                 <thead><tr><th>Feature</th><th>What it adds</th></tr></thead>
                 <tbody>
                 <tr><td>Spring Modulith</td><td>Modular architecture enforcement</td></tr>
-                <tr><td>Spring Security</td><td>HTTP Session based for Web Apps, JWT for REST APIs</td></tr>
+                <tr><td>Spring Security</td><td>HTTP Session based for Thymeleaf / JTE web apps, JWT for REST APIs and Angular / React SPAs</td></tr>
                 <tr><td>Swagger UI</td><td>API docs via springdoc-openapi</td></tr>
-                <tr><td>Testcontainers</td><td>Testing &amp; local development setup</td></tr>
+                <tr><td>JUnit</td><td>Unit testing</td></tr>
+                <tr><td>Testcontainers</td><td>Integration testing &amp; local development setup</td></tr>
                 <tr><td>Docker Compose</td><td>Local development environment</td></tr>
                 <tr><td>BootUI</td><td>Developer console for the running app</td></tr>
                 <tr><td>GitHub Actions</td><td>CI configuration</td></tr>
-                <tr><td>Spotless</td><td>Code formatting</td></tr>
-                <tr><td>Taskfile + SDKMAN</td><td>Task runner for common commands with JDK/tooling version configuration (TaskRunner: <code>Taskfile</code>)</td></tr>
-                <tr><td>mise</td><td>Task runner that also installs the JDK/tooling (TaskRunner: <code>Mise</code>)</td></tr>
+                <tr><td>Spotless</td><td>Code formatting, applied right after generation</td></tr>
                 <tr><td>Renovate</td><td>Automated dependency updates</td></tr>
                 </tbody>
             </table>
