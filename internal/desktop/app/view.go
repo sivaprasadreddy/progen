@@ -21,10 +21,17 @@ func (w *Wizard) View(c *ui.Context) {
 	c.SetTheme(theme(c))
 	ui.Row(c).Fill().AlignItems(ui.Stretch).Children(func() {
 		w.sidebar(c)
-		content := ui.Scroll(c.Key("content")).Grow(1).Padding(48).AlignItems(ui.Center)
-		content.LinearGradient(ui.LinearGradient{Angle: 120, Stops: []ui.GradientStop{
+		background := ui.LinearGradient{Angle: 120, Stops: []ui.GradientStop{
 			{Color: ui.Hex("#f4f3f8"), At: 0}, {Color: ui.Hex("#faf2f7"), At: 0.48}, {Color: ui.Hex("#eef2fb"), At: 1},
-		}})
+		}}
+		if w.showsPreview() {
+			// The tree and the file scroll on their own, in the whole window.
+			ui.Column(c.Key("preview")).Grow(1).Shrink(1).MinWidth(0).AlignItems(ui.Stretch).LinearGradient(background).
+				Children(func() { w.previewPage(c) })
+			return
+		}
+		content := ui.Scroll(c.Key("content")).Grow(1).Padding(48).AlignItems(ui.Center)
+		content.LinearGradient(background)
 		content.Children(func() { w.content(c) })
 	})
 
@@ -60,6 +67,20 @@ func (w *Wizard) alerts(c *ui.Context) {
 			w.deleteTarget = nil
 		}
 	}
+}
+
+// showsPreview is whether the preview page shows in place of the Review
+// step.
+func (w *Wizard) showsPreview() bool {
+	return w.page == pageNone && w.step == stepReview && w.previewing && w.preview != nil
+}
+
+// returnName is the name of what a page's Back returns to.
+func (w *Wizard) returnName() string {
+	if w.step == stepReview && w.previewing && w.preview != nil {
+		return "Preview"
+	}
+	return stepNames[w.step]
 }
 
 func (w *Wizard) content(c *ui.Context) {
@@ -147,7 +168,7 @@ func (w *Wizard) stepItem(c *ui.Context, index int, name string, complete, activ
 // sidebarLink opens a page in place of the step, or closes it again.
 func (w *Wizard) sidebarLink(c *ui.Context, p page, icon *ui.SVG, name string, count int) ui.Element {
 	active := w.page == p
-	link := ui.ButtonBase(c.Key("link:"+name)).Label(name).Disabled(w.generating).Height(50).Gap(13).
+	link := ui.ButtonBase(c.Key("link:"+name)).Label(name).Disabled(w.busy()).Height(50).Gap(13).
 		Padding(0, 6, 0, 14).Radius(9).Justify(ui.Start).Cursor(ui.CursorPointer)
 	iconText, iconFill, text := ui.Hex("#485164"), ui.RGBA(222, 228, 236, 0.86), ui.Hex("#445064")
 	switch {
@@ -258,7 +279,7 @@ func (w *Wizard) templateItems(c *ui.Context) {
 
 // cancelButton asks before it discards the selection.
 func (w *Wizard) cancelButton(c *ui.Context) {
-	b := secondaryButton(c, "Cancel", w.generating).Tooltip("Clear all selections and return to Welcome")
+	b := secondaryButton(c, "Cancel", w.busy()).Tooltip("Clear all selections and return to Welcome")
 	if b.Clicked() {
 		w.confirmingCancel = true
 	}
@@ -444,23 +465,35 @@ func (w *Wizard) reviewStep(c *ui.Context) {
 			if w.templatePanel {
 				toggle = "Close"
 			}
-			if secondaryButton(c, toggle, w.generating).Clicked() {
+			if secondaryButton(c, toggle, w.busy()).Clicked() {
 				w.templatePanel = !w.templatePanel
 				w.templateMsg = nil
 			}
 		}, func() {
-			if secondaryButton(c, "Back", w.generating).Clicked() {
+			if secondaryButton(c, "Back", w.busy()).Clicked() {
 				w.back()
 			}
-			label := "Generate"
-			if w.generating {
-				label = "Generating…"
+			preview := "Preview"
+			if w.preparing {
+				preview = "Preparing preview…"
 			}
-			if primaryButton(c, label, "↓", w.generating).MinWidth(125).Justify(ui.SpaceBetween).Clicked() {
-				w.startGenerating()
+			if secondaryButton(c, preview, w.busy()).Tooltip("See every generated file before saving the project").Clicked() {
+				w.startPreview()
 			}
+			w.generateButton(c)
 		})
 	})
+}
+
+// generateButton is Generate, of the Review step and the preview page.
+func (w *Wizard) generateButton(c *ui.Context) {
+	label := "Generate"
+	if w.generating {
+		label = "Generating…"
+	}
+	if primaryButton(c, label, "↓", w.busy()).MinWidth(125).Justify(ui.SpaceBetween).Clicked() {
+		w.startGenerating()
+	}
 }
 
 func reviewSection(c *ui.Context, title string, rows func()) ui.Element {
@@ -486,7 +519,8 @@ func (w *Wizard) reviewField(c *ui.Context, f projectField, name, placeholder st
 		value := *projectValue(&w.selection.Project, f)
 		v := value
 		input := ui.TextInput(c.Key("review:"+name), &v).Label(name).Placeholder(placeholder).
-			WidthPercent(62).Padding(5, 8).Radius(6).FontSize(13).FontWeight(700).TextColor(ui.Hex("#24263a")).FocusRing(false)
+			WidthPercent(62).Padding(5, 8).Radius(6).FontSize(13).FontWeight(700).TextColor(ui.Hex("#24263a")).FocusRing(false).
+			Disabled(w.busy())
 		if v != value {
 			w.setProjectField(f, v)
 		}
@@ -519,13 +553,13 @@ func (w *Wizard) templatePanelView(c *ui.Context) {
 			})
 			ui.Row(c).Gap(8).Padding(21, 0, 0, 0).Children(func() {
 				if w.activeTemplate != nil {
-					if primaryButton(c, fmt.Sprintf("Update “%s”", w.activeTemplate.Name), "", false).Padding(11, 20).Clicked() {
+					if primaryButton(c, fmt.Sprintf("Update “%s”", w.activeTemplate.Name), "", w.busy()).Padding(11, 20).Clicked() {
 						w.saveTemplate(true)
 					}
-					if secondaryButton(c, "Save as new", false).Padding(11, 20).Clicked() {
+					if secondaryButton(c, "Save as new", w.busy()).Padding(11, 20).Clicked() {
 						w.saveTemplate(false)
 					}
-				} else if primaryButton(c, "Save template", "", false).Padding(11, 20).Clicked() {
+				} else if primaryButton(c, "Save template", "", w.busy()).Padding(11, 20).Clicked() {
 					w.saveTemplate(false)
 				}
 			})
@@ -576,7 +610,7 @@ func (w *Wizard) templatesPage(c *ui.Context) {
 				Border(1, colorButtonEdge).BorderStyle(ui.BorderDashed)
 		}
 		formActions(c, nil, func() {
-			if secondaryButton(c, "Back to "+stepNames[w.step], false).Clicked() {
+			if secondaryButton(c, "Back to "+w.returnName(), false).Clicked() {
 				w.page = pageNone
 			}
 		})
@@ -614,7 +648,7 @@ func (w *Wizard) defaultsPage(c *ui.Context) {
 				w.defaultsMsg = nil
 			}
 		}, func() {
-			if secondaryButton(c, "Back to "+stepNames[w.step], false).Clicked() {
+			if secondaryButton(c, "Back to "+w.returnName(), false).Clicked() {
 				w.page = pageNone
 			}
 			if primaryButton(c, "Save defaults", "", false).Clicked() {

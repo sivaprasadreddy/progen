@@ -8,6 +8,7 @@ import (
 	"github.com/egoist/mygo/ui"
 
 	"github.com/sivaprasadreddy/progen/internal/desktop/app"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 	"github.com/sivaprasadreddy/progen/internal/desktop/generator"
 	"github.com/sivaprasadreddy/progen/internal/desktop/store"
 )
@@ -27,7 +28,17 @@ func main() {
 				win.Update(apply)
 			}()
 		}
-		wizard := app.NewWizard(store.NewTemplateService(userData), store.NewDefaultsService(userData), (&generator.Service{}).GenerateProject, async)
+		service := &generator.Service{}
+		prepare := func(c config.GeneratorConfiguration) (app.PreparedProject, error) {
+			prepared, err := service.Prepare(c)
+			if err != nil {
+				return nil, err
+			}
+			return prepared, nil
+		}
+		wizard := app.NewWizard(store.NewTemplateService(userData), store.NewDefaultsService(userData), service.GenerateProject, prepare, async)
+		// A previewed project waits in a temporary directory until saved.
+		mygo.App.OnQuit(wizard.Close)
 		win = mygo.NewWindow(mygo.WindowOptions{
 			Title:     "Progen Desktop",
 			Width:     1200,

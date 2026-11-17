@@ -1,32 +1,101 @@
-// Package generator generates Spring Boot projects with progen and archives
-// them as ZIP files.
+// Package generator generates Spring Boot projects with progen, to preview
+// and archive as ZIP files.
 package generator
 
 import (
 	"archive/zip"
+	"bytes"
 	"context"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 	"github.com/sivaprasadreddy/progen/internal/generators/springboot"
 )
 
 // Service generates Spring Boot projects.
-type Service struct{}
+type Service struct {
+	// skipCodeFormat skips the build tool's code formatter, for tests.
+	skipCodeFormat bool
+}
 
 // GenerateProject generates a Spring Boot project for configuration, saves it
 // as a ZIP archive in the user's Downloads directory and returns the
 // archive's path.
 func (s *Service) GenerateProject(configuration config.GeneratorConfiguration) (string, error) {
-	if err := config.Validate(configuration); err != nil {
+	prepared, err := s.Prepare(configuration)
+	if err != nil {
 		return "", err
 	}
+	defer prepared.Discard()
+	return prepared.Save()
+}
 
+// Prepare generates a Spring Boot project for configuration into a
+// temporary directory, formatted as an archive would have it, and reads its
+// files. Save archives it, and Discard removes it.
+func (s *Service) Prepare(configuration config.GeneratorConfiguration) (*Prepared, error) {
+	if err := config.Validate(configuration); err != nil {
+		return nil, err
+	}
+	projectConfig := toProjectConfig(configuration)
+
+	workingDirectory, err := os.MkdirTemp("", "progen-desktop-")
+	if err != nil {
+		return nil, fmt.Errorf("create generation directory: %w", err)
+	}
+	result, err := springboot.Generate(context.Background(), projectConfig, springboot.GenerateOptions{
+		OutputDir:      workingDirectory,
+		SkipCodeFormat: s.skipCodeFormat,
+	})
+	if err != nil {
+		_ = os.RemoveAll(workingDirectory)
+		return nil, fmt.Errorf("generate project: %w", err)
+	}
+	files, err := readFiles(result.ProjectDir)
+	if err != nil {
+		_ = os.RemoveAll(workingDirectory)
+		return nil, fmt.Errorf("read generated project: %w", err)
+	}
+	return &Prepared{workingDirectory: workingDirectory, projectDirectory: result.ProjectDir, name: projectConfig.AppName, files: files}, nil
+}
+
+// Prepared is a generated project waiting in a temporary directory to be
+// previewed and saved.
+type Prepared struct {
+	workingDirectory string
+	projectDirectory string
+	name             string
+	files            []File
+}
+
+// File is a file of a prepared project.
+type File struct {
+	// Path is the file's path in the project directory, with slashes.
+	Path string
+	Size int64
+	// Binary is whether the file is not UTF-8 text, as a JAR; Content is
+	// empty then.
+	Binary  bool
+	Content string
+}
+
+// Name is the project directory's name, the application's.
+func (p *Prepared) Name() string { return filepath.Base(p.projectDirectory) }
+
+// Files are the project's files, in the order a directory walk finds them.
+func (p *Prepared) Files() []File { return p.files }
+
+// Save archives the project as a ZIP in the user's Downloads directory,
+// named after the application with a numeric suffix if the name is taken,
+// and returns the archive's path.
+func (p *Prepared) Save() (string, error) {
 	homeDirectory, err := os.UserHomeDir()
 	if err != nil {
 		return "", fmt.Errorf("find home directory: %w", err)
@@ -36,26 +105,11 @@ func (s *Service) GenerateProject(configuration config.GeneratorConfiguration) (
 		return "", fmt.Errorf("create downloads directory: %w", err)
 	}
 
-	projectConfig := toProjectConfig(configuration)
-
-	workingDirectory, err := os.MkdirTemp("", "progen-desktop-")
-	if err != nil {
-		return "", fmt.Errorf("create generation directory: %w", err)
-	}
-	defer os.RemoveAll(workingDirectory)
-
-	result, err := springboot.Generate(context.Background(), projectConfig, springboot.GenerateOptions{
-		OutputDir: workingDirectory,
-	})
-	if err != nil {
-		return "", fmt.Errorf("generate project: %w", err)
-	}
-
-	zipFile, zipPath, err := createUniqueZipFile(downloadsDirectory, projectConfig.AppName)
+	zipFile, zipPath, err := createUniqueZipFile(downloadsDirectory, p.name)
 	if err != nil {
 		return "", fmt.Errorf("create project archive: %w", err)
 	}
-	if err := zipDirectory(zipFile, result.ProjectDir); err != nil {
+	if err := zipDirectory(zipFile, p.projectDirectory); err != nil {
 		_ = zipFile.Close()
 		_ = os.Remove(zipPath)
 		return "", fmt.Errorf("archive project: %w", err)
@@ -64,8 +118,45 @@ func (s *Service) GenerateProject(configuration config.GeneratorConfiguration) (
 		_ = os.Remove(zipPath)
 		return "", fmt.Errorf("close project archive: %w", err)
 	}
-
 	return zipPath, nil
+}
+
+// Discard removes the prepared project's directory.
+func (p *Prepared) Discard() {
+	_ = os.RemoveAll(p.workingDirectory)
+}
+
+// readFiles reads every file under directory.
+func readFiles(directory string) ([]File, error) {
+	files := []File{}
+	err := filepath.WalkDir(directory, func(filePath string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil || entry.IsDir() {
+			return walkErr
+		}
+		relativePath, err := filepath.Rel(directory, filePath)
+		if err != nil {
+			return err
+		}
+		content, err := os.ReadFile(filePath)
+		if err != nil {
+			return err
+		}
+		file := File{Path: filepath.ToSlash(relativePath), Size: int64(len(content))}
+		if isBinary(content) {
+			file.Binary = true
+		} else {
+			file.Content = string(content)
+		}
+		files = append(files, file)
+		return nil
+	})
+	return files, err
+}
+
+// isBinary reports whether content is not text: not UTF-8, or holding a
+// NUL byte.
+func isBinary(content []byte) bool {
+	return !utf8.Valid(content) || bytes.IndexByte(content, 0) >= 0
 }
 
 func createUniqueZipFile(directory, name string) (*os.File, string, error) {

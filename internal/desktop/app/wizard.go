@@ -59,6 +59,8 @@ type Wizard struct {
 	defaults  DefaultsStore
 	// generate generates a project and returns the archive's path.
 	generate func(config.GeneratorConfiguration) (string, error)
+	// prepare generates a project to preview before it is saved.
+	prepare func(config.GeneratorConfiguration) (PreparedProject, error)
 	// async runs work off the UI thread, then apply on it: in a goroutine
 	// and Window.Update in the app, at once in tests.
 	async func(work func() (apply func()))
@@ -78,6 +80,14 @@ type Wizard struct {
 	downloadedPath  string
 	generationError string
 	generating      bool
+
+	// preview is the project last prepared for the preview page, kept
+	// while the selection it was prepared from stays the same; preparing
+	// is whether one is being prepared, and previewing whether the page
+	// shows in place of the Review step.
+	preview    *preview
+	preparing  bool
+	previewing bool
 
 	templateList   []store.Template
 	templatesError string
@@ -113,10 +123,12 @@ type DefaultsStore interface {
 }
 
 // NewWizard returns a wizard on the Welcome step. generate generates a
-// project and returns the archive's path; async runs work off the UI thread
-// and then the func it returns on it.
-func NewWizard(templates TemplateStore, defaults DefaultsStore, generate func(config.GeneratorConfiguration) (string, error), async func(func() func())) *Wizard {
-	w := &Wizard{templates: templates, defaults: defaults, generate: generate, async: async}
+// project and returns the archive's path; prepare generates one to preview
+// and save; async runs work off the UI thread and then the func it returns
+// on it.
+func NewWizard(templates TemplateStore, defaults DefaultsStore, generate func(config.GeneratorConfiguration) (string, error),
+	prepare func(config.GeneratorConfiguration) (PreparedProject, error), async func(func() func())) *Wizard {
+	w := &Wizard{templates: templates, defaults: defaults, generate: generate, prepare: prepare, async: async}
 	w.projectDefaults = store.BuiltInDefaults
 	if saved, err := defaults.Get(); err == nil {
 		w.projectDefaults = saved
@@ -192,6 +204,7 @@ func (w *Wizard) setProjectField(f projectField, value string) {
 		p.PackageName = deriveBasePackage(p.GroupID, p.ArtifactID)
 	}
 	w.generationError = ""
+	w.dropStalePreview()
 }
 
 // projectComplete reports whether every Project text field is filled in.
@@ -207,14 +220,16 @@ func (w *Wizard) projectComplete() bool {
 // setFrontend chooses a frontend. HTMX stays only with a server-rendered one.
 func (w *Wizard) setFrontend(t config.FrontendType) {
 	w.selection.Frontend = config.FrontendSettings{Type: t, HTMX: config.IsServerRendered(t) && w.selection.Frontend.HTMX}
+	w.dropStalePreview()
 }
 
 func (w *Wizard) toggleFeature(f config.Feature) {
 	if i := slices.Index(w.selection.Features, f); i >= 0 {
 		w.selection.Features = slices.Delete(slices.Clone(w.selection.Features), i, i+1)
-		return
+	} else {
+		w.selection.Features = append(slices.Clone(w.selection.Features), f)
 	}
-	w.selection.Features = append(slices.Clone(w.selection.Features), f)
+	w.dropStalePreview()
 }
 
 // toggleAIModel keeps the models in their canonical order.
@@ -227,11 +242,13 @@ func (w *Wizard) toggleAIModel(m config.AIModel) {
 		}
 	}
 	w.selection.AIModels = models
+	w.dropStalePreview()
 }
 
 // next goes on from the current step. The Project step goes on only with
-// its fields filled in.
+// its fields filled in. A preview of another selection is discarded.
 func (w *Wizard) next() {
+	w.dropStalePreview()
 	if w.step == stepProject {
 		if !w.projectComplete() {
 			w.showProjectErrors = true
@@ -246,6 +263,7 @@ func (w *Wizard) next() {
 }
 
 func (w *Wizard) back() {
+	w.dropStalePreview()
 	if w.step == stepReview {
 		// A message about the selection goes stale once it can change.
 		w.templatePanel = false
@@ -265,8 +283,9 @@ func (w *Wizard) getStarted() {
 	w.step = stepProject
 }
 
-// resetSelection drops every choice and the loaded template.
+// resetSelection drops every choice, the loaded template and the preview.
 func (w *Wizard) resetSelection() {
+	w.discardPreview()
 	w.selection = newSelection(w.projectDefaults)
 	w.projectConfirmed = false
 	w.showProjectErrors = false
@@ -315,6 +334,7 @@ func (w *Wizard) applyTemplate(t store.Template, step int) {
 	w.showProjectErrors = false
 	w.page = pageNone
 	w.step = step
+	w.dropStalePreview()
 }
 
 func cloneConfiguration(c config.GeneratorConfiguration) config.GeneratorConfiguration {
@@ -378,9 +398,10 @@ func (w *Wizard) deleteTemplate(t store.Template) {
 }
 
 // startGenerating generates the project off the UI thread and shows the
-// Complete step, or the error, when it is done.
+// Complete step, or the error, when it is done. A preview of the selection
+// is saved as it is, without generating it again.
 func (w *Wizard) startGenerating() {
-	if w.generating {
+	if w.busy() {
 		return
 	}
 	if !w.projectComplete() {
@@ -389,9 +410,13 @@ func (w *Wizard) startGenerating() {
 	}
 	w.generating = true
 	w.generationError = ""
+	generate := w.generate
+	if p := w.currentPreview(); p != nil {
+		generate = func(config.GeneratorConfiguration) (string, error) { return p.project.Save() }
+	}
 	configuration := w.configuration()
 	w.async(func() func() {
-		path, err := w.generate(configuration)
+		path, err := generate(configuration)
 		return func() {
 			w.generating = false
 			if err != nil {
@@ -399,6 +424,7 @@ func (w *Wizard) startGenerating() {
 				return
 			}
 			w.downloadedPath = path
+			w.previewing = false
 			w.step = stepComplete
 		}
 	})

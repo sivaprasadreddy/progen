@@ -10,6 +10,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 	"github.com/sivaprasadreddy/progen/internal/desktop/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/generator"
 	"github.com/sivaprasadreddy/progen/internal/desktop/store"
 )
 
@@ -22,7 +23,10 @@ func newTestWizard(t *testing.T, generate func(config.GeneratorConfiguration) (s
 	if generate == nil {
 		generate = func(config.GeneratorConfiguration) (string, error) { return "/tmp/demo.zip", nil }
 	}
-	return NewWizard(store.NewTemplateService(userData), store.NewDefaultsService(userData), generate, func(work func() func()) { work()() })
+	prepare := func(config.GeneratorConfiguration) (PreparedProject, error) {
+		return nil, errors.New("no preview in this test")
+	}
+	return NewWizard(store.NewTemplateService(userData), store.NewDefaultsService(userData), generate, prepare, func(work func() func()) { work()() })
 }
 
 // TestSnapshots saves a picture of every screen in DESKTOP_SNAPSHOT_DIR, to
@@ -33,6 +37,18 @@ func TestSnapshots(t *testing.T) {
 		t.Skip("DESKTOP_SNAPSHOT_DIR not set")
 	}
 	w := newTestWizard(t, nil)
+	w.prepare = func(c config.GeneratorConfiguration) (PreparedProject, error) {
+		pom := "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\">\n    <modelVersion>4.0.0</modelVersion>\n" +
+			"    <groupId>" + c.Project.GroupID + "</groupId>\n    <artifactId>" + c.Project.ArtifactID + "</artifactId>\n    <!-- Spring Boot -->\n</project>\n"
+		return &fakeProject{name: c.Project.AppName, files: []generator.File{
+			{Path: "pom.xml", Content: pom, Size: int64(len(pom))},
+			{Path: "src/main/resources/application.properties", Content: "spring.application.name=demo\n", Size: 29},
+			{Path: "README.md", Content: "# demo\n", Size: 7},
+			{Path: ".gitignore", Content: "target/\n", Size: 8},
+			{Path: ".mvn/wrapper/maven-wrapper.properties", Content: "distributionUrl=x\n", Size: 18},
+			{Path: "compose.yml", Content: "services:\n", Size: 10},
+		}}, nil
+	}
 	tt := ui.NewTester(w.View, 1200, 800)
 	save := func(name string) {
 		t.Helper()
@@ -64,6 +80,9 @@ func TestSnapshots(t *testing.T) {
 	save("5-features")
 	click("Next")
 	save("6-review")
+	click("Preview")
+	save("6-preview")
+	click("Back to Review")
 	click("Cancel")
 	save("9-cancel-alert")
 	tt.Key(0, ui.KeyEscape)
@@ -346,7 +365,7 @@ func TestDefaultsPrefillNewProjects(t *testing.T) {
 	}
 
 	// A new wizard reads the saved defaults.
-	again := NewWizard(w.templates, w.defaults, w.generate, w.async)
+	again := NewWizard(w.templates, w.defaults, w.generate, w.prepare, w.async)
 	if again.selection.Project.AppVersion != "2.0.0" {
 		t.Errorf("defaults not kept: %+v", again.selection.Project)
 	}

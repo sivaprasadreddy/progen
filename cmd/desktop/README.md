@@ -45,6 +45,9 @@ frontends (Thymeleaf, JTE) and JWT for REST API, Angular, and React applications
 5. **Features** – select optional features and Spring AI model providers.
 6. **Review** – check your selections and click **Generate**. You can change the application name, version,
    Group ID, Artifact ID and package right here, including for a project started from a template.
+   Click **Preview** to see every generated file before saving: a file tree beside the selected file, read-only,
+   with line numbers and syntax highlighting. **Generate** there saves exactly those files; **Back to Review**
+   keeps the preview until you change a selection.
 7. The project is saved as `~/Downloads/<application-name>.zip` (a numeric suffix is added if the
    file already exists). Unzip it and follow the generated project's `README.md`.
 
@@ -147,7 +150,8 @@ Apps you build yourself are signed locally (ad-hoc) and don't trigger the Gateke
 - `internal/desktop/config/` – `GeneratorConfiguration`, the project the user chooses (build tool, frontend, database,
   features, AI models), and `Validate`, which checks it.
 - `internal/desktop/generator/` – `generator.Service`, which validates a configuration, maps it to a progen
-  `springboot.ProjectConfig`, generates the project with `springboot.Generate`, and zips it into `~/Downloads`.
+  `springboot.ProjectConfig`, generates the project with `springboot.Generate` into a temporary directory
+  (`Prepare`, which the preview shows), and zips it into `~/Downloads` (`Save`).
 - `internal/desktop/store/` – `TemplateService` and `DefaultsService`, which keep templates and the Project step's
   defaults in the app's user data directory; `json.go` has the JSON file helpers they share.
 - `internal/desktop/app/` – the window:

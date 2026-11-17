@@ -25,7 +25,7 @@ const (
 	bootUIVersion                          = "2.4.0"
 	axelixVersion                          = "1.3.0"
 	archunitVersion                        = "1.5.1"
-	taikaiVersion                          = "2.8.0"
+	taikaiVersion                          = "2.9.0"
 	palantirJavaFormatVersion              = "2.103.0"
 	testcontainersJooqCodegenPluginVersion = "1.0.0"
 	jacocoMavenPluginVersion               = "0.8.16"

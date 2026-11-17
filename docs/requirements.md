@@ -1,6 +1,6 @@
 # Requirements
 
-Each requirement is a feature or use case. Status values: `COMPLETED`, `IN PROGRESS`, `PLANNED`.
+Each requirement is a feature or use case. Status values: `COMPLETED`, `IN PROGRESS`, `PLANNED`, `NOT_IMPLEMENTED`.
 
 ## 1. Distribution and platform
 
@@ -36,6 +36,7 @@ Each requirement is a feature or use case. Status values: `COMPLETED`, `IN PROGR
 | DSK-08 | Let the user set the defaults for new projects (version, Group ID, build tool, task runner) and restore the built-in values | COMPLETED |
 | DSK-09 | Store templates and defaults as JSON in `~/Library/Application Support/Progen Desktop/`                                  | COMPLETED |
 | DSK-10 | Configure security from the chosen frontend: session login for Thymeleaf/JTE, JWT for REST API, Angular and React        | COMPLETED |
+| DSK-11 | Preview the generated project (file tree and read-only file contents) from the Review step before saving the ZIP         | COMPLETED |
 
 ## 4. Generated project: project setup
 
