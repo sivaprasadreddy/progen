@@ -1,4 +1,4 @@
-// Package app is SBGen's window: the wizard's state and actions, and the
+// Package app is Progen Desktop's window: the wizard's state and actions, and the
 // native view MyGo draws from them.
 package app
 
@@ -7,8 +7,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/store"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/store"
 )
 
 // The wizard's steps, in order. stepWelcome and stepComplete bracket the

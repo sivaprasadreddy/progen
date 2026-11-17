@@ -9,15 +9,15 @@ import (
 	"testing"
 
 	"github.com/egoist/mygo/ui"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/store"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/store"
 )
 
 // newTestWizard is a wizard whose templates and defaults are in a temporary
 // directory, generating with generate and running work at once.
 func newTestWizard(t *testing.T, generate func(config.GeneratorConfiguration) (string, error)) *Wizard {
 	t.Helper()
-	dir := filepath.Join(t.TempDir(), "SBGen")
+	dir := filepath.Join(t.TempDir(), "Progen Desktop")
 	userData := func() (string, error) { return dir, nil }
 	if generate == nil {
 		generate = func(config.GeneratorConfiguration) (string, error) { return "/tmp/demo.zip", nil }
@@ -25,12 +25,12 @@ func newTestWizard(t *testing.T, generate func(config.GeneratorConfiguration) (s
 	return NewWizard(store.NewTemplateService(userData), store.NewDefaultsService(userData), generate, func(work func() func()) { work()() })
 }
 
-// TestSnapshots saves a picture of every screen in SBGEN_SNAPSHOT_DIR, to
+// TestSnapshots saves a picture of every screen in DESKTOP_SNAPSHOT_DIR, to
 // compare the look by eye. It is skipped without it.
 func TestSnapshots(t *testing.T) {
-	dir := os.Getenv("SBGEN_SNAPSHOT_DIR")
+	dir := os.Getenv("DESKTOP_SNAPSHOT_DIR")
 	if dir == "" {
-		t.Skip("SBGEN_SNAPSHOT_DIR not set")
+		t.Skip("DESKTOP_SNAPSHOT_DIR not set")
 	}
 	w := newTestWizard(t, nil)
 	tt := ui.NewTester(w.View, 1200, 800)

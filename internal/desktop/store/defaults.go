@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 )
 
 const defaultsFileName = "defaults.json"

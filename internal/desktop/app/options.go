@@ -1,6 +1,6 @@
 package app
 
-import "github.com/sivaprasadreddy/progen/internal/sbgen/config"
+import "github.com/sivaprasadreddy/progen/internal/desktop/config"
 
 // option is a choice the wizard offers: its value, its name, and a line
 // describing it.

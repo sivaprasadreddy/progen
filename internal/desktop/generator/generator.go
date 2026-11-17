@@ -12,8 +12,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 	"github.com/sivaprasadreddy/progen/internal/generators/springboot"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
 )
 
 // Service generates Spring Boot projects.
@@ -38,7 +38,7 @@ func (s *Service) GenerateProject(configuration config.GeneratorConfiguration) (
 
 	projectConfig := toProjectConfig(configuration)
 
-	workingDirectory, err := os.MkdirTemp("", "sbgen-")
+	workingDirectory, err := os.MkdirTemp("", "progen-desktop-")
 	if err != nil {
 		return "", fmt.Errorf("create generation directory: %w", err)
 	}

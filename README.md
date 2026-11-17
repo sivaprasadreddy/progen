@@ -1,8 +1,8 @@
 # Project Generator CLI
 A CLI tool for generating Spring Boot projects.
 
-This repository also contains **SBGen**, a macOS desktop app that generates the same Spring Boot projects
-through a step-by-step wizard. See [SBGen](#sbgen-desktop-app) below.
+This repository also contains **Progen Desktop**, a macOS desktop app that generates the same Spring Boot projects
+through a step-by-step wizard. See [Progen Desktop](#progen-desktop-app) below.
 
 [![Build](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml)
 [![GoReleaser](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml)
@@ -45,21 +45,21 @@ $ progen -c .progen.json
 > You will then be prompted to confirm that you want to open the binary. After confirming, you can run progen as usual.
 
 ### Progen Desktop App
-SBGen is a native macOS app (built with [MyGo](https://mygo.run/)) that uses the same generator as the `progen` CLI.
-You can download `sbgen-<version>-macos.zip` from https://github.com/sivaprasadreddy/progen/releases.
+Progen Desktop is a native macOS app (built with [MyGo](https://mygo.run/)) that uses the same generator as the `progen` CLI.
+You can download `progen-desktop-<version>-macos.zip` from https://github.com/sivaprasadreddy/progen/releases.
 
 > [!IMPORTANT]
-> SBGen releases are not signed with an Apple Developer ID or notarized by Apple, so macOS Gatekeeper
+> Progen Desktop releases are not signed with an Apple Developer ID or notarized by Apple, so macOS Gatekeeper
 > blocks the app the first time you open it with a message such as
-> *"Apple could not verify “SBGen” is free of malware"*.
+> *"Apple could not verify “Progen Desktop” is free of malware"*.
 
 #### Allowing the app to run on macOS
-1. Try to open `SBGen.app`, then click **Done** (or **OK**) on the warning dialog.
+1. Try to open `Progen Desktop.app`, then click **Done** (or **OK**) on the warning dialog.
 2. Open **System Settings → Privacy & Security**.
-3. Scroll down to the **Security** section. You will see *"SBGen" was blocked to protect your Mac*. Click **Open Anyway**.
+3. Scroll down to the **Security** section. You will see *"Progen Desktop" was blocked to protect your Mac*. Click **Open Anyway**.
 4. Confirm with **Open Anyway** again and authenticate with your password or Touch ID.
 
-On macOS 14 (Sonoma) and earlier you can instead Control-click (right-click) `SBGen.app` in Finder,
+On macOS 14 (Sonoma) and earlier you can instead Control-click (right-click) `Progen Desktop.app` in Finder,
 choose **Open**, and then click **Open** in the dialog.
 
 ## Features

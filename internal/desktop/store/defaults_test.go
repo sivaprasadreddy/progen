@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 )
 
 func newTestDefaultsService(t *testing.T) (*DefaultsService, string) {
 	t.Helper()
-	dir := filepath.Join(t.TempDir(), "SBGen")
+	dir := filepath.Join(t.TempDir(), "Progen Desktop")
 	return NewDefaultsService(func() (string, error) { return dir, nil }), dir
 }
 

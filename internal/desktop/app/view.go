@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/egoist/mygo/ui"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/store"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/store"
 )
 
 const (
@@ -609,7 +609,7 @@ func (w *Wizard) defaultsPage(c *ui.Context) {
 			ui.Column(c).Margin(18, 0, 0, 0).Children(func() { feedback(c, w.defaultsMsg) })
 		}
 		formActions(c, func() {
-			if secondaryButton(c, "Restore built-in values", false).Tooltip("Fill in SBGen's own defaults; Save to keep them").Clicked() {
+			if secondaryButton(c, "Restore built-in values", false).Tooltip("Fill in Progen Desktop's own defaults; Save to keep them").Clicked() {
 				w.defaultsDraft = store.BuiltInDefaults
 				w.defaultsMsg = nil
 			}

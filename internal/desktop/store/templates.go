@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 )
 
 const templatesFileName = "templates.json"

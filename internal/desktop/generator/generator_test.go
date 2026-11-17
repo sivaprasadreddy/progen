@@ -7,8 +7,8 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 	"github.com/sivaprasadreddy/progen/internal/generators/springboot"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
 )
 
 func validConfiguration() config.GeneratorConfiguration {

@@ -4,7 +4,7 @@ node = "26"
 
 [vars]
 main_src_dir = "./cmd/progen"
-sbgen_src_dir = "./cmd/sbgen"
+desktop_src_dir = "./cmd/desktop"
 dist_dir = "dist"
 binary_name = "progen"
 goarches = "amd64 arm64"
@@ -36,16 +36,16 @@ description = "Run interactively"
 raw = true
 run = "go run {{vars.main_src_dir}}"
 
-[tasks.sbgen_dev]
-description = "Run the SBGen desktop app, rebuilding as the code changes (mygo dev)"
+[tasks.desktop_dev]
+description = "Run the Progen Desktop app, rebuilding as the code changes (mygo dev)"
 raw = true
-run = "go tool mygo dev {{vars.sbgen_src_dir}}"
+run = "go tool mygo dev {{vars.desktop_src_dir}}"
 
-[tasks.sbgen_build]
-description = "Build SBGen.app and a DMG into cmd/sbgen/build/ (mygo build)"
+[tasks.desktop_build]
+description = "Build Progen Desktop.app and a DMG into cmd/desktop/build/ (mygo build)"
 run = [
-  "rm -rf {{vars.sbgen_src_dir}}/build",
-  "go tool mygo build {{vars.sbgen_src_dir}}",
+  "rm -rf {{vars.desktop_src_dir}}/build",
+  "go tool mygo build {{vars.desktop_src_dir}}",
 ]
 
 [tasks.test]
@@ -64,8 +64,8 @@ run = [
 ]
 
 [tasks.clean]
-description = "Remove dist/ and the SBGen build output"
+description = "Remove dist/ and the Progen Desktop build output"
 run = [
   "echo 'Cleaning...'",
-  "rm -rf {{vars.dist_dir}} {{vars.sbgen_src_dir}}/build",
+  "rm -rf {{vars.dist_dir}} {{vars.desktop_src_dir}}/build",
 ]

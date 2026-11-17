@@ -6,7 +6,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/sivaprasadreddy/progen/internal/sbgen/config"
+	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 )
 
 func templateNames(templates []Template) []string {
@@ -21,7 +21,7 @@ func templateNames(templates []Template) []string {
 // temporary directory. It starts with no templates unless withStarters.
 func newTestTemplateService(t *testing.T, withStarters bool) (*TemplateService, string) {
 	t.Helper()
-	dir := filepath.Join(t.TempDir(), "SBGen")
+	dir := filepath.Join(t.TempDir(), "Progen Desktop")
 	if !withStarters {
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			t.Fatal(err)

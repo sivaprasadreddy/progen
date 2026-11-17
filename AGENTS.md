@@ -7,15 +7,15 @@ This file provides guidance to AI Agents when working with code in this reposito
 **Progen** is a CLI tool (written in Go) that generates complete, production-ready Spring Boot projects. 
 It works offline, ships as a single binary, and uses interactive prompts or a JSON config file to scaffold a full Java project — build files, Java source, tests, Docker Compose, GitHub Actions, database migrations, security setup, and more.
 
-The repository also contains **SBGen**, a macOS desktop app built with [MyGo](https://mygo.run/) (native UI, no web view) that generates the same projects through a wizard. Both are released together with the version in `internal/version/version.go`.
+The repository also contains **Progen Desktop**, a macOS desktop app built with [MyGo](https://mygo.run/) (native UI, no web view) that generates the same projects through a wizard. Both are released together with the version in `internal/version/version.go`.
 
 ## Layout
 
 - `cmd/progen/` – the CLI entry point; `internal/cli/` – Cobra commands and interactive prompts.
-- `internal/generators/springboot/` – the Spring Boot generator (`springboot.Generate`) and its templates, shared by the CLI and SBGen.
-- `cmd/sbgen/` – the SBGen `main` package and its MyGo project directory: `mygo.json`, `resources/icon.png`, `AppIcon.icon`, and `README.md` (user docs).
-- `internal/sbgen/` – SBGen's packages: `config` (the user's choices and `Validate`), `generator` (maps them to `springboot.ProjectConfig`, generates and zips into `~/Downloads`), `store` (templates and defaults in the user data directory), and `app` (the wizard's state in `wizard.go`, the screens in `view.go`, the look in `style.go`, choices in `options.go`). `config`, `generator` and `store` must not import `app` or MyGo's `ui`.
-- The `progen` CLI must not import `internal/sbgen` or MyGo (`go list -deps ./cmd/progen | grep mygo` should print nothing).
+- `internal/generators/springboot/` – the Spring Boot generator (`springboot.Generate`) and its templates, shared by the CLI and Progen Desktop.
+- `cmd/desktop/` – the Progen Desktop `main` package and its MyGo project directory: `mygo.json`, `resources/icon.png`, `AppIcon.icon`, and `README.md` (user docs).
+- `internal/desktop/` – Progen Desktop's packages: `config` (the user's choices and `Validate`), `generator` (maps them to `springboot.ProjectConfig`, generates and zips into `~/Downloads`), `store` (templates and defaults in the user data directory), and `app` (the wizard's state in `wizard.go`, the screens in `view.go`, the look in `style.go`, choices in `options.go`). `config`, `generator` and `store` must not import `app` or MyGo's `ui`.
+- The `progen` CLI must not import `internal/desktop` or MyGo (`go list -deps ./cmd/progen | grep mygo` should print nothing).
 
 ## Commands
 
@@ -28,32 +28,28 @@ make fmt         # Format Go source code
 make clean       # Remove dist/
 ```
 
-SBGen (the MyGo project directory is `cmd/sbgen`; pass it to every `mygo` command):
+Progen Desktop (the MyGo project directory is `cmd/desktop`; pass it to every `mygo` command):
 ```bash
-go tool mygo dev ./cmd/sbgen                               # Run the app, rebuilding on changes (make sbgen_dev)
-go tool mygo build ./cmd/sbgen                             # Build SBGen.app and a DMG into cmd/sbgen/build/ (make sbgen_build)
-go tool mygo build -platform darwin/universal ./cmd/sbgen  # Universal macOS build
-go test -short ./internal/sbgen/...                        # SBGen tests, including ui.Tester view tests
-go tool mygo vet ./internal/sbgen/app                      # MyGo-specific checks; one package directory at a time
+go tool mygo dev ./cmd/desktop                               # Run the app, rebuilding on changes (make desktop_dev)
+go tool mygo build ./cmd/desktop                             # Build Progen Desktop.app and a DMG into cmd/desktop/build/ (make desktop_build)
+go tool mygo build -platform darwin/universal ./cmd/desktop  # Universal macOS build
+go test -short ./internal/desktop/...                        # Progen Desktop tests, including ui.Tester view tests
+go tool mygo vet ./internal/desktop/app                      # MyGo-specific checks; one package directory at a time
 ```
-The SBGen view tests need a text engine: they run on macOS (CI runs them on `macos-latest`; the Ubuntu job skips `internal/sbgen`).
+The Progen Desktop view tests need a text engine: they run on macOS (CI runs them on `macos-latest`; the Ubuntu job skips `internal/desktop`).
 
-## SBGen Native UI Practices
+## Progen Desktop Native UI Practices
 
 - The view runs on the main thread, possibly several times a frame. Change state in actions (`Clicked`, `OnClick`, a widget's `Changed`), not unconditionally while building.
 - Don't keep `ui.Element` values or a `*ui.Context` in the wizard or in goroutines; `go tool mygo vet` reports it.
 - Keep slow work off the main thread: generation runs through `wizard.async`, and its result is applied with `Window.Update`.
 - Give a widget a key (`c.Key(...)`) where siblings would otherwise share state, as option cards in a loop.
 - For alerts whose action discards data, list the action first and Cancel last: `ui.AlertDialog`'s last button is the default for Enter.
-- Add a choice to a step by adding its constant in `internal/sbgen/config/config.go`, accepting it in `Validate`, mapping it in `toProjectConfig` (`internal/sbgen/generator/generator.go`), and listing it in `internal/sbgen/app/options.go`.
-- Cover new view behavior with a `ui.Tester` test in `internal/sbgen/app/view_test.go`.
+- Add a choice to a step by adding its constant in `internal/desktop/config/config.go`, accepting it in `Validate`, mapping it in `toProjectConfig` (`internal/desktop/generator/generator.go`), and listing it in `internal/desktop/app/options.go`.
+- Cover new view behavior with a `ui.Tester` test in `internal/desktop/app/view_test.go`.
 - MyGo docs for the pinned version: `go list -m -f '{{.Dir}}' github.com/egoist/mygo`, under `docs/` (native UI under `docs/ui/`). `.agents/skills/` has the `mygo-maintenance` and `mygo-native-modules` skills.
 
 ## Releasing
 
-Bump `Version` in `internal/version/version.go`, commit, and push a matching `vX.Y.Z` tag. `.github/workflows/release.yml` checks that the tag matches, runs GoReleaser for the `progen` binaries and Homebrew formula, then builds the universal SBGen app on macOS (writing the tag's version into `cmd/sbgen/mygo.json`) and uploads `sbgen-vX.Y.Z-macos.zip` to the same release.
+Bump `Version` in `internal/version/version.go`, commit, and push a matching `vX.Y.Z` tag. `.github/workflows/release.yml` checks that the tag matches, runs GoReleaser for the `progen` binaries and Homebrew formula, then builds the universal Progen Desktop app on macOS (writing the tag's version into `cmd/desktop/mygo.json`) and uploads `progen-desktop-vX.Y.Z-macos.zip` to the same release.
 
-Running a single test:
-```bash
-go test -v -run TestGenerateSpringBootWithAllFeatures ./...
-```

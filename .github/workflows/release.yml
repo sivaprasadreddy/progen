@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 jobs:
-  # progen and SBGen are released together, with the version of the tag.
+  # The CLI and Progen Desktop are released together, with the version of the tag.
   check-version:
     name: Check version
     runs-on: ubuntu-latest
@@ -44,9 +44,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-  sbgen-macos:
-    name: SBGen macOS desktop app
-    # GoReleaser creates the GitHub release; SBGen is uploaded to it.
+  desktop-macos:
+    name: Progen Desktop macOS app
+    # GoReleaser creates the GitHub release; Progen Desktop is uploaded to it.
     needs: goreleaser
     runs-on: macos-latest
     steps:
@@ -57,24 +57,24 @@ jobs:
           go-version-file: go.mod
 
       - name: Set the version from the tag
-        working-directory: cmd/sbgen
+        working-directory: cmd/desktop
         run: |
           jq --arg version "${GITHUB_REF_NAME#v}" '.version = $version' mygo.json > mygo.json.tmp
           mv mygo.json.tmp mygo.json
 
       - name: Package macOS app
-        run: go tool mygo build -platform darwin/universal -skip-dmg ./cmd/sbgen
+        run: go tool mygo build -platform darwin/universal -skip-dmg ./cmd/desktop
 
       - name: Archive app bundle
         run: |
           ditto -c -k --sequesterRsrc --keepParent \
-            cmd/sbgen/build/darwin-universal/SBGen.app \
-            "sbgen-${GITHUB_REF_NAME}-macos.zip"
+            "cmd/desktop/build/darwin-universal/Progen Desktop.app" \
+            "progen-desktop-${GITHUB_REF_NAME}-macos.zip"
 
       - name: Upload to the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release upload "${GITHUB_REF_NAME}" \
-            "sbgen-${GITHUB_REF_NAME}-macos.zip" \
+            "progen-desktop-${GITHUB_REF_NAME}-macos.zip" \
             --clobber

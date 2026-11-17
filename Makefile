@@ -1,7 +1,7 @@
 MAIN_SRC_DIR=./cmd/progen
+DESKTOP_SRC_DIR=./cmd/desktop
 DIST_DIR=dist
 BINARY_NAME=progen
-SBGEN_SRC_DIR=./cmd/sbgen
 GOARCHES=amd64 arm64
 
 # Build the application
@@ -25,13 +25,13 @@ build:
 run:
 	@go run ${MAIN_SRC_DIR}
 
-# Run the SBGen desktop app, rebuilding as the code changes
-sbgen_dev:
-	go tool mygo dev ${SBGEN_SRC_DIR}
+# Run the Progen Desktop app, rebuilding as the code changes
+desktop_dev:
+	go tool mygo dev ${DESKTOP_SRC_DIR}
 
-# Build SBGen.app and a DMG into cmd/sbgen/build/
-sbgen_build:
-	go tool mygo build ${SBGEN_SRC_DIR}
+# Build Progen Desktop.app and a DMG into cmd/desktop/build/
+desktop_build:
+	go tool mygo build ${DESKTOP_SRC_DIR}
 
 # Run basic tests only
 test:
@@ -46,6 +46,6 @@ all_tests:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -rf dist ${SBGEN_SRC_DIR}/build
+	@rm -rf dist ${DESKTOP_SRC_DIR}/build
 
-.PHONY: all build run sbgen_dev sbgen_build test all_tests clean
+.PHONY: all build run desktop_dev desktop_build test all_tests clean

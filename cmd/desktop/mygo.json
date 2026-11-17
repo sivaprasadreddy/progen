@@ -1,7 +1,7 @@
 {
-  "name": "SBGen",
-  "slug": "sbgen",
-  "identifier": "dev.sivalabs.sbgen",
+  "name": "Progen Desktop",
+  "slug": "progen-desktop",
+  "identifier": "dev.sivalabs.progen.desktop",
   "version": "1.1.2",
   "copyright": "© 2027 SivaLabs",
   "macos": { "icon": "AppIcon.icon" },

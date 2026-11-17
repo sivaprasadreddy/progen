@@ -13,7 +13,7 @@ import (
 //go:embed assets/Inter-Medium.ttf
 var interFont []byte
 
-//go:embed assets/sbgen.png
+//go:embed assets/logo.png
 var logoPNG []byte
 
 const fontFamily = "Inter"

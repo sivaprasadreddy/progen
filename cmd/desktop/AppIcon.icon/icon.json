@@ -6,8 +6,8 @@
     {
       "layers" : [
         {
-          "image-name" : "sbgen.png",
-          "name" : "sbgen",
+          "image-name" : "logo.png",
+          "name" : "logo",
           "position" : {
             "scale" : 1.0,
             "translation-in-points" : [

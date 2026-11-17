@@ -1,4 +1,4 @@
-// Command sbgen is SBGen, a desktop app that generates Spring Boot projects.
+// Command desktop is Progen Desktop, a desktop app that generates Spring Boot projects.
 package main
 
 import (
@@ -7,14 +7,14 @@ import (
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/ui"
 
-	"github.com/sivaprasadreddy/progen/internal/sbgen/app"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/generator"
-	"github.com/sivaprasadreddy/progen/internal/sbgen/store"
+	"github.com/sivaprasadreddy/progen/internal/desktop/app"
+	"github.com/sivaprasadreddy/progen/internal/desktop/generator"
+	"github.com/sivaprasadreddy/progen/internal/desktop/store"
 )
 
 func main() {
 	// Templates and defaults live in the user data directory, e.g.
-	// ~/Library/Application Support/SBGen/templates.json.
+	// ~/Library/Application Support/Progen Desktop/templates.json.
 	userData := func() (string, error) { return mygo.App.Path(mygo.PathUserData) }
 
 	mygo.App.WhenReady(func() {
@@ -29,7 +29,7 @@ func main() {
 		}
 		wizard := app.NewWizard(store.NewTemplateService(userData), store.NewDefaultsService(userData), (&generator.Service{}).GenerateProject, async)
 		win = mygo.NewWindow(mygo.WindowOptions{
-			Title:     "SBGen",
+			Title:     "Progen Desktop",
 			Width:     1200,
 			Height:    800,
 			MinWidth:  900,

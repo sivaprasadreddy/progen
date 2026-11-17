@@ -29,16 +29,16 @@ jobs:
           go version
           docker version
 
-      # The SBGen packages are tested on macOS by the sbgen job: MyGo's text
+      # The Progen Desktop packages are tested on macOS by the desktop job: MyGo's text
       # engine needs GTK/Pango, which the Ubuntu runner does not have.
       - name: Test
-        run: go test -v -short $(go list ./... | grep -v '/internal/sbgen/')
+        run: go test -v -short $(go list ./... | grep -v '/internal/desktop/')
 
       - name: Build
         run: go build -v ./cmd/progen
 
-  sbgen:
-    name: Build SBGen desktop app
+  desktop:
+    name: Build Progen Desktop app
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -51,17 +51,17 @@ jobs:
 
       - name: Vet MyGo code
         run: |
-          go tool mygo vet ./cmd/sbgen
-          go tool mygo vet ./internal/sbgen/app
+          go tool mygo vet ./cmd/desktop
+          go tool mygo vet ./internal/desktop/app
 
       # -short skips the test that generates a full project, which needs a JDK.
       - name: Test
-        run: go test -short ./internal/sbgen/...
+        run: go test -short ./internal/desktop/...
 
       - name: Build
-        run: go tool mygo build -platform darwin/universal ./cmd/sbgen
+        run: go tool mygo build -platform darwin/universal ./cmd/desktop
 
       - uses: actions/upload-artifact@v7
         with:
-          name: sbgen-darwin
-          path: cmd/sbgen/build/
+          name: progen-desktop-darwin
+          path: cmd/desktop/build/
