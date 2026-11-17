@@ -4,7 +4,7 @@ go 1.27.4
 
 require (
 	charm.land/huh/v2 v2.0.3
-	github.com/egoist/mygo v0.9.2
+	github.com/egoist/mygo v0.10.0
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.12.1
 )
