@@ -16,9 +16,6 @@ builds:
       goarch:
         - amd64
         - arm64
-      ignore:
-        - goarch: arm64
-          goos: windows
 archives:
   - formats: ['tar.gz']
     # this name template makes the OS and Arch compatible with the results of `uname`.

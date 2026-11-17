@@ -28,6 +28,7 @@ Download the archive for your platform from the [Releases](https://github.com/si
 |----------------------------------|----------------------------------------------|
 | macOS 12+ (Apple Silicon, Intel) | `progen-desktop-<version>-macos.zip`         |
 | Windows 10/11 (x64)              | `progen-desktop-<version>-windows-amd64.zip` |
+| Windows 11 (ARM64)               | `progen-desktop-<version>-windows-arm64.zip` |
 | Linux (x86-64)                   | `progen-desktop-<version>-linux-amd64.tar.gz` |
 | Linux (ARM64)                    | `progen-desktop-<version>-linux-arm64.tar.gz` |
 
@@ -54,7 +55,7 @@ Download the archive for your platform from the [Releases](https://github.com/si
 ### Prerequisites
 
 - **macOS:** macOS 12 or later.
-- **Windows:** Windows 10 or 11, 64-bit (x64).
+- **Windows:** Windows 10 or 11 on x64, or Windows 11 on ARM64.
 - **Linux:** a desktop with GTK 3 and Pango, which most desktop distributions install. If they're missing,
   install them with your package manager, e.g. `sudo apt install libgtk-3-0` (Debian, Ubuntu),
   `sudo dnf install gtk3` (Fedora) or `sudo pacman -S gtk3` (Arch).
@@ -181,10 +182,10 @@ go tool mygo build ./cmd/desktop
 go tool mygo build -platform darwin/universal ./cmd/desktop
 
 # Build the Windows and Linux apps; any machine can, as MyGo needs no cgo
-go tool mygo build -platform windows/amd64,linux/amd64,linux/arm64 -skip-installer ./cmd/desktop
+go tool mygo build -platform windows/amd64,windows/arm64,linux/amd64,linux/arm64 -skip-installer ./cmd/desktop
 
 # Pack a build into its release archive, e.g. dist/progen-desktop-v<version>-linux-amd64.tar.gz
-# (targets: macos, windows-amd64, linux-amd64, linux-arm64)
+# (targets: macos, windows-amd64, windows-arm64, linux-amd64, linux-arm64)
 .github/scripts/package-desktop.sh linux-amd64 dist
 
 # Run the Progen Desktop tests, including the view tests that click through the wizard without a window

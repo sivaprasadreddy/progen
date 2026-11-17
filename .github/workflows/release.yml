@@ -56,6 +56,7 @@ jobs:
           - { target: macos, os: macos-latest, platform: darwin/universal }
           # MyGo needs no cgo, so Ubuntu builds the Windows and Linux apps.
           - { target: windows-amd64, os: ubuntu-latest, platform: windows/amd64 }
+          - { target: windows-arm64, os: ubuntu-latest, platform: windows/arm64 }
           - { target: linux-amd64, os: ubuntu-latest, platform: linux/amd64 }
           - { target: linux-arm64, os: ubuntu-latest, platform: linux/arm64 }
     steps:
@@ -98,7 +99,7 @@ jobs:
 
       - name: Check every archive is there
         run: |
-          for file in macos.zip windows-amd64.zip linux-amd64.tar.gz linux-arm64.tar.gz; do
+          for file in macos.zip windows-amd64.zip windows-arm64.zip linux-amd64.tar.gz linux-arm64.tar.gz; do
             test -f "dist/progen-desktop-${GITHUB_REF_NAME}-${file}" || { echo "missing progen-desktop-${GITHUB_REF_NAME}-${file}"; exit 1; }
           done
 

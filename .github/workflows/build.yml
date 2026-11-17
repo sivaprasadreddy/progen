@@ -78,6 +78,7 @@ jobs:
       matrix:
         include:
           - { target: windows-amd64, platform: windows/amd64 }
+          - { target: windows-arm64, platform: windows/arm64 }
           - { target: linux-amd64, platform: linux/amd64 }
           - { target: linux-arm64, platform: linux/arm64 }
     steps:

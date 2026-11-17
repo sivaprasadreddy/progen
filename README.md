@@ -53,6 +53,7 @@ Download the archive for your platform from https://github.com/sivaprasadreddy/p
 |----------------------------------|-----------------------------------------------|
 | macOS 12+ (Apple Silicon, Intel) | `progen-desktop-<version>-macos.zip`          |
 | Windows 10/11 (x64)              | `progen-desktop-<version>-windows-amd64.zip`  |
+| Windows 11 (ARM64)               | `progen-desktop-<version>-windows-arm64.zip`  |
 | Linux (x86-64)                   | `progen-desktop-<version>-linux-amd64.tar.gz` |
 | Linux (ARM64)                    | `progen-desktop-<version>-linux-arm64.tar.gz` |
 

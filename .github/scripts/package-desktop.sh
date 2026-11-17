@@ -3,20 +3,20 @@
 #
 #   .github/scripts/package-desktop.sh <target> <output-dir>
 #
-# <target> is macos, windows-amd64, linux-amd64 or linux-arm64; build it first with
-# go tool mygo build -platform <darwin/universal|windows/amd64|linux/amd64|linux/arm64> ./cmd/desktop
+# <target> is macos, windows-amd64, windows-arm64, linux-amd64 or linux-arm64; build it first with
+# go tool mygo build -platform <darwin/universal|windows/amd64|windows/arm64|linux/amd64|linux/arm64> ./cmd/desktop
 # The archive is named after the version in cmd/desktop/mygo.json, which the release
 # workflow sets from the tag:
 #
 #   progen-desktop-vX.Y.Z-macos.zip           Progen Desktop.app
-#   progen-desktop-vX.Y.Z-windows-amd64.zip   Progen Desktop/ with Progen Desktop.exe and its files
+#   progen-desktop-vX.Y.Z-windows-<arch>.zip  Progen Desktop/ with Progen Desktop.exe and its files
 #   progen-desktop-vX.Y.Z-linux-<arch>.tar.gz progen-desktop-vX.Y.Z-linux-<arch>/ with the executable,
 #                                             desktop entry and icon, install.sh, and the archive
 #                                             install.sh installs from
 set -euo pipefail
 
 if [[ $# -ne 2 ]]; then
-  echo "usage: $0 <macos|windows-amd64|linux-amd64|linux-arm64> <output-dir>" >&2
+  echo "usage: $0 <macos|windows-amd64|windows-arm64|linux-amd64|linux-arm64> <output-dir>" >&2
   exit 2
 fi
 target=$1
@@ -54,7 +54,7 @@ case "$target" in
     ditto -c -k --sequesterRsrc --keepParent "$app" "$out/$archive.zip"
     echo "$out/$archive.zip"
     ;;
-  windows-amd64)
+  windows-amd64 | windows-arm64)
     copy_app_files "$desktop/build/$target" "$staging/Progen Desktop"
     rm -f "$out/$archive.zip"
     (cd "$staging" && zip -qr "$out/$archive.zip" "Progen Desktop")
@@ -70,7 +70,7 @@ case "$target" in
     echo "$out/$archive.tar.gz"
     ;;
   *)
-    echo "unknown target $target: use macos, windows-amd64, linux-amd64 or linux-arm64" >&2
+    echo "unknown target $target: use macos, windows-amd64, windows-arm64, linux-amd64 or linux-arm64" >&2
     exit 2
     ;;
 esac

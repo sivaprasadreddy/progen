@@ -14,7 +14,7 @@ The repository also contains **Progen Desktop**, a desktop app for macOS, Window
 - `cmd/progen/` – the CLI entry point; `internal/cli/` – Cobra commands and interactive prompts.
 - `internal/generators/springboot/` – the Spring Boot generator (`springboot.Generate`) and its templates, shared by the CLI and Progen Desktop.
 - `cmd/desktop/` – the Progen Desktop `main` package and its MyGo project directory: `mygo.json`, `resources/icon.png`, `AppIcon.icon`, and `README.md` (user docs).
-- `.github/scripts/package-desktop.sh` – packs a Progen Desktop build into its release archive (`macos`, `windows-amd64`, `linux-amd64`, `linux-arm64`); CI and the release workflow use it.
+- `.github/scripts/package-desktop.sh` – packs a Progen Desktop build into its release archive (`macos`, `windows-amd64`, `windows-arm64`, `linux-amd64`, `linux-arm64`); CI and the release workflow use it.
 - `internal/desktop/` – Progen Desktop's packages: `config` (the user's choices and `Validate`), `generator` (maps them to `springboot.ProjectConfig`, generates and zips into `~/Downloads`), `store` (templates and defaults in the user data directory), and `app` (the wizard's state in `wizard.go`, the screens in `view.go`, the look in `style.go`, choices in `options.go`). `config`, `generator` and `store` must not import `app` or MyGo's `ui`.
 - The `progen` CLI must not import `internal/desktop` or MyGo (`go list -deps ./cmd/progen | grep mygo` should print nothing).
 
@@ -34,7 +34,7 @@ Progen Desktop (the MyGo project directory is `cmd/desktop`; pass it to every `m
 go tool mygo dev ./cmd/desktop                               # Run the app, rebuilding on changes (make desktop_dev)
 go tool mygo build ./cmd/desktop                             # Build Progen Desktop.app and a DMG into cmd/desktop/build/ (make desktop_build)
 go tool mygo build -platform darwin/universal ./cmd/desktop  # Universal macOS build
-go tool mygo build -platform windows/amd64,linux/amd64,linux/arm64 -skip-installer ./cmd/desktop  # Windows and Linux builds (no cgo, any machine)
+go tool mygo build -platform windows/amd64,windows/arm64,linux/amd64,linux/arm64 -skip-installer ./cmd/desktop  # Windows and Linux builds (no cgo, any machine)
 go test -short ./internal/desktop/...                        # Progen Desktop tests, including ui.Tester view tests
 go tool mygo vet ./internal/desktop/app                      # MyGo-specific checks; one package directory at a time
 ```
@@ -53,5 +53,5 @@ The Progen Desktop view tests need a text engine: they run on macOS (CI runs the
 
 ## Releasing
 
-Bump `Version` in `internal/version/version.go`, commit, and push a matching `vX.Y.Z` tag. `.github/workflows/release.yml` checks that the tag matches, runs GoReleaser for the `progen` binaries and Homebrew formula, and builds Progen Desktop for macOS (universal), Windows (amd64) and Linux (amd64, arm64), writing the tag's version into `cmd/desktop/mygo.json`. Only when every desktop build succeeds does it upload `progen-desktop-vX.Y.Z-macos.zip`, `-windows-amd64.zip`, `-linux-amd64.tar.gz` and `-linux-arm64.tar.gz` to the same release.
+Bump `Version` in `internal/version/version.go`, commit, and push a matching `vX.Y.Z` tag. `.github/workflows/release.yml` checks that the tag matches, runs GoReleaser for the `progen` binaries and Homebrew formula, and builds Progen Desktop for macOS (universal), Windows (amd64, arm64) and Linux (amd64, arm64), writing the tag's version into `cmd/desktop/mygo.json`. Only when every desktop build succeeds does it upload `progen-desktop-vX.Y.Z-macos.zip`, `-windows-amd64.zip`, `-windows-arm64.zip`, `-linux-amd64.tar.gz` and `-linux-arm64.tar.gz` to the same release.
 
