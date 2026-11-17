@@ -2,6 +2,7 @@ version: "3"
 
 vars:
   MAIN_SRC_DIR: ./cmd/progen
+  SBGEN_SRC_DIR: ./cmd/sbgen
   DIST_DIR: dist
   BINARY_NAME: progen
   GOARCHES: amd64 arm64
@@ -36,6 +37,18 @@ tasks:
     cmds:
       - go run {{.MAIN_SRC_DIR}}
 
+  sbgen_dev:
+    desc: Run the SBGen desktop app, rebuilding as the code changes
+    interactive: true
+    cmds:
+      - go tool mygo dev {{.SBGEN_SRC_DIR}}
+
+  sbgen_build:
+    desc: Build SBGen.app and a DMG into cmd/sbgen/build/ (pass e.g. -- -platform darwin/universal)
+    cmds:
+      - rm -rf {{.SBGEN_SRC_DIR}}/build
+      - go tool mygo build {{.CLI_ARGS}} {{.SBGEN_SRC_DIR}}
+
   test:
     desc: Run tests in short mode (skips permutation tests)
     deps: [ fmt ]
@@ -50,7 +63,7 @@ tasks:
       - go test -v -p 1 ./...
 
   clean:
-    desc: Remove dist/ and local progen binary
+    desc: Remove dist/ and the SBGen build output
     cmds:
       - echo "Cleaning..."
-      - rm -rf {{.DIST_DIR}}
+      - rm -rf {{.DIST_DIR}} {{.SBGEN_SRC_DIR}}/build

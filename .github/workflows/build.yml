@@ -5,68 +5,63 @@ on:
       - 'main'
 
 jobs:
-  build:
-    name: Build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: ['1.27.4']
-        #os: [ubuntu-latest, macos-latest, windows-latest]
-        os: [ubuntu-latest]
-
+  progen:
+    name: Build progen CLI
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
 
-#      - name: Setup docker (missing on MacOS)
-#        if: runner.os == 'macos'
-#        run: |
-#          brew install docker
-#          colima start
-#          # For testcontainers to find the Colima socket
-#          # https://github.com/abiosoft/colima/blob/main/docs/FAQ.md#cannot-connect-to-the-docker-daemon-at-unixvarrundockersock-is-the-docker-daemon-running
-#          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
-
       - name: Install Go
         uses: actions/setup-go@v7
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version-file: go.mod
 
       - name: Setup Java
         uses: actions/setup-java@v6
         with:
           java-version: 25
           distribution: 'temurin'
+
       - name: Print SDK Versions
         run: |
           java -version
           go version
           docker version
+
+      # The SBGen packages are tested on macOS by the sbgen job: MyGo's text
+      # engine needs GTK/Pango, which the Ubuntu runner does not have.
       - name: Test
-        run: go test -v -short ./...
+        run: go test -v -short $(go list ./... | grep -v '/internal/sbgen/')
 
       - name: Build
         run: go build -v ./cmd/progen
 
-#  dev-releases-matrix:
-#    name: Release Go Binary
-#    needs: [build]
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        go-version: ['1.27.4']
-#        goos: [ linux, windows, darwin ]
-#        goarch: [ amd64, arm64 ]
-#        exclude:
-#          - goarch: arm64
-#            goos: windows
-#    steps:
-#      - uses: actions/checkout@v7
-#      - uses: wangyoucao577/go-release-action@v1
-#        with:
-#          github_token: ${{ secrets.GH_TOKEN }}
-#          goos: ${{ matrix.goos }}
-#          goarch: ${{ matrix.goarch }}
-#          release_name: dev
-#          overwrite: true
-#          extra_files: LICENSE README.md
+  sbgen:
+    name: Build SBGen desktop app
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Vet MyGo code
+        run: |
+          go tool mygo vet ./cmd/sbgen
+          go tool mygo vet ./internal/sbgen/app
+
+      # -short skips the test that generates a full project, which needs a JDK.
+      - name: Test
+        run: go test -short ./internal/sbgen/...
+
+      - name: Build
+        run: go tool mygo build -platform darwin/universal ./cmd/sbgen
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: sbgen-darwin
+          path: cmd/sbgen/build/

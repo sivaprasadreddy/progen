@@ -1,4 +1,4 @@
-name: GoReleaser
+name: Release
 on:
   push:
     tags:
@@ -8,7 +8,24 @@ permissions:
   contents: write
 
 jobs:
+  # progen and SBGen are released together, with the version of the tag.
+  check-version:
+    name: Check version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the tag matches internal/version
+        run: |
+          version=$(sed -n 's/^const Version = "\(.*\)"$/\1/p' internal/version/version.go)
+          if [[ "${version}" != "${GITHUB_REF_NAME}" ]]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match Version ${version} in internal/version/version.go"
+            exit 1
+          fi
+
   goreleaser:
+    name: progen CLI
+    needs: check-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -16,7 +33,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@v7
         with:
-          go-version: '1.27.4'
+          go-version-file: go.mod
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7
@@ -26,3 +43,38 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  sbgen-macos:
+    name: SBGen macOS desktop app
+    # GoReleaser creates the GitHub release; SBGen is uploaded to it.
+    needs: goreleaser
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Set the version from the tag
+        working-directory: cmd/sbgen
+        run: |
+          jq --arg version "${GITHUB_REF_NAME#v}" '.version = $version' mygo.json > mygo.json.tmp
+          mv mygo.json.tmp mygo.json
+
+      - name: Package macOS app
+        run: go tool mygo build -platform darwin/universal -skip-dmg ./cmd/sbgen
+
+      - name: Archive app bundle
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            cmd/sbgen/build/darwin-universal/SBGen.app \
+            "sbgen-${GITHUB_REF_NAME}-macos.zip"
+
+      - name: Upload to the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${GITHUB_REF_NAME}" \
+            "sbgen-${GITHUB_REF_NAME}-macos.zip" \
+            --clobber

@@ -1,6 +1,9 @@
 # Project Generator CLI
 A CLI tool for generating Spring Boot projects.
 
+This repository also contains **SBGen**, a macOS desktop app that generates the same Spring Boot projects
+through a step-by-step wizard. See [SBGen](#sbgen-desktop-app) below.
+
 [![Build](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml)
 [![GoReleaser](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml)
 
@@ -79,6 +82,14 @@ Generated .progen.json successfully
 # Generating a new project using .progen.json configuration
 $ progen -c .progen.json
 ```
+
+## SBGen desktop app
+SBGen is a native macOS app (built with [MyGo](https://mygo.run/)) that uses the same generator as the `progen` CLI.
+It is released together with `progen`, with the same version: download `sbgen-<version>-macos.zip`
+from https://github.com/sivaprasadreddy/progen/releases.
+
+See [cmd/sbgen/README.md](cmd/sbgen/README.md) for usage, how to allow the unsigned app to run on macOS,
+and how to build it from source.
 
 ## License
 The **progen** is Open Source software released under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html).

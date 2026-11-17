@@ -1,0 +1,10 @@
+{
+  "name": "SBGen",
+  "slug": "sbgen",
+  "identifier": "dev.sivalabs.sbgen",
+  "version": "1.1.2",
+  "copyright": "© 2027 SivaLabs",
+  "macos": { "icon": "AppIcon.icon" },
+  "linux": { "webview": false },
+  "out": "build"
+}

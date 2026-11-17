@@ -31,3 +31,8 @@ dist/
 reviews.md
 .junie/
 springboot-demo-*
+
+# SBGen desktop app (MyGo) build output
+/cmd/sbgen/build/
+.mygo/
+mygo_windows_*.syso
