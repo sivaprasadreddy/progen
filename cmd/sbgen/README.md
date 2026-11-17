@@ -5,8 +5,7 @@ A step-by-step wizard walks you through the options; the generated project is sa
 `~/Downloads` folder as a ZIP archive.
 
 SBGen lives in the [progen](https://github.com/sivaprasadreddy/progen) repository and uses the same
-Spring Boot generator as the `progen` CLI, so the projects it creates are the same. Both are released
-together, with the same version.
+Spring Boot generator as the `progen` CLI, so the projects it creates are the same. Both are released together, with the same version.
 SBGen gives you a graphical alternative to answering prompts in the terminal.
 
 ## What you can generate
