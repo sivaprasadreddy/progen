@@ -47,7 +47,7 @@ The Progen Desktop view tests need a text engine: they run on macOS (CI runs the
 - Keep slow work off the main thread: generation runs through `wizard.async`, and its result is applied with `Window.Update`.
 - Give a widget a key (`c.Key(...)`) where siblings would otherwise share state, as option cards in a loop.
 - For alerts whose action discards data, list the action first and Cancel last: `ui.AlertDialog`'s last button is the default for Enter.
-- Add a choice to a step by adding its constant in `internal/desktop/config/config.go`, accepting it in `Validate`, mapping it in `toProjectConfig` (`internal/desktop/generator/generator.go`), and listing it in `internal/desktop/app/options.go`.
+- Add a choice to a section of the Configure step by adding its constant in `internal/desktop/config/config.go`, accepting it in `Validate`, mapping it in `toProjectConfig` (`internal/desktop/generator/generator.go`), and listing it in `internal/desktop/app/options.go`.
 - Cover new view behavior with a `ui.Tester` test in `internal/desktop/app/view_test.go`.
 - MyGo docs for the pinned version: `go list -m -f '{{.Dir}}' github.com/egoist/mygo`, under `docs/` (native UI under `docs/ui/`). `.agents/skills/` has the `mygo-maintenance` and `mygo-native-modules` skills.
 

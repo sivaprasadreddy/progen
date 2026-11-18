@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/egoist/mygo/ui"
 	"github.com/sivaprasadreddy/progen/internal/desktop/config"
 	"github.com/sivaprasadreddy/progen/internal/desktop/store"
 )
@@ -15,15 +16,26 @@ import (
 // steps that make a selection.
 const (
 	stepWelcome = iota
-	stepProject
-	stepFrontend
-	stepDatabase
-	stepFeatures
+	stepConfigure
 	stepReview
 	stepComplete
 )
 
-var stepNames = []string{"Welcome", "Project", "Frontend", "Database", "Features", "Review", "Complete"}
+var stepNames = []string{"Welcome", "Configure", "Review", "Complete"}
+
+// section is a card of the Configure step, which the links above it scroll
+// to.
+type section int
+
+const (
+	sectionProject section = iota
+	sectionFrontend
+	sectionDatabase
+	sectionFeatures
+	sectionCount
+)
+
+var sectionNames = [sectionCount]string{"Project", "Frontend", "Database", "Features"}
 
 // page is a page the sidebar opens in place of the current step, which it
 // returns to.
@@ -41,7 +53,7 @@ type message struct {
 	error bool
 }
 
-// projectField names a field of the Project step.
+// projectField names a field of the Configure step’s Project section.
 type projectField int
 
 const (
@@ -69,12 +81,16 @@ type Wizard struct {
 	step int
 	page page
 
+	// configureScroll is how far the Configure step is scrolled, kept while
+	// the user goes to Review and back.
+	configureScroll ui.ScrollState
+
 	// selection is what the steps chose so far.
 	selection config.GeneratorConfiguration
-	// projectConfirmed is whether the user went past the Project step, or
+	// projectConfirmed is whether the user went past the Configure step, or
 	// loaded a template, after which new defaults leave the project alone.
 	projectConfirmed bool
-	// showProjectErrors marks the empty Project fields once the user tried
+	// showProjectErrors marks the empty project fields once the user tried
 	// to go on with them.
 	showProjectErrors bool
 
@@ -144,8 +160,8 @@ func NewWizard(templates TemplateStore, defaults DefaultsStore, generate func(co
 	return w
 }
 
-// newSelection is a fresh selection: the Project step from the defaults,
-// and the first choice of every other step.
+// newSelection is a fresh selection: the project from the defaults,
+// and the first choice of every other section.
 func newSelection(d store.ProjectDefaults) config.GeneratorConfiguration {
 	return config.GeneratorConfiguration{
 		Project:  projectFromDefaults(d),
@@ -156,7 +172,7 @@ func newSelection(d store.ProjectDefaults) config.GeneratorConfiguration {
 	}
 }
 
-// projectFromDefaults is the Project step's starting values for a new
+// projectFromDefaults is the Project section’s starting values for a new
 // application.
 func projectFromDefaults(d store.ProjectDefaults) config.ProjectSettings {
 	return config.ProjectSettings{
@@ -249,13 +265,15 @@ func (w *Wizard) toggleAIModel(m config.AIModel) {
 	w.dropStalePreview()
 }
 
-// next goes on from the current step. The Project step goes on only with
-// its fields filled in. A preview of another selection is discarded.
+// next goes on from the current step. The Configure step goes on only with
+// the project's fields filled in, and otherwise scrolls up to them. A
+// preview of another selection is discarded.
 func (w *Wizard) next() {
 	w.dropStalePreview()
-	if w.step == stepProject {
+	if w.step == stepConfigure {
 		if !w.projectComplete() {
 			w.showProjectErrors = true
+			w.configureScroll.ScrollTo(0, 0, ui.Smooth)
 			return
 		}
 		w.showProjectErrors = false
@@ -284,7 +302,8 @@ func (w *Wizard) getStarted() {
 	if w.activeTemplate != nil {
 		w.resetSelection()
 	}
-	w.step = stepProject
+	w.configureScroll.Y = 0
+	w.step = stepConfigure
 }
 
 // resetSelection drops every choice, the loaded template and the preview.
@@ -315,7 +334,7 @@ func (w *Wizard) startNew() {
 	w.step = stepWelcome
 }
 
-// applyTemplate loads a template's selection into every step, then shows
+// applyTemplate loads a template’s selection into every section, then shows
 // step.
 func (w *Wizard) applyTemplate(t store.Template, step int) {
 	w.selection = cloneConfiguration(t.Configuration)
@@ -339,6 +358,7 @@ func (w *Wizard) applyTemplate(t store.Template, step int) {
 	w.showProjectErrors = false
 	w.page = pageNone
 	w.step = step
+	w.configureScroll.Y = 0
 	w.dropStalePreview()
 }
 
@@ -450,7 +470,7 @@ func (w *Wizard) openPage(p page) {
 	w.page = p
 }
 
-// saveDefaults saves the Defaults page. A Project step that still shows the
+// saveDefaults saves the Defaults page. A project that still shows the
 // previous defaults follows the new ones; one the user changed, confirmed
 // or filled from a template keeps its values.
 func (w *Wizard) saveDefaults() {

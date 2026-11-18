@@ -30,6 +30,12 @@ func (w *Wizard) View(c *ui.Context) {
 				Children(func() { w.previewPage(c) })
 			return
 		}
+		if w.page == pageNone && w.step == stepConfigure {
+			// The section links stay over the cards as they scroll.
+			ui.Column(c.Key("configure")).Grow(1).Shrink(1).MinWidth(0).AlignItems(ui.Stretch).LinearGradient(background).
+				Children(func() { w.configureStep(c) })
+			return
+		}
 		content := ui.Scroll(c.Key("content")).Grow(1).Padding(48).AlignItems(ui.Center)
 		content.LinearGradient(background)
 		content.Children(func() { w.content(c) })
@@ -91,14 +97,6 @@ func (w *Wizard) content(c *ui.Context) {
 		w.defaultsPage(c)
 	case w.step == stepWelcome:
 		w.welcome(c)
-	case w.step == stepProject:
-		w.projectStep(c)
-	case w.step == stepFrontend:
-		w.frontendStep(c)
-	case w.step == stepDatabase:
-		w.databaseStep(c)
-	case w.step == stepFeatures:
-		w.featuresStep(c)
 	case w.step == stepReview:
 		w.reviewStep(c)
 	case w.step == stepComplete:
@@ -264,8 +262,8 @@ func (w *Wizard) templateItems(c *ui.Context) {
 					ui.Text(c, templateSummary(t.Configuration)).FontSize(12).LineHeight(1.4).TextColor(ui.Hex("#6b6f82"))
 				})
 				ui.Row(c).Gap(6).Shrink(0).Children(func() {
-					smallButton(c, "Update").Tooltip("Change this template’s selections, starting from the Project step").
-						OnClick(func() { w.applyTemplate(t, stepProject) })
+					smallButton(c, "Update").Tooltip("Change this template’s selections on the Configure step").
+						OnClick(func() { w.applyTemplate(t, stepConfigure) })
 					smallButton(c, "Delete").OnClick(func() {
 						target := t
 						w.deleteTarget = &target
@@ -285,42 +283,118 @@ func (w *Wizard) cancelButton(c *ui.Context) {
 	}
 }
 
-// stepActions is Cancel, Back and Next, at the foot of steps 2 to 5.
-func (w *Wizard) stepActions(c *ui.Context) {
-	formActions(c, func() { w.cancelButton(c) }, func() {
-		if secondaryButton(c, "Back", false).Clicked() {
-			w.back()
+// sectionBarHeight is the height of the bar of section links over the
+// Configure step.
+const sectionBarHeight = 60
+
+// configureStep is every choice of a project in one scrolling page, a card
+// for each section, under a bar of links that scroll to them and mark the
+// one in view.
+func (w *Wizard) configureStep(c *ui.Context) {
+	// targets are where the links scroll to, from where the previous frame
+	// laid the cards out: each card's top in the page, which puts it just
+	// under the bar.
+	var targets [sectionCount]float32
+	var view float32
+	scroll := ui.Scroll(c.Key("configure-scroll")).TrackScroll(&w.configureScroll).Grow(1).Shrink(1).
+		Padding(sectionBarHeight+28, 48, 48, 48).ScrollbarInsets(sectionBarHeight, 0, 0).AlignItems(ui.Center)
+	scroll.Children(func() {
+		page := ui.Column(c).FillWidth().MaxWidth(760).Gap(18)
+		page.Children(func() {
+			ui.Column(c).Padding(0, 4, 8, 4).Children(func() {
+				eyebrow(c, "Step 2 of 4").Margin(0, 0, 8, 0)
+				heading(c, "Configure Your Project", 30)
+				subtitle(c, "Choose everything your Spring Boot application needs on one page. Jump to a section with the links above.").Margin(8, 0, 0, 0)
+			})
+			cards := [sectionCount]func(*ui.Context){w.projectSection, w.frontendSection, w.databaseSection, w.featuresSection}
+			for s, card := range cards {
+				e := formCard(c.Key("section:"+sectionNames[s]), func() { card(c) })
+				if s > 0 {
+					targets[s] = e.Bounds().Y - page.Bounds().Y
+				}
+			}
+			formActions(c, func() { w.cancelButton(c) }, func() {
+				if secondaryButton(c, "Back", false).Clicked() {
+					w.back()
+				}
+				if primaryButton(c, "Next", "→", false).Clicked() {
+					w.next()
+				}
+			})
+		})
+		view = scroll.Bounds().H
+	})
+
+	// The section in view is the last whose top passed a third of the way
+	// down the page under the bar.
+	in := sectionProject
+	line := w.configureScroll.Y + max(view-sectionBarHeight, 0)/3
+	for s := sectionFrontend; s < sectionCount; s++ {
+		if targets[s] > 0 && targets[s] <= line {
+			in = s
 		}
-		if primaryButton(c, "Next", "→", false).Clicked() {
-			w.next()
-		}
+	}
+	bar := ui.Row(c).Absolute().Top(0).Left(0).Right(0).Height(sectionBarHeight).Padding(0, 48).Justify(ui.Center).
+		AlignItems(ui.Center).Background(ui.RGBA(248, 246, 251, 0.97)).BorderWidth(0, 0, 1, 0).BorderColor(ui.RGBA(205, 207, 221, 0.7))
+	bar.Role(ui.RoleNavigation).Label("Sections").Children(func() {
+		ui.Row(c).FillWidth().MaxWidth(760).Gap(6).AlignItems(ui.Center).Children(func() {
+			for s := range sectionCount {
+				w.sectionLink(c, s, s == in, targets[s])
+			}
+		})
 	})
 }
 
-func (w *Wizard) projectStep(c *ui.Context) {
+// sectionLink scrolls the Configure step to a section's card.
+func (w *Wizard) sectionLink(c *ui.Context, s section, active bool, target float32) {
+	name := sectionNames[s]
+	link := ui.ButtonBase(c.Key("section-link:"+name)).Label(name).Padding(8, 16).Radius(999).Cursor(ui.CursorPointer).
+		Tooltip("Go to " + name)
+	text := colorButtonText
+	current := ui.CurrentNone
+	switch {
+	case active:
+		current = ui.CurrentLocation
+		link.Background(white).Border(1, ui.RGBA(239, 74, 84, 0.45)).Shadow(0, 2, 8, 0, ui.RGBA(55, 57, 88, 0.06))
+		text = colorAccent
+	case link.Hovered():
+		link.Background(ui.RGBA(255, 255, 255, 0.7)).Border(1, colorButtonEdge)
+	default:
+		link.Border(1, ui.Transparent)
+	}
+	link.Current(current).OnClick(func() { w.configureScroll.ScrollTo(0, target, ui.Smooth) })
+	link.Children(func() {
+		ui.Text(c, name).FontSize(13).FontWeight(600).TextColor(text)
+	})
+}
+
+// sectionHeading is a Configure card's title and description.
+func sectionHeading(c *ui.Context, title, description string) {
+	ui.Column(c).Margin(0, 0, 22, 0).Gap(6).Children(func() {
+		heading(c, title, 21)
+		subtitle(c, description)
+	})
+}
+
+func (w *Wizard) projectSection(c *ui.Context) {
 	p := w.selection.Project
-	formCard(c, func() {
-		formHeading(c, "Step 2 of 7", "Project Metadata", func() {
-			subtitle(c, "Define the coordinates, build system, and task runner for your new Spring Boot application.")
-		})
-		ui.Grid(c).Columns(2).Gap(20).Children(func() {
-			w.projectField(c, fieldAppName, "Application Name", "The generated project directory name.", "boot-demo")
-			w.projectField(c, fieldAppVersion, "Application Version", "The initial version of your application.", "1.0.0")
-			w.projectField(c, fieldGroupID, "Group ID", "Usually your organization’s reversed domain.", "com.example")
-			w.projectField(c, fieldArtifactID, "Artifact ID", "The Maven/Gradle artifact name.", "my-application")
-			w.projectField(c, fieldPackageName, "Package Name", "The base package for generated source code.", "com.example.demo").ColumnSpan(-1)
-		})
-		optionGroup(c, "Build Tool", false, func() {
-			for _, o := range buildToolOptions {
-				radioCard(c.Key(o.value), p.BuildTool, o, func(v config.BuildTool) { w.selection.Project.BuildTool = v })
-			}
-		})
-		optionGroup(c, "Task Runner", false, func() {
-			for _, o := range taskRunnerOptions {
-				radioCard(c.Key(o.value), p.TaskRunner, o, func(v config.TaskRunner) { w.selection.Project.TaskRunner = v })
-			}
-		})
-		w.stepActions(c)
+	sectionHeading(c, "Project Metadata", "Define the coordinates, build system, and task runner for your new Spring Boot application.")
+	ui.Grid(c).Columns(2).Gap(20).Children(func() {
+		w.projectField(c, fieldAppName, "Application Name", "The generated project directory name.", "boot-demo")
+		w.projectField(c, fieldAppVersion, "Application Version", "The initial version of your application.", "1.0.0")
+		w.projectField(c, fieldGroupID, "Group ID", "Usually your organization’s reversed domain.", "com.example")
+		w.projectField(c, fieldArtifactID, "Artifact ID", "The Maven/Gradle artifact name.", "my-application")
+		w.projectField(c, fieldPackageName, "Package Name", "The base package for generated source code.", "com.example.demo").ColumnSpan(-1)
+	})
+	optionGroup(c, "Build Tool", false, func() {
+		for _, o := range buildToolOptions {
+			radioCard(c.Key(o.value), p.BuildTool, o, func(v config.BuildTool) { w.selection.Project.BuildTool = v })
+		}
+	})
+	optionGroup(c, "Task Runner", false, func() {
+		for _, o := range taskRunnerOptions {
+			radioCard(c.Key(o.value), p.TaskRunner, o, func(v config.TaskRunner) { w.selection.Project.TaskRunner = v })
+		}
 	})
 }
 
@@ -329,72 +403,57 @@ func (w *Wizard) projectField(c *ui.Context, f projectField, label, hint, placeh
 		func(v string) { w.setProjectField(f, v) })
 }
 
-func (w *Wizard) frontendStep(c *ui.Context) {
+func (w *Wizard) frontendSection(c *ui.Context) {
 	f := w.selection.Frontend
-	formCard(c, func() {
-		formHeading(c, "Step 3 of 7", "Frontend", func() {
-			subtitle(c, "Choose how the user interface for "+w.selection.Project.AppName+" should be built.")
-		})
-		optionGroup(c, "Frontend", true, func() {
-			for _, o := range frontendOptions {
-				radioCard(c.Key(o.value), f.Type, o, w.setFrontend)
-			}
-		})
-		if config.IsServerRendered(f.Type) {
-			optionGroup(c, "Additional Support", false, func() {
-				checkCard(c.Key("htmx"), f.HTMX, "HTMX", "Add HTMX for dynamic server-rendered pages", false,
-					func() { w.selection.Frontend.HTMX = !w.selection.Frontend.HTMX })
-			})
+	sectionHeading(c, "Frontend", "Choose how the user interface for "+w.selection.Project.AppName+" should be built.")
+	optionGroup(c, "Frontend", true, func() {
+		for _, o := range frontendOptions {
+			radioCard(c.Key(o.value), f.Type, o, w.setFrontend)
 		}
-		w.stepActions(c)
 	})
+	if config.IsServerRendered(f.Type) {
+		optionGroup(c, "Additional Support", false, func() {
+			checkCard(c.Key("htmx"), f.HTMX, "HTMX", "Add HTMX for dynamic server-rendered pages", false,
+				func() { w.selection.Frontend.HTMX = !w.selection.Frontend.HTMX })
+		})
+	}
 }
 
-func (w *Wizard) databaseStep(c *ui.Context) {
+func (w *Wizard) databaseSection(c *ui.Context) {
 	d := w.selection.Database
-	formCard(c, func() {
-		formHeading(c, "Step 4 of 7", "Database", func() {
-			subtitle(c, "Choose the database, persistence framework, and schema migration tool for "+w.selection.Project.AppName+".")
-		})
-		optionGroup(c, "Database", true, func() {
-			for _, o := range databaseOptions {
-				radioCard(c.Key(o.value), d.Engine, o, func(v config.DatabaseEngine) { w.selection.Database.Engine = v })
-			}
-		})
-		optionGroup(c, "Persistence Framework", false, func() {
-			for _, o := range persistenceOptions {
-				radioCard(c.Key(o.value), d.PersistenceFramework, o, func(v config.PersistenceFramework) { w.selection.Database.PersistenceFramework = v })
-			}
-		})
-		optionGroup(c, "Database Migration Tool", false, func() {
-			for _, o := range migrationOptions {
-				radioCard(c.Key(o.value), d.MigrationTool, o, func(v config.MigrationTool) { w.selection.Database.MigrationTool = v })
-			}
-		})
-		w.stepActions(c)
+	sectionHeading(c, "Database", "Choose the database, persistence framework, and schema migration tool for "+w.selection.Project.AppName+".")
+	optionGroup(c, "Database", true, func() {
+		for _, o := range databaseOptions {
+			radioCard(c.Key(o.value), d.Engine, o, func(v config.DatabaseEngine) { w.selection.Database.Engine = v })
+		}
+	})
+	optionGroup(c, "Persistence Framework", false, func() {
+		for _, o := range persistenceOptions {
+			radioCard(c.Key(o.value), d.PersistenceFramework, o, func(v config.PersistenceFramework) { w.selection.Database.PersistenceFramework = v })
+		}
+	})
+	optionGroup(c, "Database Migration Tool", false, func() {
+		for _, o := range migrationOptions {
+			radioCard(c.Key(o.value), d.MigrationTool, o, func(v config.MigrationTool) { w.selection.Database.MigrationTool = v })
+		}
 	})
 }
 
-func (w *Wizard) featuresStep(c *ui.Context) {
-	formCard(c, func() {
-		formHeading(c, "Step 5 of 7", "Features", func() {
-			subtitle(c, "Select any additional capabilities to include in your generated application.")
+func (w *Wizard) featuresSection(c *ui.Context) {
+	sectionHeading(c, "Features", "Select any additional capabilities to include in your generated application.")
+	ui.Column(c).Gap(25).Children(func() {
+		featureGroup(c, "Optional Features", func() {
+			for _, o := range featureOptions {
+				checkCard(c.Key(o.value), slices.Contains(w.selection.Features, o.value), o.name, o.description, true,
+					func() { w.toggleFeature(o.value) })
+			}
 		})
-		ui.Column(c).Gap(25).Children(func() {
-			featureGroup(c, "Optional Features", func() {
-				for _, o := range featureOptions {
-					checkCard(c.Key(o.value), slices.Contains(w.selection.Features, o.value), o.name, o.description, true,
-						func() { w.toggleFeature(o.value) })
-				}
-			})
-			featureGroup(c, "Spring AI Models (optional)", func() {
-				for _, o := range aiModelOptions {
-					checkCard(c.Key(o.value), slices.Contains(w.selection.AIModels, o.value), o.name, o.description, true,
-						func() { w.toggleAIModel(o.value) })
-				}
-			})
+		featureGroup(c, "Spring AI Models (optional)", func() {
+			for _, o := range aiModelOptions {
+				checkCard(c.Key(o.value), slices.Contains(w.selection.AIModels, o.value), o.name, o.description, true,
+					func() { w.toggleAIModel(o.value) })
+			}
 		})
-		w.stepActions(c)
 	})
 }
 
@@ -408,7 +467,7 @@ func featureGroup(c *ui.Context, legend string, cards func()) {
 func (w *Wizard) reviewStep(c *ui.Context) {
 	s := w.selection
 	formCard(c, func() {
-		formHeading(c, "Step 6 of 7", "Review", func() {
+		formHeading(c, "Step 3 of 4", "Review", func() {
 			subtitle(c, "Review your selections and adjust the project’s name and coordinates before generating it.")
 			if w.activeTemplate != nil {
 				subtitleWith(c, "From template ", w.activeTemplate.Name, "")
@@ -624,7 +683,7 @@ func (w *Wizard) defaultsPage(c *ui.Context) {
 	d := w.defaultsDraft
 	formCard(c, func() {
 		formHeading(c, "Defaults", "Project Defaults", func() {
-			subtitle(c, "New projects start with these values on the Project step. Templates keep their own.")
+			subtitle(c, "New projects start with these values on the Configure step. Templates keep their own.")
 		})
 		ui.Grid(c).Columns(2).Gap(20).Children(func() {
 			textField(c, "Application Version", "The initial version of new applications.", "1.0.0", d.AppVersion, false,

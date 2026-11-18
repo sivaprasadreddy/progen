@@ -84,9 +84,7 @@ func newPreviewFixture(t *testing.T) *previewFixture {
 	// Tall enough for the Review step with an error under it.
 	f.tt = ui.NewTester(f.w.View, 1200, 1000)
 	click(t, f.tt, "Get started")
-	for range 4 {
-		click(t, f.tt, "Next")
-	}
+	next(t, f.w, f.tt)
 	if f.w.step != stepReview {
 		t.Fatalf("not on Review: step %d", f.w.step)
 	}
@@ -239,7 +237,7 @@ func TestAnUnchangedPreviewIsReused(t *testing.T) {
 
 	// Going back and on without changes keeps it too.
 	click(t, f.tt, "Back")
-	click(t, f.tt, "Next")
+	next(t, f.w, f.tt)
 	if f.last().discarded {
 		t.Fatal("an unchanged preview was discarded")
 	}
@@ -264,11 +262,12 @@ func TestChangingTheSelectionDiscardsThePreview(t *testing.T) {
 		t.Fatalf("not prepared again: %d", len(f.prepared))
 	}
 
-	// A change in an earlier step discards it once the user goes on.
+	// A change on the Configure step discards it once the user goes on.
 	click(t, f.tt, "Back to Review")
 	click(t, f.tt, "Back")
+	goToSection(t, f.tt, "Features")
 	click(t, f.tt, "Email")
-	click(t, f.tt, "Next")
+	next(t, f.w, f.tt)
 	if !f.prepared[1].discarded || f.w.preview != nil {
 		t.Fatal("choosing a feature kept the preview")
 	}

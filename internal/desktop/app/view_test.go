@@ -3,10 +3,12 @@ package app
 import (
 	"errors"
 	"image/png"
+	"math"
 	"os"
 	"path/filepath"
 	"slices"
 	"testing"
+	"time"
 
 	"github.com/egoist/mygo/ui"
 	"github.com/sivaprasadreddy/progen/internal/desktop/config"
@@ -69,17 +71,17 @@ func TestSnapshots(t *testing.T) {
 	}
 	save("1-welcome")
 	click("Get started")
-	save("2-project")
-	click("Next")
+	save("2-configure")
+	goToSection(t, tt, "Frontend")
 	click("Thymeleaf")
-	save("3-frontend")
-	click("Next")
-	save("4-database")
-	click("Next")
+	save("2-configure-frontend")
+	goToSection(t, tt, "Database")
+	save("2-configure-database")
+	goToSection(t, tt, "Features")
 	click("Spring Cloud AWS")
-	save("5-features")
-	click("Next")
-	save("6-review")
+	save("2-configure-features")
+	next(t, w, tt)
+	save("3-review")
 	click("Preview")
 	save("6-preview")
 	click("Back to Review")
@@ -100,6 +102,26 @@ func click(t *testing.T, tt *ui.Tester, label string) {
 	if err := tt.Click(label); err != nil {
 		t.Fatalf("click %q: %v\ntexts: %q", label, err, tt.Texts())
 	}
+}
+
+// goToSection clicks the Configure step's link to a section and waits for
+// the page to scroll there.
+func goToSection(t *testing.T, tt *ui.Tester, name string) {
+	t.Helper()
+	link, ok := tt.AccessByRole(ui.RoleButton, name)
+	if !ok {
+		t.Fatalf("no link to %q: %q", name, tt.Texts())
+	}
+	tt.ClickAt(link.Bounds.X+link.Bounds.W/2, link.Bounds.Y+link.Bounds.H/2)
+	tt.Advance(2 * time.Second)
+}
+
+// next scrolls the Configure step to its end and clicks Next.
+func next(t *testing.T, w *Wizard, tt *ui.Tester) {
+	t.Helper()
+	w.configureScroll.Y = math.MaxFloat32
+	tt.Frame()
+	click(t, tt, "Next")
 }
 
 // replace types value into the text field labeled label, over its text.
@@ -147,14 +169,73 @@ func TestProjectStepNeedsEveryField(t *testing.T) {
 	tt := viewTester(w)
 	click(t, tt, "Get started")
 	replace(t, tt, "Application Name", "")
-	click(t, tt, "Next")
-	if w.step != stepProject || !tt.HasText("Required.") {
+	next(t, w, tt)
+	tt.Advance(2 * time.Second)
+	if w.step != stepConfigure || !tt.HasText("Required.") {
 		t.Fatalf("Next went on without a name: step %d, texts %q", w.step, tt.Texts())
 	}
+	// Next scrolled back up to the field, so it can be filled in.
 	replace(t, tt, "Application Name", "orders")
-	click(t, tt, "Next")
-	if w.step != stepFrontend || tt.HasText("Required.") {
+	next(t, w, tt)
+	if w.step != stepReview || tt.HasText("Required.") {
 		t.Errorf("Next with a name: step %d", w.step)
+	}
+}
+
+// currentSection is the Configure step's link marked as the section in
+// view.
+func currentSection(tt *ui.Tester) string {
+	for _, a := range tt.AccessAll() {
+		if a.Role == ui.RoleButton && a.Current == ui.CurrentLocation {
+			return a.Name
+		}
+	}
+	return ""
+}
+
+func TestSectionLinksScrollToTheirCards(t *testing.T) {
+	w := newTestWizard(t, nil)
+	tt := viewTester(w)
+	click(t, tt, "Get started")
+	if got := currentSection(tt); got != "Project" {
+		t.Fatalf("section in view at the top: %q", got)
+	}
+	for _, s := range []struct{ link, text string }{
+		{"Database", "Choose the database, persistence framework, and schema migration tool for demo."},
+		{"Frontend", "Choose how the user interface for demo should be built."},
+		{"Features", "Select any additional capabilities to include in your generated application."},
+	} {
+		goToSection(t, tt, s.link)
+		if got := currentSection(tt); got != s.link {
+			t.Errorf("after %s, section in view: %q", s.link, got)
+		}
+		text, ok := tt.Find(s.text)
+		if !ok {
+			t.Fatalf("no text %q", s.text)
+		}
+		// The card's heading shows just under the bar of links.
+		if y := text.Y; y < sectionBarHeight || y > sectionBarHeight+120 {
+			t.Errorf("%s's description at y %v", s.link, y)
+		}
+	}
+	goToSection(t, tt, "Project")
+	if w.configureScroll.Y != 0 || currentSection(tt) != "Project" {
+		t.Errorf("Project scrolled to %v, section in view %q", w.configureScroll.Y, currentSection(tt))
+	}
+
+	// Review's Back returns to the place the user left.
+	goToSection(t, tt, "Database")
+	next(t, w, tt)
+	click(t, tt, "Back")
+	if w.step != stepConfigure || w.configureScroll.Y == 0 {
+		t.Errorf("Back: step %d, scrolled to %v", w.step, w.configureScroll.Y)
+	}
+	// A new project starts at the top.
+	click(t, tt, "Cancel")
+	click(t, tt, "Discard")
+	click(t, tt, "Get started")
+	if w.configureScroll.Y != 0 {
+		t.Errorf("a new project starts scrolled to %v", w.configureScroll.Y)
 	}
 }
 
@@ -162,7 +243,7 @@ func TestHTMXGoesWithServerRenderedFrontends(t *testing.T) {
 	w := newTestWizard(t, nil)
 	tt := viewTester(w)
 	click(t, tt, "Get started")
-	click(t, tt, "Next")
+	goToSection(t, tt, "Frontend")
 	if tt.HasText("HTMX") {
 		t.Error("HTMX offered without a server-rendered frontend")
 	}
@@ -187,18 +268,18 @@ func TestGeneratesTheSelection(t *testing.T) {
 	click(t, tt, "Get started")
 	replace(t, tt, "Application Name", "orders")
 	click(t, tt, "Gradle")
-	click(t, tt, "Next")
+	goToSection(t, tt, "Frontend")
 	click(t, tt, "JTE")
 	click(t, tt, "HTMX")
-	click(t, tt, "Next")
+	goToSection(t, tt, "Database")
 	click(t, tt, "MySQL")
 	click(t, tt, "jOOQ")
 	click(t, tt, "Liquibase")
-	click(t, tt, "Next")
+	goToSection(t, tt, "Features")
 	click(t, tt, "Email")
 	click(t, tt, "Anthropic")
 	click(t, tt, "Ollama")
-	click(t, tt, "Next")
+	next(t, w, tt)
 	if w.step != stepReview || !tt.HasText("Email") {
 		t.Fatalf("not on Review: step %d", w.step)
 	}
@@ -229,9 +310,7 @@ func TestShowsAGenerationWarningOnComplete(t *testing.T) {
 	})
 	tt := viewTester(w)
 	click(t, tt, "Get started")
-	for range 4 {
-		click(t, tt, "Next")
-	}
+	next(t, w, tt)
 	click(t, tt, "Generate")
 	if w.step != stepComplete || !tt.HasText("/Users/me/Downloads/demo.zip") || !tt.HasText("WARNING: formatting its code failed") {
 		t.Fatalf("warning not shown on Complete: step %d, texts %q", w.step, tt.Texts())
@@ -248,9 +327,7 @@ func TestShowsAGenerationError(t *testing.T) {
 	})
 	tt := viewTester(w)
 	click(t, tt, "Get started")
-	for range 4 {
-		click(t, tt, "Next")
-	}
+	next(t, w, tt)
 	click(t, tt, "Generate")
 	if w.step != stepReview || !tt.HasText("generate project: exit status 1") {
 		t.Errorf("error not shown: step %d, texts %q", w.step, tt.Texts())
@@ -305,7 +382,7 @@ func TestUpdateOpensATemplateAtTheProjectStep(t *testing.T) {
 	if err := tt.Click("Update"); err != nil {
 		t.Fatal(err)
 	}
-	if w.page != pageNone || w.step != stepProject || w.activeTemplate == nil || w.activeTemplate.Name != "REST API" {
+	if w.page != pageNone || w.step != stepConfigure || w.activeTemplate == nil || w.activeTemplate.Name != "REST API" {
 		t.Errorf("Update: page %d, step %d, template %v", w.page, w.step, w.activeTemplate)
 	}
 }
@@ -373,12 +450,12 @@ func TestDefaultsPrefillNewProjects(t *testing.T) {
 		t.Errorf("Project %+v, want %+v", w.selection.Project, want)
 	}
 
-	// A Project step the user changed keeps its values when the defaults change.
+	// A project the user changed keeps its values when the defaults change.
 	replace(t, tt, "Application Name", "orders")
 	click(t, tt, "Defaults")
 	replace(t, tt, "Application Version", "2.0.0")
 	click(t, tt, "Save defaults")
-	click(t, tt, "Back to Project")
+	click(t, tt, "Back to Configure")
 	if p := w.selection.Project; p.AppName != "orders" || p.AppVersion != "0.1.0" {
 		t.Errorf("edited Project changed: %+v", p)
 	}
