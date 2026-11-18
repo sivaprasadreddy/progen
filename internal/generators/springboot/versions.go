@@ -22,7 +22,7 @@ const (
 	springAIVersion                        = "2.0.2"
 	datasourceMicrometerSpringBootVersion  = "2.3.0"
 	jjwtVersion                            = "0.13.0"
-	bootUIVersion                          = "2.4.0"
+	bootUIVersion                          = "2.5.0"
 	axelixVersion                          = "1.3.0"
 	archunitVersion                        = "1.5.1"
 	taikaiVersion                          = "2.9.0"
