@@ -1,0 +1,50 @@
+name: Feature request
+description: Suggest a new option, feature, or improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. Progen aims to generate minimal projects with the most commonly used features, so please explain why this would be useful to many users.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - progen CLI
+        - Progen Desktop
+        - Generated project
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What are you trying to do, and what's missing today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should it work? For a new generator option, describe the generated code or configuration you expect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+    validations:
+      required: false

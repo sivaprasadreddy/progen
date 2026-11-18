@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Progen documentation
+    url: https://github.com/sivaprasadreddy/progen#readme
+    about: Read the README for installation and usage instructions.
+  - name: Progen Desktop documentation
+    url: https://github.com/sivaprasadreddy/progen/blob/main/cmd/desktop/README.md
+    about: Installing and using Progen Desktop on macOS, Windows and Linux.
