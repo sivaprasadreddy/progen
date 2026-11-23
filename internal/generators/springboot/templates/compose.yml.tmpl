@@ -93,19 +93,19 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       {{- if eq .DbType "PostgreSQL" }}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      DB_URL: jdbc:postgresql://postgres:5432/postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
       {{- end }}
       {{- if eq .DbType "MySQL" }}
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/test
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: secret
+      DB_URL: jdbc:mysql://localhost:3306/test
+      DB_USERNAME: user
+      DB_PASSWORD: secret
       {{- end }}
       {{- if eq .DbType "MariaDB" }}
-      SPRING_DATASOURCE_URL: jdbc:mariadb://localhost:3306/test
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: secret
+      DB_URL: jdbc:mariadb://localhost:3306/test
+      DB_USERNAME: user
+      DB_PASSWORD: secret
       {{- end }}
       {{- if .EmailSupport }}
       EMAIL_HOST: mailpit

@@ -34,11 +34,6 @@ those constants. Only edit `versions.go` — never hardcode versions in template
      and `springBootFlociTcVersion` track Spring Boot releases. If Spring Boot is
      not being bumped to a new minor, skip a minor bump of these unless their
      release notes say they support the current Boot version.
-   - `opentelemetryLogbackAppenderVersion` (instrumentation) and
-     `opentelemetryAPIIncubatorVersion` (SDK) are released in pairs: the
-     instrumentation release N depends on a specific SDK version. Pick the
-     incubator version that matches the chosen instrumentation release (check its
-     POM on Maven Central) rather than blindly taking the latest of each.
    - `nodeVersion` stays on the current LTS major (script already limits this);
      `npmVersion` must be compatible with that Node version.
 
@@ -98,7 +93,6 @@ those constants. Only edit `versions.go` — never hardcode versions in template
 | gradleNodePluginVersion | Gradle Plugin Portal | com.github.node-gradle.node |
 | mavenAntrunPluginVersion | Maven Central | org.apache.maven.plugins:maven-antrun-plugin |
 | opentelemetryLogbackAppenderVersion | Maven Central | io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0 (`-alpha`) |
-| opentelemetryAPIIncubatorVersion | Maven Central | io.opentelemetry:opentelemetry-api-incubator (`-alpha`) |
 | mavenVersion | Maven Central | org.apache.maven:apache-maven (Maven wrapper distribution, `.sdkmanrc`, `mise.toml`) |
 | mavenWrapperVersion | Maven Central | org.apache.maven.wrapper:maven-wrapper (`wrapperVersion` in `maven-wrapper.properties`) |
 | gradleVersion | services.gradle.org/versions/current | Gradle wrapper distribution, `.sdkmanrc`, `mise.toml` |

@@ -31,6 +31,7 @@ springAIVersion|maven|org.springframework.ai:spring-ai-bom|
 datasourceMicrometerSpringBootVersion|maven|net.ttddyy.observation:datasource-micrometer-spring-boot|
 jjwtVersion|maven|io.jsonwebtoken:jjwt-api|
 bootUIVersion|maven|com.julien-dubois.bootui:bootui-spring-boot-starter|
+axelixVersion|maven|com.axelixlabs:axelix-spring-boot-4-starter|
 archunitVersion|maven|com.tngtech.archunit:archunit-junit5|
 taikaiVersion|maven|com.enofex:taikai|
 palantirJavaFormatVersion|maven|com.palantir.javaformat:palantir-java-format|
@@ -40,7 +41,6 @@ frontendMavenPluginVersion|maven|com.github.eirslett:frontend-maven-plugin|
 gradleNodePluginVersion|gradle|com.github.node-gradle.node|
 mavenAntrunPluginVersion|maven|org.apache.maven.plugins:maven-antrun-plugin|
 opentelemetryLogbackAppenderVersion|maven|io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0|alpha
-opentelemetryAPIIncubatorVersion|maven|io.opentelemetry:opentelemetry-api-incubator|alpha
 mavenVersion|maven|org.apache.maven:apache-maven|
 mavenWrapperVersion|maven|org.apache.maven.wrapper:maven-wrapper|
 LIST

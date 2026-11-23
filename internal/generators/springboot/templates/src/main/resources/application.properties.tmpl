@@ -45,8 +45,8 @@ gg.jte.usePrecompiledTemplates=true
 ###### Logging ######
 logging.level.root=INFO
 logging.level.{{ .BasePackage }}=DEBUG
-logging.pattern.correlation=[${spring.application.name:},%X{traceId:-},%X{spanId:-}]
-logging.include-application-name=false
+#logging.pattern.correlation=[${spring.application.name:},%X{traceId:-},%X{spanId:-}]
+#logging.include-application-name=false
 #logging.level.org.springframework.security=DEBUG
 {{- if .OpenTelemetrySupport }}
 jdbc.datasource-proxy.query.enable-logging=true
@@ -62,8 +62,8 @@ management.endpoint.health.show-details=when_authorized
 management.endpoint.health.probes.enabled=true
 {{- if .OpenTelemetrySupport }}
 management.tracing.export.enabled=${TRACING_ENABLED:false}
-management.tracing.sampling.probability=1.0
 management.otlp.metrics.export.url=${METRICS_EXPORT_URL:http://localhost:4318/v1/metrics}
+management.tracing.sampling.probability=1.0
 management.opentelemetry.tracing.export.otlp.endpoint=${TRACES_EXPORT_URL:http://localhost:4318/v1/traces}
 management.opentelemetry.logging.export.otlp.endpoint=${LOGS_EXPORT_URL:http://localhost:4318/v1/logs}
 {{- end }}
@@ -123,9 +123,12 @@ spring.mail.port=${EMAIL_PORT:1025}
 spring.mail.protocol=smtp
 spring.mail.username=${EMAIL_USERNAME:}
 spring.mail.password=${EMAIL_PASSWORD:}
-spring.mail.properties.mail.smtp.connectiontimeout=5000
-spring.mail.properties.mail.smtp.timeout=3000
-spring.mail.properties.mail.smtp.writetimeout=5000
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=${SMTP_TLS_ENABLE:true}
+spring.mail.properties.mail.smtp.starttls.required=${SMTP_TLS_REQUIRED:true}
+spring.mail.properties.mail.smtp.connectiontimeout=10000
+spring.mail.properties.mail.smtp.timeout=10000
+spring.mail.properties.mail.smtp.writetimeout=10000
 {{ end }}
 
 {{- if .RabbitMQSupport }}

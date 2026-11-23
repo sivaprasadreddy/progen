@@ -1,8 +1,5 @@
 plugins {
-    {{- if .AxelixSupport }}
-    id "com.axelixlabs.axelix" version "{{ .AxelixVersion }}"
-    {{- end }}
-	id "java"
+    id "java"
 	id "jacoco"
 	id "org.springframework.boot" version "{{ .SpringBootVersion }}"
     id "io.spring.dependency-management" version "{{ .GradleDependencyMgmtVersion }}"
@@ -14,6 +11,9 @@ plugins {
     {{- if .SPASupport }}
     id "com.github.node-gradle.node" version "{{ .GradleNodePluginVersion }}"
     {{ end }}
+    {{- if .AxelixSupport }}
+    id "com.axelixlabs.axelix" version "{{ .AxelixVersion }}"
+    {{- end }}
 }
 
 group = "{{ .GroupID }}"
@@ -78,16 +78,12 @@ ext {
 }
 
 dependencies {
-    {{- if .AxelixSupport }}
-    implementation "com.axelixlabs:axelix-spring-boot-4-starter:{{ .AxelixVersion }}"
-    {{- end }}
     implementation "org.springframework.boot:spring-boot-starter-webmvc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     {{- if .OpenTelemetrySupport }}
     implementation "org.springframework.boot:spring-boot-starter-opentelemetry"
     implementation "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:{{ .OpenTelemetryLogbackAppenderVersion }}"
-    implementation "io.opentelemetry:opentelemetry-api-incubator:{{ .OpenTelemetryAPIIncubatorVersion }}"
     implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:${datasourceMicrometerSpringBootVersion}"
     {{ end }}
     implementation "org.springframework.boot:spring-boot-starter-security"
@@ -178,6 +174,9 @@ dependencies {
     implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     {{- end }}
     implementation "com.julien-dubois.bootui:bootui-spring-boot-starter:${bootUIVersion}"
+    {{- if .AxelixSupport }}
+    implementation "com.axelixlabs:axelix-spring-boot-4-starter:{{ .AxelixVersion }}"
+    {{- end }}
 
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"

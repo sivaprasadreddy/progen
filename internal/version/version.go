@@ -2,4 +2,4 @@
 package version
 
 // Version is the current Progen release version.
-const Version = "v1.1.6"
+const Version = "v1.2.0-SNAPSHOT"

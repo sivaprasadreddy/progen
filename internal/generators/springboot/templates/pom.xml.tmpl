@@ -76,13 +76,6 @@
 	</properties>
 
 	<dependencies>
-        {{- if .AxelixSupport }}
-        <dependency>
-            <groupId>com.axelixlabs</groupId>
-            <artifactId>axelix-spring-boot-4-starter</artifactId>
-            <version>${axelix.version}</version>
-        </dependency>
-        {{- end }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -95,6 +88,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         {{- if .OpenTelemetrySupport }}
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -104,11 +102,6 @@
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-appender-1.0</artifactId>
             <version>{{ .OpenTelemetryLogbackAppenderVersion }}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-api-incubator</artifactId>
-            <version>{{ .OpenTelemetryAPIIncubatorVersion }}</version>
         </dependency>
         <dependency>
             <groupId>net.ttddyy.observation</groupId>
@@ -334,6 +327,13 @@
             <artifactId>bootui-spring-boot-starter</artifactId>
             <version>${bootui.version}</version>
         </dependency>
+        {{- if .AxelixSupport }}
+        <dependency>
+            <groupId>com.axelixlabs</groupId>
+            <artifactId>axelix-spring-boot-4-starter</artifactId>
+            <version>${axelix.version}</version>
+        </dependency>
+        {{- end }}
 
         <!-- Dev dependencies -->
         <dependency>
@@ -538,20 +538,6 @@
 
     <build>
         <plugins>
-            {{- if .AxelixSupport }}
-            <plugin>
-                <groupId>com.axelixlabs</groupId>
-                <artifactId>axelix-maven-plugin</artifactId>
-                <version>${axelix.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>axelix-generate-project-info</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            {{- end }}
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
@@ -778,6 +764,20 @@
                     </execution>
                 </executions>
             </plugin>
+            {{- if .AxelixSupport }}
+            <plugin>
+                <groupId>com.axelixlabs</groupId>
+                <artifactId>axelix-maven-plugin</artifactId>
+                <version>${axelix.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>axelix-generate-project-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            {{- end }}
             {{- if .SPASupport }}
             <plugin>
                 <groupId>com.github.eirslett</groupId>

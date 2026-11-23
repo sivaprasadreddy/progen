@@ -35,17 +35,17 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: kubernetes
-            - name: SPRING_DATASOURCE_URL
+            - name: DB_URL
               valueFrom:
                 configMapKeyRef:
                   name: {{ .ArtifactID }}-configmap
                   key: db_jdbc_url
-            - name: SPRING_DATASOURCE_USERNAME
+            - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: {{ .ArtifactID }}-secrets
                   key: db_username
-            - name: SPRING_DATASOURCE_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .ArtifactID }}-secrets
@@ -61,6 +61,16 @@ spec:
                 configMapKeyRef:
                   name: {{ .ArtifactID }}-configmap
                   key: email_port
+            - name: SMTP_TLS_ENABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .ArtifactID }}-configmap
+                  key: smtp_tls_enable
+            - name: SMTP_TLS_REQUIRED
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .ArtifactID }}-configmap
+                  key: smtp_tls_required
 {{- end }}
 {{- if .RedisCachingSupport }}
             - name: SPRING_DATA_REDIS_HOST
