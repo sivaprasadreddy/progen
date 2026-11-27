@@ -3,6 +3,15 @@ on:
   push:
     branches:
       - 'main'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.agents/**'
+      - '.claude/**'
+      - '.idea/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - 'renovate.json'
 
 jobs:
   progen:

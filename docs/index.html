@@ -328,6 +328,25 @@
         }
         .copy-btn:hover { color: var(--text); border-color: var(--accent-2); }
         .code-block { position: relative; }
+
+        /* screenshots */
+        .screenshots { margin-top: 2rem; }
+        .screenshots figure { margin: 0; }
+        .screenshots img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 6px 20px rgba(31, 41, 33, 0.08);
+        }
+        .screenshots figcaption {
+            margin-top: 0.6rem;
+            font-size: 0.9rem;
+            color: var(--text-faint);
+            text-align: center;
+        }
+        .desktop-actions { margin-top: 1.6rem; display: flex; gap: 0.9rem; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -551,7 +570,7 @@ progen --help</code></pre>
         <div class="grid cols-3">
             <div class="card">
                 <h3><span class="icon-dot"></span>Step-by-step wizard</h3>
-                <p>Project → Frontend → Database → Features → Review. The package name is filled in from the Group ID and Artifact ID, and you can still edit the project details on Review.</p>
+                <p>Welcome → Configure (project, frontend, database, features) → Review → Complete. The package name is filled in from the Group ID and Artifact ID, and you can still edit the project details on Review.</p>
             </div>
             <div class="card">
                 <h3><span class="icon-dot"></span>Templates</h3>
@@ -567,6 +586,22 @@ progen --help</code></pre>
             <code>&lt;application-name&gt;.zip</code> in the <code>Downloads</code> folder of your home directory.
             Templates and defaults are stored in <code>~/Library/Application Support/Progen Desktop/</code> on macOS,
             <code>%AppData%\Progen Desktop\</code> on Windows and <code>~/.config/Progen Desktop/</code> on Linux.
+        </div>
+
+        <div class="grid cols-2 screenshots">
+            <figure>
+                <img src="images/desktop-configure.png" alt="Progen Desktop Configure step, choosing the frontend and database" width="1200" height="800" loading="lazy" />
+                <figcaption>Configure: pick the frontend, database and features on one page.</figcaption>
+            </figure>
+            <figure>
+                <img src="images/desktop-review.png" alt="Progen Desktop Review step, summarizing the selections before generating" width="1200" height="800" loading="lazy" />
+                <figcaption>Review: check your selections, then generate or save them as a template.</figcaption>
+            </figure>
+        </div>
+
+        <div class="desktop-actions">
+            <a class="btn btn-primary" href="https://github.com/sivaprasadreddy/progen/releases/latest" target="_blank" rel="noopener">Download from GitHub Releases</a>
+            <a class="btn btn-secondary" href="#install" data-open-tab="desktop">Installation steps</a>
         </div>
     </div>
 </section>
@@ -646,6 +681,11 @@ progen --help</code></pre>
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        });
+    });
+    document.querySelectorAll('[data-open-tab]').forEach(link => {
+        link.addEventListener('click', () => {
+            document.querySelector('.tab-btn[data-tab="' + link.dataset.openTab + '"]').click();
         });
     });
 </script>
