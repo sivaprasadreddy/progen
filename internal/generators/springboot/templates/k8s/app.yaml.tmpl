@@ -73,24 +73,24 @@ spec:
                   key: smtp_tls_required
 {{- end }}
 {{- if .RedisCachingSupport }}
-            - name: SPRING_DATA_REDIS_HOST
+            - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ .ArtifactID }}-configmap
                   key: redis_host
-            - name: SPRING_DATA_REDIS_PORT
+            - name: REDIS_PORT
               valueFrom:
                 configMapKeyRef:
                   name: {{ .ArtifactID }}-configmap
                   key: redis_port
 {{- end }}
 {{- if .RabbitMQSupport }}
-            - name: SPRING_RABBITMQ_HOST
+            - name: RABBITMQ_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ .ArtifactID }}-configmap
                   key: rabbitmq_host
-            - name: SPRING_RABBITMQ_PORT
+            - name: RABBITMQ_PORT
               valueFrom:
                 configMapKeyRef:
                   name: {{ .ArtifactID }}-configmap
@@ -126,6 +126,8 @@ spec:
 {{- end }}
 {{- if .OpenTelemetrySupport }}
             - name: TRACING_ENABLED
+              value: "true"
+            - name: TELEMETRY_ENABLED
               value: "true"
             - name: METRICS_EXPORT_URL
               valueFrom:

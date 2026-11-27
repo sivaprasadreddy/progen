@@ -146,7 +146,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-mail"
     {{- end }}
     {{- if .RabbitMQSupport }}
-    implementation "org.springframework.boot:spring-boot-starter-amqp"
+    implementation "org.springframework.boot:spring-boot-starter-rabbitmq"
     {{- end }}
     {{- if .OllamaSupport }}
     implementation "org.springframework.ai:spring-ai-starter-model-ollama"
@@ -225,7 +225,7 @@ dependencies {
     testImplementation "ch.martinelli.oss:testcontainers-mailpit:${tcMailpitVersion}"
     {{- end }}
     {{- if .RabbitMQSupport }}
-    testImplementation "org.springframework.boot:spring-boot-starter-amqp-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-rabbitmq-test"
     testImplementation "org.testcontainers:testcontainers-rabbitmq"
     {{- end }}
     {{- if .OpenTelemetrySupport }}

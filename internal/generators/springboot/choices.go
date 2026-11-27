@@ -65,12 +65,12 @@ func Choices() ConfigChoices {
 
 // baseFeatures are the optional features available for every frontend.
 var baseFeatures = []string{
-	FeatureAxelixSupport,
 	FeatureSpringCloudAWSSupport,
 	FeatureEmailSupport,
 	FeatureRabbitMQSupport,
 	FeatureRedisCachingSupport,
 	FeatureOpenTelemetrySupport,
+	FeatureAxelixSupport,
 	FeatureK8sSupport,
 }
 

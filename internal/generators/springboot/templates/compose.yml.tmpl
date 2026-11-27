@@ -118,12 +118,12 @@ services:
       SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY: test
       {{- end }}
       {{- if .RabbitMQSupport }}
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
       {{- end }}
       {{- if .RedisCachingSupport }}
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       {{- end }}
       {{- if .SpringAISupport }}
       SPRING_AI_MODEL_CHAT: ${SPRING_AI_MODEL_CHAT:-{{ .DefaultAIChatModel }}}
