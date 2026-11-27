@@ -7,6 +7,8 @@ through a step-by-step wizard. See [Progen Desktop](#progen-desktop-app) below.
 [![Build](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/build.yml)
 [![GoReleaser](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml/badge.svg)](https://github.com/sivaprasadreddy/progen/actions/workflows/release.yml)
 
+[![Listed on Awesome MyGo](https://awesomemygo.dev/badge.svg)](https://awesomemygo.dev/apps/progen-desktop)
+
 ## Motivation
 There are a few good project generator tools exist, such as [JHipster](https://www.jhipster.tech/), [Bootify](https://bootify.io/), [generator-springboot](https://github.com/sivaprasadreddy/generator-springboot).
 
